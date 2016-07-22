@@ -58,7 +58,12 @@ class ThreadManager(object):
         try:
             return int(s)
         except:
-            return eval(s)
+            pass
+        if isinstance(s, basestring):
+            if s[0] in ("'", '"'):
+                return eval(s)
+            return s
+        return str(s)
 
     def setup_config(self, grinder):
         if py_java.is_java_object(grinder):
