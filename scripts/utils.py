@@ -4,7 +4,7 @@ from net.grinder.script.Grinder import grinder
 from net.grinder.script.Grinder import ScriptContext
 import net.grinder.engine.process.ScriptContextImplementation
 import py_java
-import java.lang.Properties
+import java.util.Properties
 
 default_config = {
     'name_fmt': "t4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
