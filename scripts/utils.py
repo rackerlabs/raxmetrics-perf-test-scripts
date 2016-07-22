@@ -1,6 +1,10 @@
 import time
 import random
 from net.grinder.script.Grinder import grinder
+from net.grinder.script.Grinder import ScriptContext
+import net.grinder.engine.process.ScriptContextImplementation
+import py_java
+import java.lang.Properties
 
 default_config = {
     'name_fmt': "t4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
@@ -57,18 +61,29 @@ class ThreadManager(object):
             return eval(s)
 
     def setup_config(self, grinder):
+        if py_java.is_java_object(grinder):
+            if isinstance(grinder, ScriptContext):
+                grinder = py_java.dict_from_properties(grinder.getProperties())
+            elif type(grinder) == \
+                    net.grinder.engine.process.ScriptContextImplementation:
+                grinder = py_java.dict_from_properties(grinder.getProperties())
+            elif isinstance(grinder, java.lang.Properties):
+                grinder = py_java.dict_from_properties(grinder)
+            else:
+                raise TypeError("Unknown configuration object type")
+
         # Parse the properties file and update default_config dictionary
-        for entry in grinder.getProperties().entrySet():
-            if entry.value.startswith(".."):
+        for k, v in grinder:
+            if v.startswith(".."):
                 continue
-            if entry.key == "grinder.threads":
-                self.tot_threads = self.convert(entry.value)
-            if entry.key.find("concurrency") >= 0:
-                self.concurrent_threads += self.convert(entry.value)
-            if not entry.key.startswith("grinder.bf."):
+            if k == "grinder.threads":
+                self.tot_threads = self.convert(v)
+            if k.find("concurrency") >= 0:
+                self.concurrent_threads += self.convert(v)
+            if not k.startswith("grinder.bf."):
                 continue
-            k = entry.key.replace("grinder.bf.", "")
-            default_config[k] = self.convert(entry.value)
+            k = k.replace("grinder.bf.", "")
+            default_config[k] = self.convert(v)
 
     def __init__(self, grinder):
         # tot_threads is the value passed to the grinder at startup for the
