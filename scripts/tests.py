@@ -3,8 +3,8 @@
 from __future__ import division
 import net.grinder.script.Grinder
 
-package_path = net.grinder.script.Grinder.grinder.getProperties().getProperty(
-    "grinder.package_path")
+# package_path = net.grinder.script.Grinder.grinder.getProperties().getProperty(
+#     "grinder.package_path")
 import sys
 
 grinder_props = {
@@ -40,11 +40,11 @@ grinder_props = {
     'grinder.bf.annotations_queries_per_interval': '8',
 }
 
-sys.path.append(package_path)
-from coverage import coverage
-
-cov = coverage()
-cov.start()
+# sys.path.append(package_path)
+# from coverage import coverage
+#
+# cov = coverage()
+# cov.start()
 
 import time
 import utils
@@ -546,8 +546,8 @@ class BluefloodTests(unittest.TestCase):
 unittest.TextTestRunner().run(
     unittest.TestLoader().loadTestsFromTestCase(BluefloodTests))
 
-cov.stop()
-cov.save()
+# cov.stop()
+# cov.save()
 
 
 class TestRunner:
