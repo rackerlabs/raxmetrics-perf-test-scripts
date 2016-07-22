@@ -5,6 +5,7 @@ from net.grinder.script.Grinder import ScriptContext
 import net.grinder.engine.process.ScriptContextImplementation
 import py_java
 import java.util.Properties
+import ast
 
 default_config = {
     'name_fmt': "t4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
@@ -61,7 +62,7 @@ class ThreadManager(object):
             pass
         if isinstance(s, basestring):
             if s[0] in ("'", '"'):
-                return eval(s)
+                return ast.literal_eval(s)
             return s
         return str(s)
 
