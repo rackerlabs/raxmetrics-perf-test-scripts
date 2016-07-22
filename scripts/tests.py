@@ -94,7 +94,7 @@ class BluefloodTests(unittest.TestCase):
         self.real_randint = random.randint
         self.real_time = utils.AbstractThread.time
         self.real_sleep = utils.AbstractThread.sleep
-        self.tm = ingest.ThreadManager(grinder_props)
+        self.tm = utils.ThreadManager(grinder_props)
         req = MockReq()
         ingest.IngestThread.request = req
         ingestenum.EnumIngestThread.request = req

@@ -3,12 +3,13 @@ import ingest
 import ingestenum
 import annotationsingest
 import query
+import utils
 
 # ENTRY POINT into the Grinder
 
 # The code inside the TestRunner class is gets executed by each worker thread
 # Outside the class is executed before any of the workers begin
-thread_manager = ingest.ThreadManager(grinder)
+thread_manager = utils.ThreadManager(grinder)
 thread_manager.create_all_metrics(grinder.getAgentNumber())
 
 
