@@ -7,6 +7,39 @@ package_path = net.grinder.script.Grinder.grinder.getProperties().getProperty(
     "grinder.package_path")
 import sys
 
+grinder_props = {
+    'grinder.script': '../scripts/tests.py',
+    'grinder.package_path': '/Library/Python/2.7/site-packages',
+    'grinder.runs': '1',
+    'grinder.threads': '45',
+    'grinder.useConsole': 'false',
+    'grinder.logDirectory': 'resources/logs',
+    'grinder.bf.name_fmt': 't4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d',
+    'grinder.bf.report_interval': '10000',
+    'grinder.bf.annotations_num_tenants': '4',
+    'grinder.bf.num_tenants': '4',
+    'grinder.bf.enum_num_tenants': '4',
+    'grinder.bf.metrics_per_tenant': '15',
+    'grinder.bf.enum_metrics_per_tenant': '5',
+    'grinder.bf.batch_size': '5',
+    'grinder.bf.ingest_concurrency': '15',
+    'grinder.bf.enum_ingest_concurrency': '15',
+    'grinder.bf.annotations_per_tenant': '5',
+    'grinder.bf.annotations_concurrency': '5',
+    'grinder.bf.num_nodes': '1',
+    'grinder.bf.url': 'http://qe01.metrics-ingest.api.rackspacecloud.com',
+    'grinder.bf.query_url': 'http://qe01.metrics.api.rackspacecloud.com',
+    'grinder.bf.query_concurrency': '10',
+    'grinder.bf.max_multiplot_metrics': '10',
+    'grinder.bf.search_queries_per_interval': '10',
+    'grinder.bf.enum_search_queries_per_interval': '10',
+    'grinder.bf.multiplot_per_interval': '10',
+    'grinder.bf.singleplot_per_interval': '10',
+    'grinder.bf.enum_single_plot_queries_per_interval': '10',
+    'grinder.bf.enum_multiplot_per_interval': '10',
+    'grinder.bf.annotations_queries_per_interval': '8',
+}
+
 sys.path.append(package_path)
 from coverage import coverage
 
@@ -61,7 +94,7 @@ class BluefloodTests(unittest.TestCase):
         self.real_randint = random.randint
         self.real_time = utils.AbstractThread.time
         self.real_sleep = utils.AbstractThread.sleep
-        self.tm = ingest.ThreadManager(net.grinder.script.Grinder.grinder)
+        self.tm = ingest.ThreadManager(grinder_props)
         req = MockReq()
         ingest.IngestThread.request = req
         ingestenum.EnumIngestThread.request = req
