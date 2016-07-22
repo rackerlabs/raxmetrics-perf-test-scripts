@@ -73,7 +73,7 @@ class ThreadManager(object):
                 raise TypeError("Unknown configuration object type")
 
         # Parse the properties file and update default_config dictionary
-        for k, v in grinder:
+        for k, v in grinder.iteritems():
             if v.startswith(".."):
                 continue
             if k == "grinder.threads":
