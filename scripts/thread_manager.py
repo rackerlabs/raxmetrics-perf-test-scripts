@@ -32,17 +32,19 @@ class ThreadManager(object):
     def setup_config(self, grinder):
         if py_java.is_java_object(grinder):
             if isinstance(grinder, ScriptContext):
-                grinder = py_java.dict_from_properties(grinder.getProperties())
+                config = py_java.dict_from_properties(grinder.getProperties())
             elif type(grinder) == \
                     net.grinder.engine.process.ScriptContextImplementation:
-                grinder = py_java.dict_from_properties(grinder.getProperties())
+                config = py_java.dict_from_properties(grinder.getProperties())
             elif isinstance(grinder, java.lang.Properties):
-                grinder = py_java.dict_from_properties(grinder)
+                config = py_java.dict_from_properties(grinder)
             else:
                 raise TypeError("Unknown configuration object type")
+        else:
+            config = grinder
 
         # Parse the properties file and update default_config dictionary
-        for k, v in grinder.iteritems():
+        for k, v in config.iteritems():
             if v.startswith(".."):
                 continue
             if k == "grinder.threads":
