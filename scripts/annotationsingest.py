@@ -4,9 +4,11 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from utils import *
+from utils import ThreadManager, generate_job_range, generate_metrics_tenants
+from utils import generate_metric_name
 from net.grinder.script import Test
 from net.grinder.plugin.http import HTTPRequest
+from abstract_thread import AbstractThread, default_config
 
 
 class AnnotationsIngestThread(AbstractThread):

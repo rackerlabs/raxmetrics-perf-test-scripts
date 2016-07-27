@@ -7,7 +7,7 @@ import py_java
 import java.util.Properties
 import ast
 
-from abstract_thread import AbstractThread, default_config
+from abstract_thread import default_config
 
 
 RAND_MAX = 982374239
