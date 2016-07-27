@@ -9,6 +9,7 @@ import net.grinder.engine.process.ScriptContextImplementation
 import py_java
 from abstract_thread import default_config
 
+
 class ThreadManager(object):
     # keep track of the various thread types
     types = []
@@ -68,7 +69,8 @@ class ThreadManager(object):
         #  passed to the grinder
         if self.tot_threads != self.concurrent_threads:
             raise Exception(
-                "Configuration error: grinder.threads doesn't equal total concurrent threads")
+                "Configuration error: grinder.threads doesn't equal total "
+                "concurrent threads")
 
     def create_all_metrics(self, agent_number):
         """Step through all the attached types and have them create their
@@ -101,7 +103,7 @@ class ThreadManager(object):
             else:
                 server_num -= x.num_threads()
 
-        if thread_type == None:
+        if thread_type is None:
             raise Exception("Invalid Thread Type")
 
         return thread_type(server_num)

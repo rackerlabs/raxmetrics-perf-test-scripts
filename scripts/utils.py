@@ -6,8 +6,6 @@ from abstract_thread import default_config
 RAND_MAX = 982374239
 
 
-
-
 def generate_job_range(total_jobs, total_servers, server_num):
     """ Determine which subset of the total work the current server is to do.
 
@@ -45,5 +43,3 @@ def generate_metric_name(metric_id):
 # TODO: Add enum prefix to config
 def generate_enum_metric_name(metric_id):
     return "enum_grinder_" + default_config['name_fmt'] % metric_id
-
-
