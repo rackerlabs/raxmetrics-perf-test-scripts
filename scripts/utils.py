@@ -1,6 +1,11 @@
 import random
 
+import java.util.Properties
+from net.grinder.script.Grinder import ScriptContext
+import net.grinder.engine.process.ScriptContextImplementation
+
 from abstract_thread import default_config
+import py_java
 
 
 RAND_MAX = 982374239
@@ -43,3 +48,19 @@ def generate_metric_name(metric_id):
 # TODO: Add enum prefix to config
 def generate_enum_metric_name(metric_id):
     return "enum_grinder_" + default_config['name_fmt'] % metric_id
+
+
+def get_config_from_grinder(grinder):
+    if py_java.is_java_object(grinder):
+        if isinstance(grinder, ScriptContext):
+            config = py_java.dict_from_properties(grinder.getProperties())
+        elif type(grinder) == \
+                net.grinder.engine.process.ScriptContextImplementation:
+            config = py_java.dict_from_properties(grinder.getProperties())
+        elif isinstance(grinder, java.lang.Properties):
+            config = py_java.dict_from_properties(grinder)
+        else:
+            raise TypeError("Unknown configuration object type")
+    else:
+        config = grinder
+    return config

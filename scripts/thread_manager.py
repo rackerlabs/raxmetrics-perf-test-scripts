@@ -2,16 +2,12 @@
 
 import ast
 
-import java.util.Properties
-from net.grinder.script.Grinder import ScriptContext
-import net.grinder.engine.process.ScriptContextImplementation
-
-import py_java
 from abstract_thread import default_config
 from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
 from ingestenum import EnumIngestThread
 from query import QueryThread
+import utils
 
 
 class ThreadManager(object):
@@ -42,18 +38,7 @@ class ThreadManager(object):
         self.thread_types = thread_types
 
     def setup_config(self, grinder):
-        if py_java.is_java_object(grinder):
-            if isinstance(grinder, ScriptContext):
-                config = py_java.dict_from_properties(grinder.getProperties())
-            elif type(grinder) == \
-                    net.grinder.engine.process.ScriptContextImplementation:
-                config = py_java.dict_from_properties(grinder.getProperties())
-            elif isinstance(grinder, java.lang.Properties):
-                config = py_java.dict_from_properties(grinder)
-            else:
-                raise TypeError("Unknown configuration object type")
-        else:
-            config = grinder
+        config = utils.get_config_from_grinder(grinder)
 
         # Parse the properties file and update default_config dictionary
         for k, v in config.iteritems():
