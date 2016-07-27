@@ -18,16 +18,28 @@ class ThreadManager(object):
     # keep track of the various thread types
     thread_types = []
 
-    def convert(self, s):
-        try:
-            return int(s)
-        except:
-            pass
-        if isinstance(s, basestring):
-            if s[0] in ("'", '"'):
-                return ast.literal_eval(s)
-            return s
-        return str(s)
+    def __init__(self, grinder, thread_types=None):
+        if thread_types is None:
+            thread_types = [IngestThread, EnumIngestThread, QueryThread,
+                            AnnotationsIngestThread]
+        # tot_threads is the value passed to the grinder at startup for the
+        # number of threads to start
+        self.tot_threads = 0
+
+        # concurrent_threads is the sum of the various thread types, (currently
+        # ingest and query)
+        self.concurrent_threads = 0
+        self.setup_config(grinder)
+
+        # Sanity check the concurrent_threads to make sure they are the same as
+        # the value
+        #  passed to the grinder
+        if self.tot_threads != self.concurrent_threads:
+            raise Exception(
+                "Configuration error: grinder.threads doesn't equal total "
+                "concurrent threads")
+
+        self.thread_types = thread_types
 
     def setup_config(self, grinder):
         if py_java.is_java_object(grinder):
@@ -56,28 +68,16 @@ class ThreadManager(object):
             k = k.replace("grinder.bf.", "")
             default_config[k] = self.convert(v)
 
-    def __init__(self, grinder, thread_types=None):
-        if thread_types is None:
-            thread_types = [IngestThread, EnumIngestThread, QueryThread,
-                            AnnotationsIngestThread]
-        # tot_threads is the value passed to the grinder at startup for the
-        # number of threads to start
-        self.tot_threads = 0
-
-        # concurrent_threads is the sum of the various thread types, (currently
-        # ingest and query)
-        self.concurrent_threads = 0
-        self.setup_config(grinder)
-
-        # Sanity check the concurrent_threads to make sure they are the same as
-        # the value
-        #  passed to the grinder
-        if self.tot_threads != self.concurrent_threads:
-            raise Exception(
-                "Configuration error: grinder.threads doesn't equal total "
-                "concurrent threads")
-
-        self.thread_types = thread_types
+    def convert(self, s):
+        try:
+            return int(s)
+        except:
+            pass
+        if isinstance(s, basestring):
+            if s[0] in ("'", '"'):
+                return ast.literal_eval(s)
+            return s
+        return str(s)
 
     def create_all_metrics(self, agent_number):
         """Step through all the attached types and have them create their
