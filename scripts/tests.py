@@ -1,19 +1,6 @@
-# It is difficult to invoke the Python coverage tool externally with Jython, so
-# it is being invoked internally here:
 from __future__ import division
 import net.grinder.script.Grinder
-
-# package_path = net.grinder.script.Grinder.grinder.getProperties().getProperty(
-#     "grinder.package_path")
 import sys
-
-
-# sys.path.append(package_path)
-# from coverage import coverage
-#
-# cov = coverage()
-# cov.start()
-
 import time
 import utils
 import ingest
@@ -549,9 +536,6 @@ class BluefloodTests(unittest.TestCase):
 # if __name__ == '__main__':
 unittest.TextTestRunner().run(
     unittest.TestLoader().loadTestsFromTestCase(BluefloodTests))
-
-# cov.stop()
-# cov.save()
 
 
 class TestRunner:
