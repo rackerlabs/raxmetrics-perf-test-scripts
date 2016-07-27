@@ -56,6 +56,8 @@ import unittest
 import random
 import math
 import grinder
+import abstract_thread
+import thread_manager as tm
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -92,9 +94,9 @@ class BluefloodTests(unittest.TestCase):
     def setUp(self):
         self.real_shuffle = random.shuffle
         self.real_randint = random.randint
-        self.real_time = utils.AbstractThread.time
-        self.real_sleep = utils.AbstractThread.sleep
-        self.tm = utils.ThreadManager(grinder_props)
+        self.real_time = abstract_thread.AbstractThread.time
+        self.real_sleep = abstract_thread.AbstractThread.sleep
+        self.tm = tm.ThreadManager(grinder_props)
         req = MockReq()
         ingest.IngestThread.request = req
         ingestenum.EnumIngestThread.request = req
@@ -103,8 +105,8 @@ class BluefloodTests(unittest.TestCase):
             x.query_request = req
         random.shuffle = lambda x: None
         random.randint = lambda x, y: 0
-        utils.AbstractThread.time = lambda x: 1000
-        utils.AbstractThread.sleep = mock_sleep
+        abstract_thread.AbstractThread.time = lambda x: 1000
+        abstract_thread.AbstractThread.sleep = mock_sleep
 
         test_config = {'report_interval': (1000 * 6),
                        'num_tenants': 3,
@@ -538,8 +540,8 @@ class BluefloodTests(unittest.TestCase):
     def tearDown(self):
         random.shuffle = self.real_shuffle
         random.randint = self.real_randint
-        utils.AbstractThread.time = self.real_time
-        utils.AbstractThread.sleep = self.real_sleep
+        abstract_thread.AbstractThread.time = self.real_time
+        abstract_thread.AbstractThread.sleep = self.real_sleep
 
 
 # if __name__ == '__main__':
