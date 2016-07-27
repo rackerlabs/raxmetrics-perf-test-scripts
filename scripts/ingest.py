@@ -4,11 +4,14 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from utils import RAND_MAX, generate_job_range
+from utils import generate_job_range
 from utils import generate_metrics_tenants, generate_metric_name
 from net.grinder.script import Test
 from net.grinder.plugin.http import HTTPRequest
 from abstract_thread import AbstractThread, default_config
+
+
+RAND_MAX = 982374239
 
 
 class IngestThread(AbstractThread):
