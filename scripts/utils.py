@@ -1,11 +1,4 @@
-import time
 import random
-from net.grinder.script.Grinder import grinder
-from net.grinder.script.Grinder import ScriptContext
-import net.grinder.engine.process.ScriptContextImplementation
-import py_java
-import java.util.Properties
-import ast
 
 from abstract_thread import default_config
 
