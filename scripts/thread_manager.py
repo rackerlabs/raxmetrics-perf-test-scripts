@@ -16,11 +16,7 @@ from query import QueryThread
 
 class ThreadManager(object):
     # keep track of the various thread types
-    types = []
-
-    @classmethod
-    def add_type(cls, type):
-        cls.types.append(type)
+    thread_types = []
 
     def convert(self, s):
         try:
@@ -58,7 +54,10 @@ class ThreadManager(object):
             k = k.replace("grinder.bf.", "")
             default_config[k] = self.convert(v)
 
-    def __init__(self, grinder):
+    def __init__(self, grinder, thread_types=None):
+        if thread_types is None:
+            thread_types = [IngestThread, EnumIngestThread, QueryThread,
+                            AnnotationsIngestThread]
         # tot_threads is the value passed to the grinder at startup for the
         # number of threads to start
         self.tot_threads = 0
@@ -76,10 +75,12 @@ class ThreadManager(object):
                 "Configuration error: grinder.threads doesn't equal total "
                 "concurrent threads")
 
+        self.thread_types = thread_types
+
     def create_all_metrics(self, agent_number):
         """Step through all the attached types and have them create their
         metrics"""
-        for x in self.types:
+        for x in self.thread_types:
             x.create_metrics(agent_number)
 
     def setup_thread(self, thread_num):
@@ -100,7 +101,7 @@ class ThreadManager(object):
         thread_type = None
         server_num = thread_num
 
-        for x in self.types:
+        for x in self.thread_types:
             if server_num < x.num_threads():
                 thread_type = x
                 break
@@ -111,8 +112,3 @@ class ThreadManager(object):
             raise Exception("Invalid Thread Type")
 
         return thread_type(server_num)
-
-ThreadManager.add_type(IngestThread)
-ThreadManager.add_type(EnumIngestThread)
-ThreadManager.add_type(QueryThread)
-ThreadManager.add_type(AnnotationsIngestThread)
