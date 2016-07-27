@@ -7,8 +7,6 @@ RAND_MAX = 982374239
 
 
 
-# ThreadManager class ends here
-# Utility functions below
 
 def generate_job_range(total_jobs, total_servers, server_num):
     """ Determine which subset of the total work the current server is to do.
@@ -49,4 +47,3 @@ def generate_enum_metric_name(metric_id):
     return "enum_grinder_" + default_config['name_fmt'] % metric_id
 
 
-# Utility functions end here
