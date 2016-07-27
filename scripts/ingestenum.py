@@ -10,7 +10,6 @@ from utils import generate_metrics_tenants, generate_enum_metric_name
 from net.grinder.script import Test
 from net.grinder.plugin.http import HTTPRequest
 from abstract_thread import AbstractThread, default_config
-from thread_manager import ThreadManager
 
 
 class EnumIngestThread(AbstractThread):
@@ -96,4 +95,3 @@ class EnumIngestThread(AbstractThread):
         return result
 
 
-ThreadManager.add_type(EnumIngestThread)

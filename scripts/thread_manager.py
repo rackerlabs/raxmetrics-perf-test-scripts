@@ -8,6 +8,10 @@ import net.grinder.engine.process.ScriptContextImplementation
 
 import py_java
 from abstract_thread import default_config
+from annotationsingest import AnnotationsIngestThread
+from ingest import IngestThread
+from ingestenum import EnumIngestThread
+from query import QueryThread
 
 
 class ThreadManager(object):
@@ -107,3 +111,8 @@ class ThreadManager(object):
             raise Exception("Invalid Thread Type")
 
         return thread_type(server_num)
+
+ThreadManager.add_type(IngestThread)
+ThreadManager.add_type(EnumIngestThread)
+ThreadManager.add_type(QueryThread)
+ThreadManager.add_type(AnnotationsIngestThread)

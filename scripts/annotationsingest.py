@@ -9,7 +9,6 @@ from utils import generate_metric_name
 from net.grinder.script import Test
 from net.grinder.plugin.http import HTTPRequest
 from abstract_thread import AbstractThread, default_config
-from thread_manager import ThreadManager
 
 
 class AnnotationsIngestThread(AbstractThread):
@@ -81,4 +80,3 @@ class AnnotationsIngestThread(AbstractThread):
         return result
 
 
-ThreadManager.add_type(AnnotationsIngestThread)

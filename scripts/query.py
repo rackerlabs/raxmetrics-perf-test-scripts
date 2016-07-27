@@ -10,7 +10,6 @@ from net.grinder.script import Test
 from net.grinder.plugin.http import HTTPRequest
 import itertools
 from abstract_thread import AbstractThread, default_config
-from thread_manager import ThreadManager
 
 
 class AbstractQuery(object):
@@ -241,4 +240,3 @@ class QueryThread(AbstractThread):
         return result
 
 
-ThreadManager.add_type(QueryThread)
