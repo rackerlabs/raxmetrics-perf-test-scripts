@@ -14,7 +14,7 @@ class ThreadManager(object):
     # keep track of the various thread types
     thread_types = []
 
-    def __init__(self, grinder, thread_types=None):
+    def __init__(self, config, thread_types=None):
         if thread_types is None:
             thread_types = [IngestThread, EnumIngestThread, QueryThread,
                             AnnotationsIngestThread]
@@ -25,7 +25,7 @@ class ThreadManager(object):
         # concurrent_threads is the sum of the various thread types, (currently
         # ingest and query)
         self.concurrent_threads = 0
-        self.setup_config(grinder)
+        self.setup_config(config)
 
         # Sanity check the concurrent_threads to make sure they are the same as
         # the value
@@ -37,9 +37,7 @@ class ThreadManager(object):
 
         self.thread_types = thread_types
 
-    def setup_config(self, grinder):
-        config = utils.get_config_from_grinder(grinder)
-
+    def setup_config(self, config):
         # Parse the properties file and update default_config dictionary
         for k, v in config.iteritems():
             if v.startswith(".."):
