@@ -24,9 +24,8 @@ class AbstractQuery(object):
         # divide the total number of each query type into the ones need by this
         # worker
         total_queries = default_config[cls.query_interval_name]
-        start_job, end_job = AbstractThread.generate_job_range(total_queries,
-                                                default_config['num_nodes'],
-                                                agent_number)
+        start_job, end_job = AbstractThread.generate_job_range(
+            total_queries, default_config['num_nodes'], agent_number)
         cls.num_queries_for_current_node = end_job - start_job
 
         # Grinder test infrastructure
@@ -69,7 +68,8 @@ class MultiPlotQuery(AbstractQuery):
         metrics_count = min(default_config['max_multiplot_metrics'],
                             random.randint(0, default_config[
                                 'metrics_per_tenant']))
-        metrics_list = map(AbstractThread.generate_metric_name, range(metrics_count))
+        metrics_list = map(AbstractThread.generate_metric_name,
+                           range(metrics_count))
         return json.dumps(metrics_list)
 
     def generate(self, time, logger):
@@ -174,7 +174,8 @@ class EnumMultiPlotQuery(AbstractQuery):
         metrics_count = min(default_config['max_multiplot_metrics'],
                             random.randint(0, default_config[
                                 'enum_metrics_per_tenant']))
-        metrics_list = map(AbstractThread.generate_enum_metric_name, range(metrics_count))
+        metrics_list = map(AbstractThread.generate_enum_metric_name,
+                           range(metrics_count))
         return json.dumps(metrics_list)
 
     def generate(self, time, logger):
@@ -219,8 +220,8 @@ class QueryThread(AbstractThread):
             [x.num_queries_for_current_node
              for x in self.query_instances])
         start, end = self.generate_job_range(total_queries_for_current_node,
-                                        self.num_threads(),
-                                        thread_num)
+                                             self.num_threads(),
+                                             thread_num)
 
         self.slice = self.queries[start:end]
         self.query_fn_dict = dict(
@@ -236,5 +237,3 @@ class QueryThread(AbstractThread):
             int(self.time()), logger)
         self.position += 1
         return result
-
-

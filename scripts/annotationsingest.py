@@ -45,7 +45,7 @@ class AnnotationsIngestThread(AbstractThread):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = self.generate_job_range(len(self.annotations),
-                                        self.num_threads(), thread_num)
+                                             self.num_threads(), thread_num)
         self.slice = self.annotations[start:end]
 
     def generate_annotation(self, time, metric_id):
@@ -76,5 +76,3 @@ class AnnotationsIngestThread(AbstractThread):
         self.position += 1
         result = self.request.POST(self.ingest_url(tenant_id), payload)
         return result
-
-

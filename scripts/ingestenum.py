@@ -26,15 +26,16 @@ class EnumIngestThread(AbstractThread):
         The metrics are a list of batches.  Each batch is a list of metrics
         processed by a single metrics ingest request.
         """
-        metrics = cls.generate_metrics_tenants(default_config['enum_num_tenants'],
-                                           default_config[
-                                               'enum_metrics_per_tenant'],
-                                           agent_number,
-                                           default_config['num_nodes'],
-                                           cls.generate_metrics_for_tenant)
+        metrics = cls.generate_metrics_tenants(
+            default_config['enum_num_tenants'],
+            default_config['enum_metrics_per_tenant'],
+            agent_number,
+            default_config['num_nodes'],
+            cls.generate_metrics_for_tenant)
 
-        cls.metrics = cls.divide_metrics_into_batches(metrics, default_config[
-            'batch_size'])
+        cls.metrics = cls.divide_metrics_into_batches(
+            metrics,
+            default_config['batch_size'])
 
     @classmethod
     def num_threads(cls):
@@ -58,7 +59,7 @@ class EnumIngestThread(AbstractThread):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = self.generate_job_range(len(self.metrics),
-                                        self.num_threads(), thread_num)
+                                             self.num_threads(), thread_num)
         self.slice = self.metrics[start:end]
 
     def generate_enum_suffix(self):
@@ -91,5 +92,3 @@ class EnumIngestThread(AbstractThread):
         self.position += 1
         result = self.request.POST(self.ingest_url(), payload)
         return result
-
-

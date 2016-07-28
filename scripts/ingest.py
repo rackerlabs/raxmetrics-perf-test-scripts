@@ -34,8 +34,8 @@ class IngestThread(AbstractThread):
             agent_number, default_config['num_nodes'],
             cls.generate_metrics_for_tenant)
 
-        cls.metrics = cls.divide_metrics_into_batches(metrics, default_config[
-            'batch_size'])
+        cls.metrics = cls.divide_metrics_into_batches(
+            metrics, default_config['batch_size'])
 
     @classmethod
     def num_threads(cls):
@@ -59,7 +59,7 @@ class IngestThread(AbstractThread):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = self.generate_job_range(len(self.metrics),
-                                        self.num_threads(), thread_num)
+                                             self.num_threads(), thread_num)
         self.slice = self.metrics[start:end]
 
     def generate_metric(self, time, tenant_id, metric_id):
@@ -97,5 +97,3 @@ class IngestThread(AbstractThread):
         self.position += 1
         result = self.request.POST(self.ingest_url(), payload)
         return result
-
-

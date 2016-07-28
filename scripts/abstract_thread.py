@@ -88,12 +88,13 @@ class AbstractThread(object):
 
     @classmethod
     def generate_job_range(cls, total_jobs, total_servers, server_num):
-        """ Determine which subset of the total work the current server is to do.
+        """ Determine which subset of the total work the current server is to
+        do.
 
-        The properties file is the same for all the distributed workers and lists
-        the total amount of work to be done for each report interval.  This method
-        allows you to split that work up into the exact subset to be done by the
-        "server_num" worker
+        The properties file is the same for all the distributed workers and
+        lists the total amount of work to be done for each report interval.
+        This method allows you to split that work up into the exact subset to
+        be done by the "server_num" worker
         """
         jobs_per_server = total_jobs / total_servers
         remainder = total_jobs % total_servers
@@ -107,11 +108,12 @@ class AbstractThread(object):
     @classmethod
     def generate_metrics_tenants(cls, num_tenants, metrics_per_tenant,
                                  agent_number, num_nodes, gen_fn):
-        """ generate the subset of the total metrics to be done by this agent"""
+        """generate the subset of the total metrics to be done by this agent"""
         tenants_in_shard = range(
             *cls.generate_job_range(num_tenants, num_nodes, agent_number))
         metrics = []
-        for y in map(lambda x: gen_fn(x, metrics_per_tenant), tenants_in_shard):
+        for y in map(lambda x: gen_fn(x, metrics_per_tenant),
+                     tenants_in_shard):
             metrics += y
         random.shuffle(metrics)
         return metrics
