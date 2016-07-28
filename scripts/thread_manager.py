@@ -7,7 +7,6 @@ from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
 from ingestenum import EnumIngestThread
 from query import QueryThread
-import utils
 
 
 class ThreadManager(object):

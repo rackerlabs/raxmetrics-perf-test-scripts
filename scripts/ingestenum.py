@@ -5,8 +5,6 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from utils import generate_job_range
-from utils import generate_metrics_tenants, generate_enum_metric_name
 from net.grinder.script import Test
 from net.grinder.plugin.http import HTTPRequest
 from abstract_thread import AbstractThread, default_config
@@ -28,7 +26,7 @@ class EnumIngestThread(AbstractThread):
         The metrics are a list of batches.  Each batch is a list of metrics
         processed by a single metrics ingest request.
         """
-        metrics = generate_metrics_tenants(default_config['enum_num_tenants'],
+        metrics = cls.generate_metrics_tenants(default_config['enum_num_tenants'],
                                            default_config[
                                                'enum_metrics_per_tenant'],
                                            agent_number,
@@ -59,7 +57,7 @@ class EnumIngestThread(AbstractThread):
     def __init__(self, thread_num):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
-        start, end = generate_job_range(len(self.metrics),
+        start, end = self.generate_job_range(len(self.metrics),
                                         self.num_threads(), thread_num)
         self.slice = self.metrics[start:end]
 
@@ -69,7 +67,7 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_metric(self, time, tenant_id, metric_id):
         return {'tenantId': str(tenant_id),
                 'timestamp': time,
-                'enums': [{'name': generate_enum_metric_name(metric_id),
+                'enums': [{'name': self.generate_enum_metric_name(metric_id),
                            'value': 'e_g_' + str(
                                metric_id) + self.generate_enum_suffix()}]
                 }

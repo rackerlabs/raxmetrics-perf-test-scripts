@@ -3,7 +3,6 @@ import ingest
 import ingestenum
 import annotationsingest
 import query
-import utils
 import thread_manager as tm
 import py_java
 

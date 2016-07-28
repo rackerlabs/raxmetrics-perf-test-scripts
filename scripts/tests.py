@@ -2,7 +2,6 @@ from __future__ import division
 import net.grinder.script.Grinder
 import sys
 import time
-import utils
 import ingest
 import ingestenum
 import query
@@ -13,6 +12,7 @@ import math
 import grinder
 import abstract_thread
 import thread_manager as tm
+from abstract_thread import AbstractThread
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -362,12 +362,12 @@ class BluefloodTests(unittest.TestCase):
         valid_payload = [{u'timestamp': 1,
                           u'tenantId': u'2',
                           u'enums': [{u'value': u'e_g_1_0',
-                                      u'name': utils.generate_enum_metric_name(
+                                      u'name': AbstractThread.generate_enum_metric_name(
                                           1)}]},
                          {u'timestamp': 1,
                           u'tenantId': u'2',
                           u'enums': [{u'value': u'e_g_2_0',
-                                      u'name': utils.generate_enum_metric_name(
+                                      u'name': AbstractThread.generate_enum_metric_name(
                                           2)}]}
                          ]
         self.assertEqual(payload, valid_payload)
@@ -448,10 +448,10 @@ class BluefloodTests(unittest.TestCase):
         thread.position = 0
         thread.finish_time = 10000
         valid_payload = [{'tenantId': '2', 'timestamp': 1000, 'enums': [
-            {'value': 'e_g_0_0', 'name': utils.generate_enum_metric_name(0)}]},
+            {'value': 'e_g_0_0', 'name': AbstractThread.generate_enum_metric_name(0)}]},
                          {'tenantId': '2', 'timestamp': 1000, 'enums': [
                              {'value': 'e_g_1_0',
-                              'name': utils.generate_enum_metric_name(1)}]}]
+                              'name': AbstractThread.generate_enum_metric_name(1)}]}]
 
         url, payload = thread.make_request(pp)
         # confirm request generates proper URL and payload
