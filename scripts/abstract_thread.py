@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import random
+import time
 
 default_config = {
     'name_fmt': "t4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
