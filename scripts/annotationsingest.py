@@ -4,19 +4,12 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from net.grinder.script import Test
-from net.grinder.plugin.http import HTTPRequest
 from abstract_thread import AbstractThread, default_config
 
 
 class AnnotationsIngestThread(AbstractThread):
     # The list of metric numbers for all threads in this worker
     annotations = []
-
-    # Grinder test reporting infrastructure
-    test1 = Test(2, "Annotations Ingest test")
-    request = HTTPRequest()
-    test1.record(request)
 
     @classmethod
     def create_metrics(cls, agent_number):
@@ -41,12 +34,13 @@ class AnnotationsIngestThread(AbstractThread):
             l.append([tenant_id, x])
         return l
 
-    def __init__(self, thread_num):
+    def __init__(self, thread_num, request):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = self.generate_job_range(len(self.annotations),
                                              self.num_threads(), thread_num)
         self.slice = self.annotations[start:end]
+        self.request = request
 
     def generate_annotation(self, time, metric_id):
         metric_name = self.generate_metric_name(metric_id)

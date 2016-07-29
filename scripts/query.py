@@ -211,10 +211,11 @@ class QueryThread(AbstractThread):
     def num_threads(cls):
         return default_config['query_concurrency']
 
-    def __init__(self, thread_num):
+    def __init__(self, thread_num, requests_by_query_type):
         AbstractThread.__init__(self, thread_num)
         self.query_instances = [x(thread_num, self.num_threads()) for x in
                                 self.query_types]
+        self.requests_by_query_type = requests_by_query_type
         total_queries_for_current_node = reduce(
             lambda x, y: x + y,
             [x.num_queries_for_current_node
@@ -233,7 +234,9 @@ class QueryThread(AbstractThread):
             self.sleep(1000000)
             return None
         self.check_position(logger, len(self.slice))
-        result = self.query_fn_dict[self.slice[self.position]](
+        query_type = self.slice[self.position]
+        req = self.requests_by_query_type[query_type]
+        result = self.query_fn_dict[query_type](
             int(self.time()), logger)
         self.position += 1
         return result

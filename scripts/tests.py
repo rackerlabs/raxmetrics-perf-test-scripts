@@ -44,6 +44,16 @@ class MockReq():
         get_url = url
         return url
 
+requests_by_query_type = {
+    query.SinglePlotQuery:        MockReq(),
+    query.MultiPlotQuery:         MockReq(),
+    query.SearchQuery:            MockReq(),
+    query.EnumSearchQuery:        MockReq(),
+    query.EnumSinglePlotQuery:    MockReq(),
+    query.EnumMultiPlotQuery:     MockReq(),
+    query.AnnotationsQuery:       MockReq(),
+}
+
 
 grinder_props = {
     'grinder.script': '../scripts/tests.py',
@@ -163,10 +173,12 @@ class BluefloodTests(unittest.TestCase):
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[0, 0], [0, 1], [1, 0], [1, 1]])
 
-        thread = annotationsingest.AnnotationsIngestThread(0)
+        thread = annotationsingest.AnnotationsIngestThread(
+            0, MockReq())
         self.assertEqual(thread.slice, [[0, 0], [0, 1]])
 
-        thread = annotationsingest.AnnotationsIngestThread(1)
+        thread = annotationsingest.AnnotationsIngestThread(
+            1, MockReq())
         self.assertEqual(thread.slice, [[1, 0], [1, 1]])
 
         # confirm enum metrics ingest
@@ -176,10 +188,10 @@ class BluefloodTests(unittest.TestCase):
                              [[1, 1]]
                          ])
 
-        thread = ingestenum.EnumIngestThread(0)
+        thread = ingestenum.EnumIngestThread(0, MockReq())
         self.assertEqual(thread.slice, [[[0, 0], [0, 1], [1, 0]]])
 
-        thread = ingestenum.EnumIngestThread(1)
+        thread = ingestenum.EnumIngestThread(1, MockReq())
         self.assertEqual(thread.slice, [[[1, 1]]])
 
         # confirm metrics ingest
@@ -192,12 +204,12 @@ class BluefloodTests(unittest.TestCase):
 
         # confirm that the correct batch slices are created for individual
         # threads
-        thread = ingest.IngestThread(0)
+        thread = ingest.IngestThread(0, MockReq())
         self.assertEqual(thread.slice,
                          [[[0, 0], [0, 1], [0, 2]],
                           [[0, 3], [0, 4], [0, 5]],
                           [[0, 6], [1, 0], [1, 1]]])
-        thread = ingest.IngestThread(1)
+        thread = ingest.IngestThread(1, MockReq())
         self.assertEqual(thread.slice,
                          [[[1, 2], [1, 3], [1, 4]],
                           [[1, 5], [1, 6]]])
@@ -236,25 +248,25 @@ class BluefloodTests(unittest.TestCase):
              [query.AnnotationsQuery] * annotation_queries_agent0) +
             [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent0)
 
-        thread = query.QueryThread(0)
+        thread = query.QueryThread(0, requests_by_query_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
 
-        thread = query.QueryThread(3)
+        thread = query.QueryThread(3, requests_by_query_type)
         self.assertEqual(thread.slice, [query.MultiPlotQuery] * 2)
 
-        thread = query.QueryThread(6)
+        thread = query.QueryThread(6, requests_by_query_type)
         self.assertEqual(thread.slice, [query.SearchQuery] * 2)
 
-        thread = query.QueryThread(9)
+        thread = query.QueryThread(9, requests_by_query_type)
         self.assertEqual(thread.slice, [query.EnumSearchQuery] * 2)
 
-        thread = query.QueryThread(12)
+        thread = query.QueryThread(12, requests_by_query_type)
         self.assertEqual(thread.slice, [query.EnumSinglePlotQuery] * 2)
 
-        thread = query.QueryThread(14)
+        thread = query.QueryThread(14, requests_by_query_type)
         self.assertEqual(thread.slice, [query.AnnotationsQuery] * 2)
 
-        thread = query.QueryThread(16)
+        thread = query.QueryThread(16, requests_by_query_type)
         self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
 
         # confirm that the correct batches of ingest metrics are created for
@@ -268,11 +280,11 @@ class BluefloodTests(unittest.TestCase):
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[2, 0], [2, 1]])
 
-        thread = ingest.IngestThread(0)
+        thread = ingest.IngestThread(0, MockReq())
         self.assertEqual(thread.slice,
                          [[[2, 0], [2, 1], [2, 2]],
                           [[2, 3], [2, 4], [2, 5]]])
-        thread = ingest.IngestThread(1)
+        thread = ingest.IngestThread(1, MockReq())
         self.assertEqual(thread.slice,
                          [[[2, 6]]])
 
@@ -309,30 +321,30 @@ class BluefloodTests(unittest.TestCase):
              [query.AnnotationsQuery] * annotation_queries_agent1) +
             [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent1)
 
-        thread = query.QueryThread(0)
+        thread = query.QueryThread(0, requests_by_query_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
 
-        thread = query.QueryThread(4)
+        thread = query.QueryThread(4, requests_by_query_type)
         self.assertEqual(thread.slice, [query.MultiPlotQuery] * 2)
 
-        thread = query.QueryThread(6)
+        thread = query.QueryThread(6, requests_by_query_type)
         self.assertEqual(thread.slice, [query.SearchQuery] * 2)
 
-        thread = query.QueryThread(8)
+        thread = query.QueryThread(8, requests_by_query_type)
         self.assertEqual(thread.slice, [query.EnumSearchQuery] * 2)
 
-        thread = query.QueryThread(10)
+        thread = query.QueryThread(10, requests_by_query_type)
         self.assertEqual(thread.slice, [query.EnumSinglePlotQuery] * 2)
 
-        thread = query.QueryThread(12)
+        thread = query.QueryThread(12, requests_by_query_type)
         self.assertEqual(thread.slice, [query.AnnotationsQuery] * 1)
 
-        thread = query.QueryThread(16)
+        thread = query.QueryThread(16, requests_by_query_type)
         self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
 
     def test_generate_payload(self):
         self.tm.create_all_metrics(1)
-        thread = ingest.IngestThread(0)
+        thread = ingest.IngestThread(0, MockReq())
         payload = json.loads(
             thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
         valid_payload = [{u'collectionTime': 0,
@@ -357,7 +369,7 @@ class BluefloodTests(unittest.TestCase):
 
     def test_generate_enum_payload(self):
         self.tm.create_all_metrics(1)
-        thread = ingestenum.EnumIngestThread(0)
+        thread = ingestenum.EnumIngestThread(0, MockReq())
         payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
         valid_payload = [{u'timestamp': 1,
                           u'tenantId': u'2',
@@ -374,7 +386,8 @@ class BluefloodTests(unittest.TestCase):
 
     def test_generate_annotations_payload(self):
         self.tm.create_all_metrics(1)
-        thread = annotationsingest.AnnotationsIngestThread(0)
+        thread = annotationsingest.AnnotationsIngestThread(
+            0, MockReq())
         payload = json.loads(thread.generate_payload(0, 3))
         valid_payload = {
             'what': 'annotation int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3',
@@ -385,7 +398,8 @@ class BluefloodTests(unittest.TestCase):
 
     def test_annotationsingest_make_request(self):
         global sleep_time
-        thread = annotationsingest.AnnotationsIngestThread(0)
+        thread = annotationsingest.AnnotationsIngestThread(
+            0, MockReq())
         thread.slice = [[2, 0]]
         thread.position = 0
         thread.finish_time = 10000
@@ -413,7 +427,7 @@ class BluefloodTests(unittest.TestCase):
 
     def test_ingest_make_request(self):
         global sleep_time
-        thread = ingest.IngestThread(0)
+        thread = ingest.IngestThread(0, MockReq())
         thread.slice = [[[2, 0], [2, 1]]]
         thread.position = 0
         thread.finish_time = 10000
@@ -443,7 +457,7 @@ class BluefloodTests(unittest.TestCase):
 
     def test_ingest_enum_make_request(self):
         global sleep_time
-        thread = ingestenum.EnumIngestThread(0)
+        thread = ingestenum.EnumIngestThread(0, MockReq())
         thread.slice = [[[2, 0], [2, 1]]]
         thread.position = 0
         thread.finish_time = 10000
@@ -470,7 +484,7 @@ class BluefloodTests(unittest.TestCase):
         self.assertEqual(thread.finish_time, 16000)
 
     def test_query_make_request(self):
-        thread = query.QueryThread(0)
+        thread = query.QueryThread(0, requests_by_query_type)
         thread.slice = [query.SinglePlotQuery, query.SearchQuery,
                         query.MultiPlotQuery, query.AnnotationsQuery,
                         query.EnumSearchQuery, query.EnumSinglePlotQuery,
