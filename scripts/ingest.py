@@ -53,7 +53,7 @@ class IngestThread(AbstractThread):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
-                                             self.num_threads(), thread_num)
+                                        self.num_threads(), thread_num)
         self.slice = self.metrics[start:end]
         self.request = request
 

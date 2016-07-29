@@ -199,8 +199,8 @@ class QueryThread(AbstractThread):
             [x.num_queries_for_current_node
              for x in self.query_instances])
         start, end = generate_job_range(total_queries_for_current_node,
-                                             self.num_threads(),
-                                             thread_num)
+                                        self.num_threads(),
+                                        thread_num)
 
         self.slice = self.queries[start:end]
         self.query_fn_dict = dict(

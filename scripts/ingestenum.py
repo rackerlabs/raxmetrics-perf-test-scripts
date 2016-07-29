@@ -8,6 +8,7 @@ except ImportError:
 from abstract_thread import AbstractThread, default_config, generate_job_range
 from abstract_thread import generate_metrics_tenants, generate_enum_metric_name
 
+
 class EnumIngestThread(AbstractThread):
     # The list of metric numbers for all threads in this worker
     metrics = []
@@ -52,7 +53,7 @@ class EnumIngestThread(AbstractThread):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
-                                             self.num_threads(), thread_num)
+                                        self.num_threads(), thread_num)
         self.slice = self.metrics[start:end]
         self.request = request
 
