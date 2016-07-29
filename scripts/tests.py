@@ -87,7 +87,7 @@ grinder_props = {
 }
 
 
-class BluefloodTests(unittest.TestCase):
+class InitProcessTest(unittest.TestCase):
     def setUp(self):
         self.real_shuffle = random.shuffle
         self.real_randint = random.randint
@@ -340,6 +340,55 @@ class BluefloodTests(unittest.TestCase):
         thread = query.QueryThread(16, requests_by_query_type)
         self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
 
+    def tearDown(self):
+        random.shuffle = self.real_shuffle
+        random.randint = self.real_randint
+        abstract_thread.AbstractThread.time = self.real_time
+        abstract_thread.AbstractThread.sleep = self.real_sleep
+
+
+class GeneratePayloadTest(unittest.TestCase):
+    def setUp(self):
+        self.real_shuffle = random.shuffle
+        self.real_randint = random.randint
+        self.real_time = abstract_thread.AbstractThread.time
+        self.real_sleep = abstract_thread.AbstractThread.sleep
+        self.tm = tm.ThreadManager(grinder_props)
+        req = MockReq()
+        ingest.IngestThread.request = req
+        ingestenum.EnumIngestThread.request = req
+        annotationsingest.AnnotationsIngestThread.request = req
+        for x in query.QueryThread.query_types:
+            x.query_request = req
+        random.shuffle = lambda x: None
+        random.randint = lambda x, y: 0
+        abstract_thread.AbstractThread.time = lambda x: 1000
+        abstract_thread.AbstractThread.sleep = mock_sleep
+
+        test_config = {'report_interval': (1000 * 6),
+                       'num_tenants': 3,
+                       'enum_num_tenants': 4,
+                       'annotations_num_tenants': 3,
+                       'metrics_per_tenant': 7,
+                       'enum_metrics_per_tenant': 2,
+                       'annotations_per_tenant': 2,
+                       'batch_size': 3,
+                       'ingest_concurrency': 2,
+                       'enum_ingest_concurrency': 2,
+                       'query_concurrency': 20,
+                       'annotations_concurrency': 2,
+                       'singleplot_per_interval': 11,
+                       'multiplot_per_interval': 10,
+                       'search_queries_per_interval': 9,
+                       'enum_search_queries_per_interval': 9,
+                       'enum_single_plot_queries_per_interval': 10,
+                       'enum_multiplot_per_interval': 10,
+                       'annotations_queries_per_interval': 8,
+                       'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                       'num_nodes': 2}
+
+        ingest.default_config.update(test_config)
+
     def test_generate_payload(self):
         self.tm.create_all_metrics(1)
         thread = ingest.IngestThread(0, MockReq())
@@ -393,6 +442,55 @@ class BluefloodTests(unittest.TestCase):
             'tags': 'tag',
             'data': 'data'}
         self.assertEqual(payload, valid_payload)
+
+    def tearDown(self):
+        random.shuffle = self.real_shuffle
+        random.randint = self.real_randint
+        abstract_thread.AbstractThread.time = self.real_time
+        abstract_thread.AbstractThread.sleep = self.real_sleep
+
+
+class MakeRequestsTest(unittest.TestCase):
+    def setUp(self):
+        self.real_shuffle = random.shuffle
+        self.real_randint = random.randint
+        self.real_time = abstract_thread.AbstractThread.time
+        self.real_sleep = abstract_thread.AbstractThread.sleep
+        self.tm = tm.ThreadManager(grinder_props)
+        req = MockReq()
+        ingest.IngestThread.request = req
+        ingestenum.EnumIngestThread.request = req
+        annotationsingest.AnnotationsIngestThread.request = req
+        for x in query.QueryThread.query_types:
+            x.query_request = req
+        random.shuffle = lambda x: None
+        random.randint = lambda x, y: 0
+        abstract_thread.AbstractThread.time = lambda x: 1000
+        abstract_thread.AbstractThread.sleep = mock_sleep
+
+        test_config = {'report_interval': (1000 * 6),
+                       'num_tenants': 3,
+                       'enum_num_tenants': 4,
+                       'annotations_num_tenants': 3,
+                       'metrics_per_tenant': 7,
+                       'enum_metrics_per_tenant': 2,
+                       'annotations_per_tenant': 2,
+                       'batch_size': 3,
+                       'ingest_concurrency': 2,
+                       'enum_ingest_concurrency': 2,
+                       'query_concurrency': 20,
+                       'annotations_concurrency': 2,
+                       'singleplot_per_interval': 11,
+                       'multiplot_per_interval': 10,
+                       'search_queries_per_interval': 9,
+                       'enum_search_queries_per_interval': 9,
+                       'enum_single_plot_queries_per_interval': 10,
+                       'enum_multiplot_per_interval': 10,
+                       'annotations_queries_per_interval': 8,
+                       'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                       'num_nodes': 2}
+
+        ingest.default_config.update(test_config)
 
     def test_annotationsingest_make_request(self):
         global sleep_time
@@ -545,9 +643,12 @@ class BluefloodTests(unittest.TestCase):
         abstract_thread.AbstractThread.sleep = self.real_sleep
 
 
-# if __name__ == '__main__':
-unittest.TextTestRunner().run(
-    unittest.TestLoader().loadTestsFromTestCase(BluefloodTests))
+suite = unittest.TestSuite()
+loader = unittest.TestLoader()
+suite.addTest(loader.loadTestsFromTestCase(InitProcessTest))
+suite.addTest(loader.loadTestsFromTestCase(GeneratePayloadTest))
+suite.addTest(loader.loadTestsFromTestCase(MakeRequestsTest))
+unittest.TextTestRunner().run(suite)
 
 
 class TestRunner:
