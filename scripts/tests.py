@@ -42,14 +42,18 @@ class MockReq():
         get_url = url
         return url
 
-requests_by_query_type = {
-    query.SinglePlotQuery:        MockReq(),
-    query.MultiPlotQuery:         MockReq(),
-    query.SearchQuery:            MockReq(),
-    query.EnumSearchQuery:        MockReq(),
-    query.EnumSinglePlotQuery:    MockReq(),
-    query.EnumMultiPlotQuery:     MockReq(),
-    query.AnnotationsQuery:       MockReq(),
+requests_by_type = {
+    ingest.IngestThread:                        MockReq(),
+    ingestenum.EnumIngestThread:                MockReq(),
+    annotationsingest.AnnotationsIngestThread:  MockReq(),
+    query.QueryThread:                          None,
+    query.SinglePlotQuery:                      MockReq(),
+    query.MultiPlotQuery:                       MockReq(),
+    query.SearchQuery:                          MockReq(),
+    query.EnumSearchQuery:                      MockReq(),
+    query.EnumSinglePlotQuery:                  MockReq(),
+    query.EnumMultiPlotQuery:                   MockReq(),
+    query.AnnotationsQuery:                     MockReq(),
 }
 
 
@@ -93,7 +97,7 @@ class InitProcessTest(unittest.TestCase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props)
+        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
         req = MockReq()
         ingest.IngestThread.request = req
         ingestenum.EnumIngestThread.request = req
@@ -246,25 +250,25 @@ class InitProcessTest(unittest.TestCase):
              [query.AnnotationsQuery] * annotation_queries_agent0) +
             [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent0)
 
-        thread = query.QueryThread(0, requests_by_query_type)
+        thread = query.QueryThread(0, requests_by_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
 
-        thread = query.QueryThread(3, requests_by_query_type)
+        thread = query.QueryThread(3, requests_by_type)
         self.assertEqual(thread.slice, [query.MultiPlotQuery] * 2)
 
-        thread = query.QueryThread(6, requests_by_query_type)
+        thread = query.QueryThread(6, requests_by_type)
         self.assertEqual(thread.slice, [query.SearchQuery] * 2)
 
-        thread = query.QueryThread(9, requests_by_query_type)
+        thread = query.QueryThread(9, requests_by_type)
         self.assertEqual(thread.slice, [query.EnumSearchQuery] * 2)
 
-        thread = query.QueryThread(12, requests_by_query_type)
+        thread = query.QueryThread(12, requests_by_type)
         self.assertEqual(thread.slice, [query.EnumSinglePlotQuery] * 2)
 
-        thread = query.QueryThread(14, requests_by_query_type)
+        thread = query.QueryThread(14, requests_by_type)
         self.assertEqual(thread.slice, [query.AnnotationsQuery] * 2)
 
-        thread = query.QueryThread(16, requests_by_query_type)
+        thread = query.QueryThread(16, requests_by_type)
         self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
 
         # confirm that the correct batches of ingest metrics are created for
@@ -319,25 +323,25 @@ class InitProcessTest(unittest.TestCase):
              [query.AnnotationsQuery] * annotation_queries_agent1) +
             [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent1)
 
-        thread = query.QueryThread(0, requests_by_query_type)
+        thread = query.QueryThread(0, requests_by_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
 
-        thread = query.QueryThread(4, requests_by_query_type)
+        thread = query.QueryThread(4, requests_by_type)
         self.assertEqual(thread.slice, [query.MultiPlotQuery] * 2)
 
-        thread = query.QueryThread(6, requests_by_query_type)
+        thread = query.QueryThread(6, requests_by_type)
         self.assertEqual(thread.slice, [query.SearchQuery] * 2)
 
-        thread = query.QueryThread(8, requests_by_query_type)
+        thread = query.QueryThread(8, requests_by_type)
         self.assertEqual(thread.slice, [query.EnumSearchQuery] * 2)
 
-        thread = query.QueryThread(10, requests_by_query_type)
+        thread = query.QueryThread(10, requests_by_type)
         self.assertEqual(thread.slice, [query.EnumSinglePlotQuery] * 2)
 
-        thread = query.QueryThread(12, requests_by_query_type)
+        thread = query.QueryThread(12, requests_by_type)
         self.assertEqual(thread.slice, [query.AnnotationsQuery] * 1)
 
-        thread = query.QueryThread(16, requests_by_query_type)
+        thread = query.QueryThread(16, requests_by_type)
         self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
 
     def tearDown(self):
@@ -353,7 +357,7 @@ class GeneratePayloadTest(unittest.TestCase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props)
+        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
         req = MockReq()
         ingest.IngestThread.request = req
         ingestenum.EnumIngestThread.request = req
@@ -456,7 +460,7 @@ class MakeRequestsTest(unittest.TestCase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props)
+        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
         req = MockReq()
         ingest.IngestThread.request = req
         ingestenum.EnumIngestThread.request = req
@@ -580,7 +584,7 @@ class MakeRequestsTest(unittest.TestCase):
         self.assertEqual(thread.finish_time, 16000)
 
     def test_query_make_request(self):
-        thread = query.QueryThread(0, requests_by_query_type)
+        thread = query.QueryThread(0, requests_by_type)
         thread.slice = [query.SinglePlotQuery, query.SearchQuery,
                         query.MultiPlotQuery, query.AnnotationsQuery,
                         query.EnumSearchQuery, query.EnumSinglePlotQuery,
