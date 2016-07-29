@@ -13,10 +13,7 @@ class ThreadManager(object):
     # keep track of the various thread types
     thread_types = []
 
-    def __init__(self, config, requests_by_type, thread_types=None):
-        if thread_types is None:
-            thread_types = [IngestThread, EnumIngestThread, QueryThread,
-                            AnnotationsIngestThread]
+    def __init__(self, config, requests_by_type):
         # tot_threads is the value passed to the grinder at startup for the
         # number of threads to start
         self.tot_threads = 0
@@ -33,8 +30,6 @@ class ThreadManager(object):
             raise Exception(
                 "Configuration error: grinder.threads doesn't equal total "
                 "concurrent threads")
-
-        self.thread_types = thread_types
 
         self.requests_by_type = requests_by_type
 
@@ -66,8 +61,10 @@ class ThreadManager(object):
     def create_all_metrics(self, agent_number):
         """Step through all the attached types and have them create their
         metrics"""
-        for x in self.thread_types:
-            x.create_metrics(agent_number)
+        IngestThread.create_metrics(agent_number)
+        EnumIngestThread.create_metrics(agent_number)
+        QueryThread.create_metrics(agent_number)
+        AnnotationsIngestThread.create_metrics(agent_number)
 
     def setup_thread(self, thread_num):
         """Figure out which type thread to create based on thread_num and
@@ -87,7 +84,9 @@ class ThreadManager(object):
         thread_type = None
         server_num = thread_num
 
-        for x in self.thread_types:
+        thread_types = [IngestThread, EnumIngestThread, QueryThread,
+                        AnnotationsIngestThread]
+        for x in thread_types:
             if server_num < x.num_threads():
                 thread_type = x
                 break
