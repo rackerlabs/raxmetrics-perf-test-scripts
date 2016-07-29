@@ -51,43 +51,20 @@ class ThreadManager(object):
 
         self.thread_types = thread_types
 
-        self.ingest_request = create_request_obj(1, "Ingest test")
-        self.enum_ingest_request = create_request_obj(7, "Enum Ingest test")
-        self.annotations_ingest_request = create_request_obj(
-            2, "Annotations Ingest test")
-        self.query_single_plot_request = create_request_obj(
-            3, "SinglePlotQuery")
-        self.query_multi_plot_request = create_request_obj(4, "MultiPlotQuery")
-        self.query_search_request = create_request_obj(5, "SearchQuery")
-        self.query_annotations_request = create_request_obj(
-            6, "AnnotationsQuery")
-        self.query_enum_search_request = create_request_obj(
-            8, "EnumSearchQuery")
-        self.query_enum_single_plot_request = create_request_obj(
-            9, "EnumSinglePlotQuery")
-        self.query_enum_multi_plot_request = create_request_obj(
-            10, "EnumMultiPlotQuery")
-
-        self.requests_by_query_type = {
-                SinglePlotQuery:        self.query_single_plot_request,
-                MultiPlotQuery:         self.query_multi_plot_request,
-                SearchQuery:            self.query_search_request,
-                EnumSearchQuery:        self.query_enum_search_request,
-                EnumSinglePlotQuery:    self.query_enum_single_plot_request,
-                EnumMultiPlotQuery:     self.query_enum_multi_plot_request,
-                AnnotationsQuery:       self.query_annotations_request,
-            }
-
-    def get_grinder_request_object_by_thread_type(self, thread_type):
-        if thread_type is IngestThread:
-            return self.ingest_request
-        if thread_type is EnumIngestThread:
-            return self.enum_ingest_request
-        if thread_type is AnnotationsIngestThread:
-            return self.annotations_ingest_request
-        if thread_type is QueryThread:
-            return self.requests_by_query_type  # note that this is a dictionary
-        raise TypeError("Unknown thread type: %s" % str(thread_type))
+        self.requests_by_type = {
+            IngestThread: create_request_obj(1, "Ingest test"),
+            EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
+            AnnotationsIngestThread:
+                create_request_obj(2, "Annotations Ingest test"),
+            QueryThread: None,
+            SinglePlotQuery: create_request_obj(3, "SinglePlotQuery"),
+            MultiPlotQuery: create_request_obj(4, "MultiPlotQuery"),
+            SearchQuery: create_request_obj(5, "SearchQuery"),
+            EnumSearchQuery: create_request_obj(8, "EnumSearchQuery"),
+            EnumSinglePlotQuery: create_request_obj(9, "EnumSinglePlotQuery"),
+            EnumMultiPlotQuery: create_request_obj(10, "EnumMultiPlotQuery"),
+            AnnotationsQuery: create_request_obj(6, "AnnotationsQuery"),
+        }
 
     def setup_config(self, config):
         # Parse the properties file and update default_config dictionary
@@ -148,6 +125,12 @@ class ThreadManager(object):
         if thread_type is None:
             raise Exception("Invalid Thread Type")
 
-        req = self.get_grinder_request_object_by_thread_type(thread_type)
+        if thread_type is QueryThread:
+            # query threads will look up by query type
+            req = self.requests_by_type
+        elif thread_type in self.requests_by_type:
+            req = self.requests_by_type[thread_type]
+        else:
+            raise TypeError("Unknown thread type: %s" % str(thread_type))
 
         return thread_type(server_num, req)
