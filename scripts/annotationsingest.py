@@ -4,7 +4,8 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, default_config
+from abstract_thread import AbstractThread, default_config, generate_job_range
+from abstract_thread import generate_metrics_tenants, generate_metric_name
 
 
 class AnnotationsIngestThread(AbstractThread):
@@ -16,7 +17,7 @@ class AnnotationsIngestThread(AbstractThread):
         """ Generate all the annotations for this worker
 
         """
-        cls.annotations = cls.generate_metrics_tenants(
+        cls.annotations = generate_metrics_tenants(
             default_config['annotations_num_tenants'],
             default_config['annotations_per_tenant'], agent_number,
             default_config['num_nodes'],
@@ -37,13 +38,13 @@ class AnnotationsIngestThread(AbstractThread):
     def __init__(self, thread_num, request):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
-        start, end = self.generate_job_range(len(self.annotations),
+        start, end = generate_job_range(len(self.annotations),
                                              self.num_threads(), thread_num)
         self.slice = self.annotations[start:end]
         self.request = request
 
     def generate_annotation(self, time, metric_id):
-        metric_name = self.generate_metric_name(metric_id)
+        metric_name = generate_metric_name(metric_id)
         return {'what': 'annotation ' + metric_name,
                 'when': time,
                 'tags': 'tag',

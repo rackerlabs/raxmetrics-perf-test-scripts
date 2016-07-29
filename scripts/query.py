@@ -5,7 +5,8 @@ try:
 except ImportError:
     import json
 import itertools
-from abstract_thread import AbstractThread, default_config
+from abstract_thread import AbstractThread, default_config, generate_job_range
+from abstract_thread import generate_metric_name, generate_enum_metric_name
 
 
 class AbstractQuery(object):
@@ -19,7 +20,7 @@ class AbstractQuery(object):
         # divide the total number of each query type into the ones need by this
         # worker
         total_queries = default_config[cls.query_interval_name]
-        start_job, end_job = AbstractThread.generate_job_range(
+        start_job, end_job = generate_job_range(
             total_queries, default_config['num_nodes'], agent_number)
         cls.num_queries_for_current_node = end_job - start_job
 
@@ -34,7 +35,7 @@ class SinglePlotQuery(AbstractQuery):
 
     def generate(self, time, logger, request):
         tenant_id = random.randint(0, default_config['num_tenants'])
-        metric_name = AbstractThread.generate_metric_name(
+        metric_name = generate_metric_name(
             random.randint(0, default_config['metrics_per_tenant']))
         to = time
         frm = time - self.one_day
@@ -55,7 +56,7 @@ class MultiPlotQuery(AbstractQuery):
         metrics_count = min(default_config['max_multiplot_metrics'],
                             random.randint(0, default_config[
                                 'metrics_per_tenant']))
-        metrics_list = map(AbstractThread.generate_metric_name,
+        metrics_list = map(generate_metric_name,
                            range(metrics_count))
         return json.dumps(metrics_list)
 
@@ -78,7 +79,7 @@ class SearchQuery(AbstractQuery):
     query_interval_name = 'search_queries_per_interval'
 
     def generate_metrics_regex(self):
-        metric_name = AbstractThread.generate_metric_name(
+        metric_name = generate_metric_name(
             random.randint(0, default_config['metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
@@ -111,7 +112,7 @@ class EnumSearchQuery(AbstractQuery):
     query_interval_name = 'enum_search_queries_per_interval'
 
     def generate_metrics_regex(self):
-        metric_name = 'enum_grinder_' + AbstractThread.generate_metric_name(
+        metric_name = 'enum_grinder_' + generate_metric_name(
             random.randint(0, default_config['enum_metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
@@ -130,7 +131,7 @@ class EnumSinglePlotQuery(AbstractQuery):
 
     def generate(self, time, logger, request):
         tenant_id = random.randint(0, default_config['enum_num_tenants'])
-        metric_name = AbstractThread.generate_enum_metric_name(
+        metric_name = generate_enum_metric_name(
             random.randint(0, default_config['enum_metrics_per_tenant']))
         to = time
         frm = time - self.one_day
@@ -151,7 +152,7 @@ class EnumMultiPlotQuery(AbstractQuery):
         metrics_count = min(default_config['max_multiplot_metrics'],
                             random.randint(0, default_config[
                                 'enum_metrics_per_tenant']))
-        metrics_list = map(AbstractThread.generate_enum_metric_name,
+        metrics_list = map(generate_enum_metric_name,
                            range(metrics_count))
         return json.dumps(metrics_list)
 
@@ -197,7 +198,7 @@ class QueryThread(AbstractThread):
             lambda x, y: x + y,
             [x.num_queries_for_current_node
              for x in self.query_instances])
-        start, end = self.generate_job_range(total_queries_for_current_node,
+        start, end = generate_job_range(total_queries_for_current_node,
                                              self.num_threads(),
                                              thread_num)
 

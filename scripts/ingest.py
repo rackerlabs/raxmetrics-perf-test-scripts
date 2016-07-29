@@ -4,7 +4,8 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, default_config
+from abstract_thread import AbstractThread, default_config, generate_job_range
+from abstract_thread import generate_metrics_tenants, generate_metric_name
 
 
 RAND_MAX = 982374239
@@ -21,7 +22,7 @@ class IngestThread(AbstractThread):
         The metrics are a list of batches.  Each batch is a list of metrics
         processed by a single metrics ingest request.
         """
-        metrics = cls.generate_metrics_tenants(
+        metrics = generate_metrics_tenants(
             default_config['num_tenants'],
             default_config['metrics_per_tenant'],
             agent_number, default_config['num_nodes'],
@@ -51,7 +52,7 @@ class IngestThread(AbstractThread):
     def __init__(self, thread_num, request):
         AbstractThread.__init__(self, thread_num)
         # Initialize the "slice" of the metrics to be sent by this thread
-        start, end = self.generate_job_range(len(self.metrics),
+        start, end = generate_job_range(len(self.metrics),
                                              self.num_threads(), thread_num)
         self.slice = self.metrics[start:end]
         self.request = request
@@ -67,7 +68,7 @@ class IngestThread(AbstractThread):
             collection_time = random.choice(collection_times)
 
         return {'tenantId': str(tenant_id),
-                'metricName': self.generate_metric_name(metric_id),
+                'metricName': generate_metric_name(metric_id),
                 'unit': self.generate_unit(tenant_id),
                 'metricValue': random.randint(0, RAND_MAX),
                 'ttlInSeconds': (2 * 24 * 60 * 60),
