@@ -63,7 +63,7 @@ class ThreadManager(object):
         metrics"""
         IngestThread.create_metrics(agent_number)
         EnumIngestThread.create_metrics(agent_number)
-        QueryThread.create_metrics(agent_number)
+        QueryThread.create_metrics(agent_number, QueryThread.query_types)
         AnnotationsIngestThread.create_metrics(agent_number)
 
     def setup_thread(self, thread_num):
