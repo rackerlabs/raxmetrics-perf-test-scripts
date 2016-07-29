@@ -1,5 +1,4 @@
 from __future__ import division
-import net.grinder.script.Grinder
 import sys
 import time
 import ingest
@@ -9,7 +8,6 @@ import annotationsingest
 import unittest
 import random
 import math
-import grinder
 import abstract_thread
 import thread_manager as tm
 from abstract_thread import AbstractThread
