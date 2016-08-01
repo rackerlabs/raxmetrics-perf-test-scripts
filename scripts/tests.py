@@ -136,6 +136,53 @@ class InitProcessTest(unittest.TestCase):
 
         ingest.default_config.update(test_config)
 
+        self.num_query_nodes = query.default_config['num_nodes']
+        self.single_plot_queries_agent0 = int(math.ceil(
+            query.default_config['singleplot_per_interval'] /
+            self.num_query_nodes))
+        self.multi_plot_queries_agent0 = int(math.ceil(
+            query.default_config['multiplot_per_interval'] /
+            self.num_query_nodes))
+        self.search_queries_agent0 = int(math.ceil(
+            query.default_config[
+                'search_queries_per_interval'] / self.num_query_nodes))
+        self.enum_search_queries_agent0 = int(math.ceil(
+            query.default_config[
+                'enum_search_queries_per_interval'] / self.num_query_nodes))
+        self.enum_single_plot_queries_agent0 = int(math.ceil(
+            query.default_config[
+                'enum_single_plot_queries_per_interval'] /
+            self.num_query_nodes))
+        self.enum_multi_plot_queries_agent0 = int(math.ceil(
+            query.default_config[
+                'enum_multiplot_per_interval'] / self.num_query_nodes))
+        self.annotation_queries_agent0 = int(math.ceil(
+            query.default_config[
+                'annotations_queries_per_interval'] / self.num_query_nodes))
+
+
+        self.single_plot_queries_agent1 = \
+            query.default_config['singleplot_per_interval'] - \
+            self.single_plot_queries_agent0
+        self.multi_plot_queries_agent1 = \
+            query.default_config['multiplot_per_interval'] - \
+            self.multi_plot_queries_agent0
+        self.search_queries_agent1 = \
+            query.default_config['search_queries_per_interval'] - \
+            self.search_queries_agent0
+        self.enum_search_queries_agent1 = \
+            query.default_config['enum_search_queries_per_interval'] - \
+            self.enum_search_queries_agent0
+        self.enum_single_plot_queries_agent1 = \
+            query.default_config['enum_single_plot_queries_per_interval'] - \
+            self.enum_single_plot_queries_agent0
+        self.annotation_queries_agent1 = \
+            query.default_config['annotations_queries_per_interval'] - \
+            self.annotation_queries_agent0
+        self.enum_multi_plot_queries_agent1 = \
+            query.default_config['enum_multiplot_per_interval'] - \
+            self.enum_multi_plot_queries_agent0
+
     def test_init_process(self):
         # confirm that threadnum 0 is an ingest thread
         t1 = self.tm.setup_thread(0)
@@ -228,36 +275,16 @@ class InitProcessTest(unittest.TestCase):
         #  each thread in this worker process
         query.QueryThread.create_metrics(0, query.QueryThread.query_types)
 
-        num_query_nodes = query.default_config['num_nodes']
-        single_plot_queries_agent0 = int(math.ceil(
-            query.default_config['singleplot_per_interval'] / num_query_nodes))
-        multi_plot_queries_agent0 = int(math.ceil(
-            query.default_config['multiplot_per_interval'] / num_query_nodes))
-        search_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'search_queries_per_interval'] / num_query_nodes))
-        enum_search_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'enum_search_queries_per_interval'] / num_query_nodes))
-        enum_single_plot_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'enum_single_plot_queries_per_interval'] / num_query_nodes))
-        enum_multi_plot_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'enum_multiplot_per_interval'] / num_query_nodes))
-        annotation_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'annotations_queries_per_interval'] / num_query_nodes))
 
         self.assertEqual(
             query.QueryThread.queries,
-            ([query.SinglePlotQuery] * single_plot_queries_agent0 +
-             [query.MultiPlotQuery] * multi_plot_queries_agent0 +
-             [query.SearchQuery] * search_queries_agent0 +
-             [query.EnumSearchQuery] * enum_search_queries_agent0 +
-             [query.EnumSinglePlotQuery] * enum_single_plot_queries_agent0 +
-             [query.AnnotationsQuery] * annotation_queries_agent0) +
-            [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent0)
+            ([query.SinglePlotQuery] * self.single_plot_queries_agent0 +
+             [query.MultiPlotQuery] * self.multi_plot_queries_agent0 +
+             [query.SearchQuery] * self.search_queries_agent0 +
+             [query.EnumSearchQuery] * self.enum_search_queries_agent0 +
+             [query.EnumSinglePlotQuery] * self.enum_single_plot_queries_agent0 +
+             [query.AnnotationsQuery] * self.annotation_queries_agent0) +
+            [query.EnumMultiPlotQuery] * self.enum_multi_plot_queries_agent0)
 
         thread = query.QueryThread(0, requests_by_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
@@ -304,37 +331,16 @@ class InitProcessTest(unittest.TestCase):
                          [[[2, 6]]])
 
         # confirm that the correct batches of queries are created for worker 1
-        single_plot_queries_agent1 = \
-            query.default_config['singleplot_per_interval'] - \
-            single_plot_queries_agent0
-        multi_plot_queries_agent1 = \
-            query.default_config['multiplot_per_interval'] - \
-            multi_plot_queries_agent0
-        search_queries_agent1 = \
-            query.default_config['search_queries_per_interval'] - \
-            search_queries_agent0
-        enum_search_queries_agent1 = \
-            query.default_config['enum_search_queries_per_interval'] - \
-            enum_search_queries_agent0
-        enum_single_plot_queries_agent1 = \
-            query.default_config['enum_single_plot_queries_per_interval'] - \
-            enum_single_plot_queries_agent0
-        annotation_queries_agent1 = \
-            query.default_config['annotations_queries_per_interval'] - \
-            annotation_queries_agent0
-        enum_multi_plot_queries_agent1 = \
-            query.default_config['enum_multiplot_per_interval'] - \
-            enum_multi_plot_queries_agent0
 
         self.assertEqual(
             query.QueryThread.queries,
-            ([query.SinglePlotQuery] * single_plot_queries_agent1 +
-             [query.MultiPlotQuery] * multi_plot_queries_agent1 +
-             [query.SearchQuery] * search_queries_agent1 +
-             [query.EnumSearchQuery] * enum_search_queries_agent1 +
-             [query.EnumSinglePlotQuery] * enum_single_plot_queries_agent1 +
-             [query.AnnotationsQuery] * annotation_queries_agent1) +
-            [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent1)
+            ([query.SinglePlotQuery] * self.single_plot_queries_agent1 +
+             [query.MultiPlotQuery] * self.multi_plot_queries_agent1 +
+             [query.SearchQuery] * self.search_queries_agent1 +
+             [query.EnumSearchQuery] * self.enum_search_queries_agent1 +
+             [query.EnumSinglePlotQuery] * self.enum_single_plot_queries_agent1 +
+             [query.AnnotationsQuery] * self.annotation_queries_agent1) +
+            [query.EnumMultiPlotQuery] * self.enum_multi_plot_queries_agent1)
 
         thread = query.QueryThread(0, requests_by_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
