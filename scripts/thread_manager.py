@@ -74,16 +74,15 @@ class ThreadManager(object):
 
         """
         thread_type = None
-        server_num = thread_num
 
         thread_types = [IngestThread, EnumIngestThread, QueryThread,
                         AnnotationsIngestThread]
         for x in thread_types:
-            if server_num < x.num_threads():
+            if thread_num < x.num_threads():
                 thread_type = x
                 break
             else:
-                server_num -= x.num_threads()
+                thread_num -= x.num_threads()
 
         if thread_type is None:
             raise Exception("Invalid Thread Type")
@@ -96,4 +95,4 @@ class ThreadManager(object):
         else:
             raise TypeError("Unknown thread type: %s" % str(thread_type))
 
-        return thread_type(server_num, req)
+        return thread_type(thread_num, req)
