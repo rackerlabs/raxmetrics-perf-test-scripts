@@ -49,8 +49,8 @@ class IngestThread(AbstractThread):
             b.append(metrics[i:i + batch_size])
         return b
 
-    def __init__(self, thread_num, request):
-        AbstractThread.__init__(self, thread_num)
+    def __init__(self, thread_num, request, config=None):
+        AbstractThread.__init__(self, thread_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
                                         self.num_threads(), thread_num)
@@ -58,7 +58,7 @@ class IngestThread(AbstractThread):
         self.request = request
 
     def generate_metric(self, time, tenant_id, metric_id):
-        ingest_delay_millis = default_config['ingest_delay_millis']
+        ingest_delay_millis = self.config['ingest_delay_millis']
 
         collection_time = time
         # all even tenants have possible delayed metrics
@@ -79,7 +79,7 @@ class IngestThread(AbstractThread):
         return json.dumps(payload)
 
     def ingest_url(self):
-        return "%s/v2.0/tenantId/ingest/multi" % default_config['url']
+        return "%s/v2.0/tenantId/ingest/multi" % self.config['url']
 
     def make_request(self, logger):
         if len(self.slice) == 0:

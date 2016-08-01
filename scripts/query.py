@@ -194,8 +194,8 @@ class QueryThread(AbstractThread):
     def num_threads(cls):
         return default_config['query_concurrency']
 
-    def __init__(self, thread_num, requests_by_query_type):
-        AbstractThread.__init__(self, thread_num)
+    def __init__(self, thread_num, requests_by_query_type, config=None):
+        AbstractThread.__init__(self, thread_num, config)
         self.query_instances = [x(thread_num, self.num_threads()) for x in
                                 self.query_types]
         self.requests_by_query_type = requests_by_query_type

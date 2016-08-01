@@ -54,13 +54,17 @@ class AbstractThread(object):
     def make_request(self, logger):
         raise Exception("Can't create abstract thread")
 
-    def __init__(self, thread_num):
+    def __init__(self, thread_num, config):
         # The threads only do so many invocations for each 'report_interval'
         # position refers to the current position for current interval
         self.position = 0
 
+        self.config = default_config.copy()
+        if config:
+            self.config.update(config)
+
         # finish_time is the end time of the interval
-        self.finish_time = self.time() + default_config['report_interval']
+        self.finish_time = self.time() + self.config['report_interval']
 
     def generate_unit(self, tenant_id):
         unit_number = tenant_id % 6
@@ -71,7 +75,7 @@ class AbstractThread(object):
         if self.position >= max_position:
             self.position = 0
             sleep_time = self.finish_time - self.time()
-            self.finish_time += default_config['report_interval']
+            self.finish_time += self.config['report_interval']
             if sleep_time < 0:
                 # return error
                 logger("finish time error")

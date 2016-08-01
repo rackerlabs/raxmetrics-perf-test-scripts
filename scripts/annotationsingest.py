@@ -35,8 +35,8 @@ class AnnotationsIngestThread(AbstractThread):
             l.append([tenant_id, x])
         return l
 
-    def __init__(self, thread_num, request):
-        AbstractThread.__init__(self, thread_num)
+    def __init__(self, thread_num, request, config=None):
+        AbstractThread.__init__(self, thread_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.annotations),
                                         self.num_threads(), thread_num)
@@ -55,7 +55,7 @@ class AnnotationsIngestThread(AbstractThread):
         return json.dumps(payload)
 
     def ingest_url(self, tenant_id):
-        return "%s/v2.0/%s/events" % (default_config['url'], tenant_id)
+        return "%s/v2.0/%s/events" % (self.config['url'], tenant_id)
 
     def make_request(self, logger):
         if len(self.slice) == 0:

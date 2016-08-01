@@ -49,8 +49,8 @@ class EnumIngestThread(AbstractThread):
             b.append(metrics[i:i + batch_size])
         return b
 
-    def __init__(self, thread_num, request):
-        AbstractThread.__init__(self, thread_num)
+    def __init__(self, thread_num, request, config=None):
+        AbstractThread.__init__(self, thread_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
                                         self.num_threads(), thread_num)
@@ -58,7 +58,7 @@ class EnumIngestThread(AbstractThread):
         self.request = request
 
     def generate_enum_suffix(self):
-        return "_" + str(random.randint(0, default_config['enum_num_values']))
+        return "_" + str(random.randint(0, self.config['enum_num_values']))
 
     def generate_enum_metric(self, time, tenant_id, metric_id):
         return {'tenantId': str(tenant_id),
@@ -73,7 +73,7 @@ class EnumIngestThread(AbstractThread):
         return json.dumps(payload)
 
     def ingest_url(self):
-        return "%s/v2.0/tenantId/ingest/aggregated/multi" % default_config[
+        return "%s/v2.0/tenantId/ingest/aggregated/multi" % self.config[
             'url']
 
     def make_request(self, logger):
