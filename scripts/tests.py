@@ -183,23 +183,26 @@ class InitProcessTest(unittest.TestCase):
             query.default_config['enum_multiplot_per_interval'] - \
             self.enum_multi_plot_queries_agent0
 
-    def test_init_process(self):
+    def test_setup_thread_zero(self):
         # confirm that threadnum 0 is an ingest thread
         t1 = self.tm.setup_thread(0)
         self.assertEqual(type(t1), ingest.IngestThread)
 
+    def test_setup_thread_second_type(self):
         # confirm that the threadnum after all ingest threads is
         # EnumIngestThread
         t1 = self.tm.setup_thread(
             ingestenum.default_config['enum_ingest_concurrency'])
         self.assertEqual(type(t1), ingestenum.EnumIngestThread)
 
+    def test_setup_thread_third_type(self):
         # confirm that the threadnum after all ingest threads is a query thread
         t1 = self.tm.setup_thread(ingest.default_config['ingest_concurrency'] +
                                   ingestenum.default_config[
                                       'enum_ingest_concurrency'])
         self.assertEqual(type(t1), query.QueryThread)
 
+    def test_setup_thread_fourth_type(self):
         # confirm that the threadnum after all ingest+query threads is an
         # annotations query thread
         t1 = self.tm.setup_thread(ingest.default_config['ingest_concurrency'] +
@@ -208,6 +211,7 @@ class InitProcessTest(unittest.TestCase):
                                   ingest.default_config['query_concurrency'])
         self.assertEqual(type(t1), annotationsingest.AnnotationsIngestThread)
 
+    def test_setup_thread_invalid_thread_type(self):
         # confirm that a threadnum after all valid thread types raises an
         # exception
         tot_threads = (
@@ -216,6 +220,8 @@ class InitProcessTest(unittest.TestCase):
             ingest.default_config['query_concurrency'] +
             ingest.default_config['annotations_concurrency'])
         self.assertRaises(Exception, self.tm.setup_thread, tot_threads)
+
+    def test_init_process_annotationsingest_agent_zero(self):
 
         # confirm that the correct batches of ingest metrics are created for
         # worker 0
@@ -234,6 +240,7 @@ class InitProcessTest(unittest.TestCase):
             1, MockReq())
         self.assertEqual(thread.slice, [[1, 0], [1, 1]])
 
+    def test_init_process_enumingest_agent_zero(self):
         # confirm enum metrics ingest
         ingestenum.EnumIngestThread.create_metrics(0)
 
@@ -249,6 +256,7 @@ class InitProcessTest(unittest.TestCase):
         thread = ingestenum.EnumIngestThread(1, MockReq())
         self.assertEqual(thread.slice, [[[1, 1]]])
 
+    def test_init_process_ingest_agent_zero(self):
         # confirm metrics ingest
         ingest.IngestThread.create_metrics(0)
 
@@ -271,6 +279,7 @@ class InitProcessTest(unittest.TestCase):
                          [[[1, 2], [1, 3], [1, 4]],
                           [[1, 5], [1, 6]]])
 
+    def test_init_process_query_agent_zero(self):
         # confirm that the number of queries is correctly distributed across
         #  each thread in this worker process
         query.QueryThread.create_metrics(0, query.QueryThread.query_types)
@@ -307,20 +316,15 @@ class InitProcessTest(unittest.TestCase):
         thread = query.QueryThread(16, requests_by_type)
         self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
 
+    def test_init_process_ingest_agent_one(self):
         # confirm that the correct batches of ingest metrics are created for
         # worker 1
         ingest.IngestThread.create_metrics(1)
-        ingestenum.EnumIngestThread.create_metrics(1)
-        annotationsingest.AnnotationsIngestThread.create_metrics(1)
-        query.QueryThread.create_metrics(1, query.QueryThread.query_types)
 
         self.assertEqual(ingest.IngestThread.metrics,
                          [[[2, 0], [2, 1], [2, 2]],
                           [[2, 3], [2, 4], [2, 5]],
                           [[2, 6]]])
-
-        self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
-                         [[2, 0], [2, 1]])
 
         thread = ingest.IngestThread(0, MockReq())
         self.assertEqual(thread.slice,
@@ -329,6 +333,14 @@ class InitProcessTest(unittest.TestCase):
         thread = ingest.IngestThread(1, MockReq())
         self.assertEqual(thread.slice,
                          [[[2, 6]]])
+
+    def test_init_process_annotationsingest_agent_one(self):
+        annotationsingest.AnnotationsIngestThread.create_metrics(1)
+        self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
+                         [[2, 0], [2, 1]])
+
+    def test_init_process_query_agent_one(self):
+        query.QueryThread.create_metrics(1, query.QueryThread.query_types)
 
         # confirm that the correct batches of queries are created for worker 1
 
