@@ -35,15 +35,15 @@ class IngestThread(AbstractThread):
     def num_threads(cls, config=default_config):
         return config['ingest_concurrency']
 
-    @classmethod
-    def generate_metrics_for_tenant(cls, tenant_id, metrics_per_tenant):
+    @staticmethod
+    def generate_metrics_for_tenant(tenant_id, metrics_per_tenant):
         l = []
         for x in range(metrics_per_tenant):
             l.append([tenant_id, x])
         return l
 
-    @classmethod
-    def divide_metrics_into_batches(cls, metrics, batch_size):
+    @staticmethod
+    def divide_metrics_into_batches(metrics, batch_size):
         b = []
         for i in range(0, len(metrics), batch_size):
             b.append(metrics[i:i + batch_size])
