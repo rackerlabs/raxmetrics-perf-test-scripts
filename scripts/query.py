@@ -179,13 +179,16 @@ class QueryThread(AbstractThread):
                    EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery,
                    EnumMultiPlotQuery]
 
-    @classmethod
-    def create_metrics(cls, agent_number, query_types):
+    @staticmethod
+    def _create_metrics(agent_number, query_types):
         queries = list(itertools.chain(
             *[x.create_metrics(agent_number) for x in query_types]))
         random.shuffle(queries)
-        cls.queries = queries
         return queries
+
+    @classmethod
+    def create_metrics(cls, agent_number, query_types):
+        cls.queries = cls._create_metrics(agent_number, query_types)
 
     @classmethod
     def num_threads(cls):
