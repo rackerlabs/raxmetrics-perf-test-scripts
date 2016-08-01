@@ -45,7 +45,11 @@ class TestRunner:
             AnnotationsQuery: create_request_obj(6, "AnnotationsQuery"),
         }
         thread_manager = tm.ThreadManager(config, requests_by_type)
-        thread_manager.create_all_metrics(grinder.getAgentNumber())
+        agent_number = grinder.getAgentNumber()
+        IngestThread.create_metrics(agent_number)
+        EnumIngestThread.create_metrics(agent_number)
+        QueryThread.create_metrics(agent_number, QueryThread.query_types)
+        AnnotationsIngestThread.create_metrics(agent_number)
         self.thread = thread_manager.setup_thread(grinder.getThreadNumber())
 
     def __call__(self):
