@@ -12,16 +12,23 @@ class AnnotationsIngestThread(AbstractThread):
     # The list of metric numbers for all threads in this worker
     annotations = []
 
+    @staticmethod
+    def _create_metrics(agent_number, config=default_config):
+        """ Generate all the annotations for this worker
+
+        """
+        return generate_metrics_tenants(
+            config['annotations_num_tenants'],
+            config['annotations_per_tenant'], agent_number,
+            config['num_nodes'],
+            AnnotationsIngestThread.generate_annotations_for_tenant)
+
     @classmethod
     def create_metrics(cls, agent_number, config=default_config):
         """ Generate all the annotations for this worker
 
         """
-        cls.annotations = generate_metrics_tenants(
-            config['annotations_num_tenants'],
-            config['annotations_per_tenant'], agent_number,
-            config['num_nodes'],
-            cls.generate_annotations_for_tenant)
+        cls.annotations = cls._create_metrics(agent_number, config)
 
     @classmethod
     def num_threads(cls, config=default_config):
