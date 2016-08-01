@@ -112,75 +112,75 @@ class InitProcessTest(unittest.TestCase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        test_config = {'report_interval': (1000 * 6),
-                       'num_tenants': 3,
-                       'enum_num_tenants': 4,
-                       'annotations_num_tenants': 3,
-                       'metrics_per_tenant': 7,
-                       'enum_metrics_per_tenant': 2,
-                       'annotations_per_tenant': 2,
-                       'batch_size': 3,
-                       'ingest_concurrency': 2,
-                       'enum_ingest_concurrency': 2,
-                       'query_concurrency': 20,
-                       'annotations_concurrency': 2,
-                       'singleplot_per_interval': 11,
-                       'multiplot_per_interval': 10,
-                       'search_queries_per_interval': 9,
-                       'enum_search_queries_per_interval': 9,
-                       'enum_single_plot_queries_per_interval': 10,
-                       'enum_multiplot_per_interval': 10,
-                       'annotations_queries_per_interval': 8,
-                       'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
-                       'num_nodes': 2}
+        self.test_config = {'report_interval': (1000 * 6),
+                            'num_tenants': 3,
+                            'enum_num_tenants': 4,
+                            'annotations_num_tenants': 3,
+                            'metrics_per_tenant': 7,
+                            'enum_metrics_per_tenant': 2,
+                            'annotations_per_tenant': 2,
+                            'batch_size': 3,
+                            'ingest_concurrency': 2,
+                            'enum_ingest_concurrency': 2,
+                            'query_concurrency': 20,
+                            'annotations_concurrency': 2,
+                            'singleplot_per_interval': 11,
+                            'multiplot_per_interval': 10,
+                            'search_queries_per_interval': 9,
+                            'enum_search_queries_per_interval': 9,
+                            'enum_single_plot_queries_per_interval': 10,
+                            'enum_multiplot_per_interval': 10,
+                            'annotations_queries_per_interval': 8,
+                            'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                            'num_nodes': 2}
 
-        ingest.default_config.update(test_config)
+        ingest.default_config.update(self.test_config)
 
-        self.num_query_nodes = query.default_config['num_nodes']
+        self.num_query_nodes = self.test_config['num_nodes']
         self.single_plot_queries_agent0 = int(math.ceil(
-            query.default_config['singleplot_per_interval'] /
+            self.test_config['singleplot_per_interval'] /
             self.num_query_nodes))
         self.multi_plot_queries_agent0 = int(math.ceil(
-            query.default_config['multiplot_per_interval'] /
+            self.test_config['multiplot_per_interval'] /
             self.num_query_nodes))
         self.search_queries_agent0 = int(math.ceil(
-            query.default_config[
+            self.test_config[
                 'search_queries_per_interval'] / self.num_query_nodes))
         self.enum_search_queries_agent0 = int(math.ceil(
-            query.default_config[
+            self.test_config[
                 'enum_search_queries_per_interval'] / self.num_query_nodes))
         self.enum_single_plot_queries_agent0 = int(math.ceil(
-            query.default_config[
+            self.test_config[
                 'enum_single_plot_queries_per_interval'] /
             self.num_query_nodes))
         self.enum_multi_plot_queries_agent0 = int(math.ceil(
-            query.default_config[
+            self.test_config[
                 'enum_multiplot_per_interval'] / self.num_query_nodes))
         self.annotation_queries_agent0 = int(math.ceil(
-            query.default_config[
+            self.test_config[
                 'annotations_queries_per_interval'] / self.num_query_nodes))
 
 
         self.single_plot_queries_agent1 = \
-            query.default_config['singleplot_per_interval'] - \
+            self.test_config['singleplot_per_interval'] - \
             self.single_plot_queries_agent0
         self.multi_plot_queries_agent1 = \
-            query.default_config['multiplot_per_interval'] - \
+            self.test_config['multiplot_per_interval'] - \
             self.multi_plot_queries_agent0
         self.search_queries_agent1 = \
-            query.default_config['search_queries_per_interval'] - \
+            self.test_config['search_queries_per_interval'] - \
             self.search_queries_agent0
         self.enum_search_queries_agent1 = \
-            query.default_config['enum_search_queries_per_interval'] - \
+            self.test_config['enum_search_queries_per_interval'] - \
             self.enum_search_queries_agent0
         self.enum_single_plot_queries_agent1 = \
-            query.default_config['enum_single_plot_queries_per_interval'] - \
+            self.test_config['enum_single_plot_queries_per_interval'] - \
             self.enum_single_plot_queries_agent0
         self.annotation_queries_agent1 = \
-            query.default_config['annotations_queries_per_interval'] - \
+            self.test_config['annotations_queries_per_interval'] - \
             self.annotation_queries_agent0
         self.enum_multi_plot_queries_agent1 = \
-            query.default_config['enum_multiplot_per_interval'] - \
+            self.test_config['enum_multiplot_per_interval'] - \
             self.enum_multi_plot_queries_agent0
 
     def test_setup_thread_zero(self):
@@ -192,33 +192,33 @@ class InitProcessTest(unittest.TestCase):
         # confirm that the threadnum after all ingest threads is
         # EnumIngestThread
         t1 = self.tm.setup_thread(
-            ingestenum.default_config['enum_ingest_concurrency'])
+            self.test_config['enum_ingest_concurrency'])
         self.assertEqual(type(t1), ingestenum.EnumIngestThread)
 
     def test_setup_thread_third_type(self):
         # confirm that the threadnum after all ingest threads is a query thread
-        t1 = self.tm.setup_thread(ingest.default_config['ingest_concurrency'] +
-                                  ingestenum.default_config[
+        t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
+                                  self.test_config[
                                       'enum_ingest_concurrency'])
         self.assertEqual(type(t1), query.QueryThread)
 
     def test_setup_thread_fourth_type(self):
         # confirm that the threadnum after all ingest+query threads is an
         # annotations query thread
-        t1 = self.tm.setup_thread(ingest.default_config['ingest_concurrency'] +
-                                  ingestenum.default_config[
+        t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
+                                  self.test_config[
                                       'enum_ingest_concurrency'] +
-                                  ingest.default_config['query_concurrency'])
+                                  self.test_config['query_concurrency'])
         self.assertEqual(type(t1), annotationsingest.AnnotationsIngestThread)
 
     def test_setup_thread_invalid_thread_type(self):
         # confirm that a threadnum after all valid thread types raises an
         # exception
         tot_threads = (
-            ingest.default_config['ingest_concurrency'] +
-            ingest.default_config['enum_ingest_concurrency'] +
-            ingest.default_config['query_concurrency'] +
-            ingest.default_config['annotations_concurrency'])
+            self.test_config['ingest_concurrency'] +
+            self.test_config['enum_ingest_concurrency'] +
+            self.test_config['query_concurrency'] +
+            self.test_config['annotations_concurrency'])
         self.assertRaises(Exception, self.tm.setup_thread, tot_threads)
 
     def test_init_process_annotationsingest_agent_zero(self):
@@ -400,29 +400,29 @@ class GeneratePayloadTest(unittest.TestCase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        test_config = {'report_interval': (1000 * 6),
-                       'num_tenants': 3,
-                       'enum_num_tenants': 4,
-                       'annotations_num_tenants': 3,
-                       'metrics_per_tenant': 7,
-                       'enum_metrics_per_tenant': 2,
-                       'annotations_per_tenant': 2,
-                       'batch_size': 3,
-                       'ingest_concurrency': 2,
-                       'enum_ingest_concurrency': 2,
-                       'query_concurrency': 20,
-                       'annotations_concurrency': 2,
-                       'singleplot_per_interval': 11,
-                       'multiplot_per_interval': 10,
-                       'search_queries_per_interval': 9,
-                       'enum_search_queries_per_interval': 9,
-                       'enum_single_plot_queries_per_interval': 10,
-                       'enum_multiplot_per_interval': 10,
-                       'annotations_queries_per_interval': 8,
-                       'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
-                       'num_nodes': 2}
+        self.test_config = {'report_interval': (1000 * 6),
+                            'num_tenants': 3,
+                            'enum_num_tenants': 4,
+                            'annotations_num_tenants': 3,
+                            'metrics_per_tenant': 7,
+                            'enum_metrics_per_tenant': 2,
+                            'annotations_per_tenant': 2,
+                            'batch_size': 3,
+                            'ingest_concurrency': 2,
+                            'enum_ingest_concurrency': 2,
+                            'query_concurrency': 20,
+                            'annotations_concurrency': 2,
+                            'singleplot_per_interval': 11,
+                            'multiplot_per_interval': 10,
+                            'search_queries_per_interval': 9,
+                            'enum_search_queries_per_interval': 9,
+                            'enum_single_plot_queries_per_interval': 10,
+                            'enum_multiplot_per_interval': 10,
+                            'annotations_queries_per_interval': 8,
+                            'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                            'num_nodes': 2}
 
-        ingest.default_config.update(test_config)
+        ingest.default_config.update(self.test_config)
 
     def test_generate_payload(self):
         ingest.IngestThread.create_metrics(1)
@@ -503,29 +503,29 @@ class MakeRequestsTest(unittest.TestCase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        test_config = {'report_interval': (1000 * 6),
-                       'num_tenants': 3,
-                       'enum_num_tenants': 4,
-                       'annotations_num_tenants': 3,
-                       'metrics_per_tenant': 7,
-                       'enum_metrics_per_tenant': 2,
-                       'annotations_per_tenant': 2,
-                       'batch_size': 3,
-                       'ingest_concurrency': 2,
-                       'enum_ingest_concurrency': 2,
-                       'query_concurrency': 20,
-                       'annotations_concurrency': 2,
-                       'singleplot_per_interval': 11,
-                       'multiplot_per_interval': 10,
-                       'search_queries_per_interval': 9,
-                       'enum_search_queries_per_interval': 9,
-                       'enum_single_plot_queries_per_interval': 10,
-                       'enum_multiplot_per_interval': 10,
-                       'annotations_queries_per_interval': 8,
-                       'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
-                       'num_nodes': 2}
+        self.test_config = {'report_interval': (1000 * 6),
+                            'num_tenants': 3,
+                            'enum_num_tenants': 4,
+                            'annotations_num_tenants': 3,
+                            'metrics_per_tenant': 7,
+                            'enum_metrics_per_tenant': 2,
+                            'annotations_per_tenant': 2,
+                            'batch_size': 3,
+                            'ingest_concurrency': 2,
+                            'enum_ingest_concurrency': 2,
+                            'query_concurrency': 20,
+                            'annotations_concurrency': 2,
+                            'singleplot_per_interval': 11,
+                            'multiplot_per_interval': 10,
+                            'search_queries_per_interval': 9,
+                            'enum_search_queries_per_interval': 9,
+                            'enum_single_plot_queries_per_interval': 10,
+                            'enum_multiplot_per_interval': 10,
+                            'annotations_queries_per_interval': 8,
+                            'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                            'num_nodes': 2}
 
-        ingest.default_config.update(test_config)
+        ingest.default_config.update(self.test_config)
 
     def test_annotationsingest_make_request(self):
         global sleep_time
