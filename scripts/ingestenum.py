@@ -13,8 +13,8 @@ class EnumIngestThread(AbstractThread):
     # The list of metric numbers for all threads in this worker
     metrics = []
 
-    @classmethod
-    def create_metrics(cls, agent_number, config=default_config):
+    @staticmethod
+    def _create_metrics(agent_number, config=default_config):
         """ Generate all the metrics for this worker
 
         The metrics are a list of batches.  Each batch is a list of metrics
@@ -25,11 +25,20 @@ class EnumIngestThread(AbstractThread):
             config['enum_metrics_per_tenant'],
             agent_number,
             config['num_nodes'],
-            cls.generate_metrics_for_tenant)
+            EnumIngestThread.generate_metrics_for_tenant)
 
-        cls.metrics = cls.divide_metrics_into_batches(
+        return EnumIngestThread.divide_metrics_into_batches(
             metrics,
             config['batch_size'])
+
+    @classmethod
+    def create_metrics(cls, agent_number, config=default_config):
+        """ Generate all the metrics for this worker
+
+        The metrics are a list of batches.  Each batch is a list of metrics
+        processed by a single metrics ingest request.
+        """
+        cls.metrics = _create_metrics(agent_number, config)
 
     @classmethod
     def num_threads(cls, config=default_config):
