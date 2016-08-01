@@ -38,7 +38,7 @@ class EnumIngestThread(AbstractThread):
         The metrics are a list of batches.  Each batch is a list of metrics
         processed by a single metrics ingest request.
         """
-        cls.metrics = _create_metrics(agent_number, config)
+        cls.metrics = cls._create_metrics(agent_number, config)
 
     @classmethod
     def num_threads(cls, config=default_config):
