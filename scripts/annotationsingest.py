@@ -27,9 +27,8 @@ class AnnotationsIngestThread(AbstractThread):
     def num_threads(cls, config=default_config):
         return config['annotations_concurrency']
 
-    @classmethod
-    def generate_annotations_for_tenant(cls, tenant_id,
-                                        annotations_per_tenant):
+    @staticmethod
+    def generate_annotations_for_tenant(tenant_id, annotations_per_tenant):
         l = []
         for x in range(annotations_per_tenant):
             l.append([tenant_id, x])
