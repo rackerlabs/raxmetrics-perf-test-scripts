@@ -120,10 +120,10 @@ def generate_metrics_tenants(num_tenants, metrics_per_tenant,
     return metrics
 
 
-def generate_metric_name(metric_id):
-    return default_config['name_fmt'] % metric_id
+def generate_metric_name(metric_id, config=default_config):
+    return config['name_fmt'] % metric_id
 
 
 # TODO: Add enum prefix to config
-def generate_enum_metric_name(metric_id):
-    return "enum_grinder_" + default_config['name_fmt'] % metric_id
+def generate_enum_metric_name(metric_id, config=default_config):
+    return "enum_grinder_" + config['name_fmt'] % metric_id
