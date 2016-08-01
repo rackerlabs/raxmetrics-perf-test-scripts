@@ -50,7 +50,8 @@ class TestRunner:
         EnumIngestThread.create_metrics(agent_number)
         QueryThread.create_metrics(agent_number, QueryThread.query_types)
         AnnotationsIngestThread.create_metrics(agent_number)
-        self.thread = thread_manager.setup_thread(grinder.getThreadNumber())
+        self.thread = thread_manager.setup_thread(
+            grinder.getThreadNumber(), agent_number)
 
     def __call__(self):
         result = self.thread.make_request(grinder.logger.info)

@@ -49,8 +49,8 @@ class IngestThread(AbstractThread):
             b.append(metrics[i:i + batch_size])
         return b
 
-    def __init__(self, thread_num, request, config=None):
-        AbstractThread.__init__(self, thread_num, config)
+    def __init__(self, thread_num, agent_num, request, config=None):
+        AbstractThread.__init__(self, thread_num, agent_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
                                         self.num_threads(), thread_num)

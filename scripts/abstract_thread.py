@@ -54,7 +54,11 @@ class AbstractThread(object):
     def make_request(self, logger):
         raise Exception("Can't create abstract thread")
 
-    def __init__(self, thread_num, config):
+    def __init__(self, thread_num, agent_num, config):
+
+        self.thread_num = thread_num
+        self.agent_num = agent_num
+
         # The threads only do so many invocations for each 'report_interval'
         # position refers to the current position for current interval
         self.position = 0

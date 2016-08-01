@@ -58,7 +58,7 @@ class ThreadManager(object):
             return s
         return str(s)
 
-    def setup_thread(self, thread_num):
+    def setup_thread(self, thread_num, agent_num):
         """Figure out which type thread to create based on thread_num and
         return it
 
@@ -95,4 +95,4 @@ class ThreadManager(object):
         else:
             raise TypeError("Unknown thread type: %s" % str(thread_type))
 
-        return thread_type(thread_num, req)
+        return thread_type(thread_num, agent_num, req)
