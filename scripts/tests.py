@@ -425,7 +425,7 @@ class GeneratePayloadTest(unittest.TestCase):
         ingest.default_config.update(test_config)
 
     def test_generate_payload(self):
-        self.tm.create_all_metrics(1)
+        ingest.IngestThread.create_metrics(1)
         thread = ingest.IngestThread(0, MockReq())
         payload = json.loads(
             thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
@@ -450,7 +450,7 @@ class GeneratePayloadTest(unittest.TestCase):
         self.assertEqual(payload, valid_payload)
 
     def test_generate_enum_payload(self):
-        self.tm.create_all_metrics(1)
+        ingestenum.EnumIngestThread.create_metrics(1)
         thread = ingestenum.EnumIngestThread(0, MockReq())
         payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
         valid_payload = [{u'timestamp': 1,
@@ -467,7 +467,7 @@ class GeneratePayloadTest(unittest.TestCase):
         self.assertEqual(payload, valid_payload)
 
     def test_generate_annotations_payload(self):
-        self.tm.create_all_metrics(1)
+        annotationsingest.AnnotationsIngestThread.create_metrics(1)
         thread = annotationsingest.AnnotationsIngestThread(
             0, MockReq())
         payload = json.loads(thread.generate_payload(0, 3))
