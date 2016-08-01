@@ -172,9 +172,10 @@ class InitProcessTest(unittest.TestCase):
 
         # confirm that the correct batches of ingest metrics are created for
         # worker 0
-        self.tm.create_all_metrics(0)
 
         # confirm annotationsingest
+        annotationsingest.AnnotationsIngestThread.create_metrics(0)
+
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[0, 0], [0, 1], [1, 0], [1, 1]])
 
@@ -187,6 +188,8 @@ class InitProcessTest(unittest.TestCase):
         self.assertEqual(thread.slice, [[1, 0], [1, 1]])
 
         # confirm enum metrics ingest
+        ingestenum.EnumIngestThread.create_metrics(0)
+
         self.assertEqual(ingestenum.EnumIngestThread.metrics,
                          [
                              [[0, 0], [0, 1], [1, 0]],
@@ -200,6 +203,8 @@ class InitProcessTest(unittest.TestCase):
         self.assertEqual(thread.slice, [[[1, 1]]])
 
         # confirm metrics ingest
+        ingest.IngestThread.create_metrics(0)
+
         self.assertEqual(ingest.IngestThread.metrics,
                          [[[0, 0], [0, 1], [0, 2]],
                           [[0, 3], [0, 4], [0, 5]],
@@ -221,6 +226,7 @@ class InitProcessTest(unittest.TestCase):
 
         # confirm that the number of queries is correctly distributed across
         #  each thread in this worker process
+        query.QueryThread.create_metrics(0, query.QueryThread.query_types)
 
         num_query_nodes = query.default_config['num_nodes']
         single_plot_queries_agent0 = int(math.ceil(
@@ -276,7 +282,11 @@ class InitProcessTest(unittest.TestCase):
 
         # confirm that the correct batches of ingest metrics are created for
         # worker 1
-        self.tm.create_all_metrics(1)
+        ingest.IngestThread.create_metrics(1)
+        ingestenum.EnumIngestThread.create_metrics(1)
+        annotationsingest.AnnotationsIngestThread.create_metrics(1)
+        query.QueryThread.create_metrics(1, query.QueryThread.query_types)
+
         self.assertEqual(ingest.IngestThread.metrics,
                          [[[2, 0], [2, 1], [2, 2]],
                           [[2, 3], [2, 4], [2, 5]],
