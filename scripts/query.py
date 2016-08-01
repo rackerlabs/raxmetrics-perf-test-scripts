@@ -26,6 +26,11 @@ class AbstractQuery(object):
 
         return [cls] * cls.num_queries_for_current_node
 
+    def __init__(self, thread_num, num_threads, config=default_config):
+        self.thread_num = thread_num
+        self.num_threads = num_threads
+        self.config = config
+
     def generate(self, time, logger, request):
         raise Exception("Can't instantiate abstract query")
 
