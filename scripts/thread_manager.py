@@ -58,14 +58,6 @@ class ThreadManager(object):
             return s
         return str(s)
 
-    def create_all_metrics(self, agent_number):
-        """Step through all the attached types and have them create their
-        metrics"""
-        IngestThread.create_metrics(agent_number)
-        EnumIngestThread.create_metrics(agent_number)
-        QueryThread.create_metrics(agent_number, QueryThread.query_types)
-        AnnotationsIngestThread.create_metrics(agent_number)
-
     def setup_thread(self, thread_num):
         """Figure out which type thread to create based on thread_num and
         return it
