@@ -13,19 +13,19 @@ class AnnotationsIngestThread(AbstractThread):
     annotations = []
 
     @classmethod
-    def create_metrics(cls, agent_number):
+    def create_metrics(cls, agent_number, config=default_config):
         """ Generate all the annotations for this worker
 
         """
         cls.annotations = generate_metrics_tenants(
-            default_config['annotations_num_tenants'],
-            default_config['annotations_per_tenant'], agent_number,
-            default_config['num_nodes'],
+            config['annotations_num_tenants'],
+            config['annotations_per_tenant'], agent_number,
+            config['num_nodes'],
             cls.generate_annotations_for_tenant)
 
     @classmethod
-    def num_threads(cls):
-        return default_config['annotations_concurrency']
+    def num_threads(cls, config=default_config):
+        return config['annotations_concurrency']
 
     @classmethod
     def generate_annotations_for_tenant(cls, tenant_id,

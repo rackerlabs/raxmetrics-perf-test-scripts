@@ -14,26 +14,26 @@ class EnumIngestThread(AbstractThread):
     metrics = []
 
     @classmethod
-    def create_metrics(cls, agent_number):
+    def create_metrics(cls, agent_number, config=default_config):
         """ Generate all the metrics for this worker
 
         The metrics are a list of batches.  Each batch is a list of metrics
         processed by a single metrics ingest request.
         """
         metrics = generate_metrics_tenants(
-            default_config['enum_num_tenants'],
-            default_config['enum_metrics_per_tenant'],
+            config['enum_num_tenants'],
+            config['enum_metrics_per_tenant'],
             agent_number,
-            default_config['num_nodes'],
+            config['num_nodes'],
             cls.generate_metrics_for_tenant)
 
         cls.metrics = cls.divide_metrics_into_batches(
             metrics,
-            default_config['batch_size'])
+            config['batch_size'])
 
     @classmethod
-    def num_threads(cls):
-        return default_config['enum_ingest_concurrency']
+    def num_threads(cls, config=default_config):
+        return config['enum_ingest_concurrency']
 
     @classmethod
     def generate_metrics_for_tenant(cls, tenant_id, metrics_per_tenant):

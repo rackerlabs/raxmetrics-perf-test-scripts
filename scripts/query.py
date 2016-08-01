@@ -16,12 +16,12 @@ class AbstractQuery(object):
     num_queries_for_current_node = 0
 
     @classmethod
-    def create_metrics(cls, agent_number):
+    def create_metrics(cls, agent_number, config=default_config):
         # divide the total number of each query type into the ones need by this
         # worker
-        total_queries = default_config[cls.query_interval_name]
+        total_queries = config[cls.query_interval_name]
         start_job, end_job = generate_job_range(
-            total_queries, default_config['num_nodes'], agent_number)
+            total_queries, config['num_nodes'], agent_number)
         cls.num_queries_for_current_node = end_job - start_job
 
         return [cls] * cls.num_queries_for_current_node
@@ -33,15 +33,15 @@ class AbstractQuery(object):
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_per_interval'
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, default_config['num_tenants'])
+    def generate(self, time, logger, request, config=default_config):
+        tenant_id = random.randint(0, config['num_tenants'])
         metric_name = generate_metric_name(
-            random.randint(0, default_config['metrics_per_tenant']))
+            random.randint(0, config['metrics_per_tenant']))
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
         url = "%s/v2.0/%d/views/%s?from=%d&to=%s&resolution=%s" % (
-            default_config['query_url'],
+            config['query_url'],
             tenant_id, metric_name, frm,
             to, resolution)
         result = request.GET(url)
@@ -52,22 +52,22 @@ class SinglePlotQuery(AbstractQuery):
 class MultiPlotQuery(AbstractQuery):
     query_interval_name = 'multiplot_per_interval'
 
-    def generate_multiplot_payload(self):
-        metrics_count = min(default_config['max_multiplot_metrics'],
-                            random.randint(0, default_config[
+    def generate_multiplot_payload(self, config=default_config):
+        metrics_count = min(config['max_multiplot_metrics'],
+                            random.randint(0, config[
                                 'metrics_per_tenant']))
         metrics_list = map(generate_metric_name,
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, default_config['num_tenants'])
+    def generate(self, time, logger, request, config=default_config):
+        tenant_id = random.randint(0, config['num_tenants'])
         payload = self.generate_multiplot_payload()
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
         url = "%s/v2.0/%d/views?from=%d&to=%d&resolution=%s" % (
-            default_config['query_url'],
+            config['query_url'],
             tenant_id, frm,
             to, resolution)
         result = request.POST(url, payload)
@@ -78,16 +78,16 @@ class MultiPlotQuery(AbstractQuery):
 class SearchQuery(AbstractQuery):
     query_interval_name = 'search_queries_per_interval'
 
-    def generate_metrics_regex(self):
+    def generate_metrics_regex(self, config=default_config):
         metric_name = generate_metric_name(
-            random.randint(0, default_config['metrics_per_tenant']))
+            random.randint(0, config['metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, default_config['num_tenants'])
+    def generate(self, time, logger, request, config=default_config):
+        tenant_id = random.randint(0, config['num_tenants'])
         metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%d/metrics/search?query=%s" % (
-            default_config['query_url'],
+            config['query_url'],
             tenant_id, metric_regex)
         result = request.GET(url)
         #    logger(result.getText())
@@ -97,13 +97,13 @@ class SearchQuery(AbstractQuery):
 class AnnotationsQuery(AbstractQuery):
     query_interval_name = 'annotations_queries_per_interval'
 
-    def generate(self, time, logger, request):
+    def generate(self, time, logger, request, config=default_config):
         tenant_id = random.randint(0,
-                                   default_config['annotations_num_tenants'])
+                                   config['annotations_num_tenants'])
         to = time
         frm = time - self.one_day
         url = "%s/v2.0/%d/events/getEvents?from=%d&until=%d" % (
-            default_config['query_url'], tenant_id, frm, to)
+            config['query_url'], tenant_id, frm, to)
         result = request.GET(url)
         return result
 
@@ -111,16 +111,16 @@ class AnnotationsQuery(AbstractQuery):
 class EnumSearchQuery(AbstractQuery):
     query_interval_name = 'enum_search_queries_per_interval'
 
-    def generate_metrics_regex(self):
+    def generate_metrics_regex(self, config=default_config):
         metric_name = 'enum_grinder_' + generate_metric_name(
-            random.randint(0, default_config['enum_metrics_per_tenant']))
+            random.randint(0, config['enum_metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, default_config['enum_num_tenants'])
+    def generate(self, time, logger, request, config=default_config):
+        tenant_id = random.randint(0, config['enum_num_tenants'])
         metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%d/metrics/search?query=%s&include_enum_values=true" % (
-            default_config['query_url'],
+            config['query_url'],
             tenant_id, metric_regex)
         result = request.GET(url)
         return result
@@ -129,15 +129,15 @@ class EnumSearchQuery(AbstractQuery):
 class EnumSinglePlotQuery(AbstractQuery):
     query_interval_name = 'enum_single_plot_queries_per_interval'
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, default_config['enum_num_tenants'])
+    def generate(self, time, logger, request, config=default_config):
+        tenant_id = random.randint(0, config['enum_num_tenants'])
         metric_name = generate_enum_metric_name(
-            random.randint(0, default_config['enum_metrics_per_tenant']))
+            random.randint(0, config['enum_metrics_per_tenant']))
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
         url = "%s/v2.0/%d/views/%s?from=%d&to=%s&resolution=%s" % (
-            default_config['query_url'],
+            config['query_url'],
             tenant_id, metric_name, frm,
             to, resolution)
         result = request.GET(url)
@@ -148,22 +148,22 @@ class EnumSinglePlotQuery(AbstractQuery):
 class EnumMultiPlotQuery(AbstractQuery):
     query_interval_name = 'enum_multiplot_per_interval'
 
-    def generate_multiplot_payload(self):
-        metrics_count = min(default_config['max_multiplot_metrics'],
-                            random.randint(0, default_config[
+    def generate_multiplot_payload(self, config=default_config):
+        metrics_count = min(config['max_multiplot_metrics'],
+                            random.randint(0, config[
                                 'enum_metrics_per_tenant']))
         metrics_list = map(generate_enum_metric_name,
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, default_config['enum_num_tenants'])
+    def generate(self, time, logger, request, config=default_config):
+        tenant_id = random.randint(0, config['enum_num_tenants'])
         payload = self.generate_multiplot_payload()
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
         url = "%s/v2.0/%d/views?from=%d&to=%d&resolution=%s" % (
-            default_config['query_url'],
+            config['query_url'],
             tenant_id, frm,
             to, resolution)
         result = request.POST(url, payload)
@@ -191,8 +191,8 @@ class QueryThread(AbstractThread):
         cls.queries = cls._create_metrics(agent_number, query_types)
 
     @classmethod
-    def num_threads(cls):
-        return default_config['query_concurrency']
+    def num_threads(cls, config=default_config):
+        return config['query_concurrency']
 
     def __init__(self, thread_num, requests_by_query_type, config=None):
         AbstractThread.__init__(self, thread_num, config)
