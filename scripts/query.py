@@ -186,8 +186,10 @@ class QueryThread(AbstractThread):
 
     @staticmethod
     def _create_metrics(agent_number, query_types):
-        queries = list(itertools.chain(
-            *[x.create_metrics(agent_number) for x in query_types]))
+        queries = []
+        for qtype in query_types:
+            qq = qtype.create_metrics(agent_number)
+            queries.extend(qq)
         random.shuffle(queries)
         return queries
 
