@@ -208,10 +208,9 @@ class QueryThread(AbstractThread):
             x(thread_num, self.num_threads(), self.config) for x in
             self.query_types]
         self.requests_by_query_type = requests_by_query_type
-        total_queries_for_current_node = reduce(
-            lambda x, y: x + y,
-            [x.num_queries_for_current_node
-             for x in self.query_instances])
+        total_queries_for_current_node = 0
+        for qi in self.query_instances:
+            total_queries_for_current_node += qi.num_queries_for_current_node
         start, end = generate_job_range(total_queries_for_current_node,
                                         self.num_threads(),
                                         thread_num)
