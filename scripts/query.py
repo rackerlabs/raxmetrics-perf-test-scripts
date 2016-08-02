@@ -205,8 +205,14 @@ class QueryThread(AbstractThread):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         self.queries = self._create_metrics(self.agent_num, self.query_types)
         self.query_instances = [
-            x(thread_num, self.num_threads(), self.config) for x in
-            self.query_types]
+            SinglePlotQuery(thread_num, self.num_threads(), self.config),
+            MultiPlotQuery(thread_num, self.num_threads(), self.config),
+            SearchQuery(thread_num, self.num_threads(), self.config),
+            EnumSearchQuery(thread_num, self.num_threads(), self.config),
+            EnumSinglePlotQuery(thread_num, self.num_threads(), self.config),
+            AnnotationsQuery(thread_num, self.num_threads(), self.config),
+            EnumMultiPlotQuery(thread_num, self.num_threads(), self.config)
+        ]
         self.requests_by_query_type = requests_by_query_type
         total_queries_for_current_node = 0
         for qi in self.query_instances:
