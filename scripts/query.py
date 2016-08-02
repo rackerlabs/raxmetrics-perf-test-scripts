@@ -213,7 +213,7 @@ class QueryThread(AbstractThread):
                                         self.num_threads(),
                                         thread_num)
 
-        # self.queries = self._create_metrics(agent_number, query_types)
+        self.queries = self._create_metrics(self.agent_num, self.query_types)
         self.slice = self.queries[start:end]
         self.query_fn_dict = dict(
             [[type(x), x.generate] for x in self.query_instances])
