@@ -285,15 +285,15 @@ class InitProcessTest(unittest.TestCase):
                          [[[1, 2], [1, 3], [1, 4]],
                           [[1, 5], [1, 6]]])
 
-    def test_init_process_query_agent_zero(self):
+    def test_init_process_query_create_all_metrics(self):
         agent_num = 0
         # confirm that the number of queries is correctly distributed across
         #  each thread in this worker process
-        query.QueryThread.create_metrics(agent_num, query.QueryThread.query_types)
-
+        queries = query.QueryThread._create_metrics(
+            agent_num, query.QueryThread.query_types)
 
         self.assertEqual(
-            query.QueryThread.queries,
+            queries,
             ([query.SinglePlotQuery] * self.single_plot_queries_agent0 +
              [query.MultiPlotQuery] * self.multi_plot_queries_agent0 +
              [query.SearchQuery] * self.search_queries_agent0 +
@@ -301,6 +301,12 @@ class InitProcessTest(unittest.TestCase):
              [query.EnumSinglePlotQuery] * self.enum_single_plot_queries_agent0 +
              [query.AnnotationsQuery] * self.annotation_queries_agent0) +
             [query.EnumMultiPlotQuery] * self.enum_multi_plot_queries_agent0)
+
+    def test_init_process_query_agent_zero(self):
+        agent_num = 0
+        # confirm that the number of queries is correctly distributed across
+        #  each thread in this worker process
+        query.QueryThread.create_metrics(agent_num, query.QueryThread.query_types)
 
         thread = query.QueryThread(0, agent_num, requests_by_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
