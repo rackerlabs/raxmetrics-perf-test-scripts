@@ -96,6 +96,12 @@ class AbstractThread(object):
         return time.sleep(x / 1000)
 
 
+def shuffled(unshuffled):
+    lst = list(unshuffled)
+    random.shuffle(lst)
+    return lst
+
+
 def generate_job_range(total_jobs, total_servers, server_num):
     """ Determine which subset of the total work the current server is to
     do.
@@ -124,8 +130,7 @@ def generate_metrics_tenants(num_tenants, metrics_per_tenant,
     for y in map(lambda x: gen_fn(x, metrics_per_tenant),
                  tenants_in_shard):
         metrics += y
-    random.shuffle(metrics)
-    return metrics
+    return shuffled(metrics)
 
 
 def generate_metric_name(metric_id, config=default_config):

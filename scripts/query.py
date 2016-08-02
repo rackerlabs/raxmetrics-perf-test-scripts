@@ -7,6 +7,7 @@ except ImportError:
 import itertools
 from abstract_thread import AbstractThread, default_config, generate_job_range
 from abstract_thread import generate_metric_name, generate_enum_metric_name
+from abstract_thread import shuffled
 
 
 class AbstractQuery(object):
@@ -212,8 +213,7 @@ class QueryThread(AbstractThread):
         for qtype in query_types:
             qq = qtype.create_metrics(agent_number)
             queries.extend(qq)
-        random.shuffle(queries)
-        return queries
+        return shuffled(queries)
 
     @classmethod
     def num_threads(cls, config=default_config):
