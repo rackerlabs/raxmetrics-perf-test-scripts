@@ -201,7 +201,6 @@ class EnumMultiPlotQuery(AbstractQuery):
 
 class QueryThread(AbstractThread):
     # The list of queries to be invoked across all threads in this worker
-    queries = []
 
     query_types = [SinglePlotQuery, MultiPlotQuery, SearchQuery,
                    EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery,
@@ -218,7 +217,7 @@ class QueryThread(AbstractThread):
 
     @classmethod
     def create_metrics(cls, agent_number, query_types):
-        cls.queries = cls._create_metrics(agent_number, query_types)
+        pass
 
     @classmethod
     def num_threads(cls, config=default_config):
