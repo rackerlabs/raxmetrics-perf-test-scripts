@@ -357,12 +357,13 @@ class InitProcessTest(unittest.TestCase):
 
     def test_init_process_query_agent_one(self):
         agent_num = 1
-        query.QueryThread.create_metrics(agent_num, query.QueryThread.query_types)
+        queries = query.QueryThread._create_metrics(
+            agent_num, query.QueryThread.query_types)
 
         # confirm that the correct batches of queries are created for worker 1
 
         self.assertEqual(
-            query.QueryThread.queries,
+            queries,
             ([query.SinglePlotQuery] * self.single_plot_queries_agent1 +
              [query.MultiPlotQuery] * self.multi_plot_queries_agent1 +
              [query.SearchQuery] * self.search_queries_agent1 +
