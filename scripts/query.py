@@ -221,7 +221,7 @@ class QueryThread(AbstractThread):
 
     def __init__(self, thread_num, agent_num, requests_by_query_type, config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
-        self.queries = self._create_metrics(self.agent_num, self.query_types)
+        queries = self._create_metrics(self.agent_num, self.query_types)
         self.query_instances = [
             SinglePlotQuery(thread_num, self.num_threads(), self.config),
             MultiPlotQuery(thread_num, self.num_threads(), self.config),
@@ -240,7 +240,7 @@ class QueryThread(AbstractThread):
                                         self.num_threads(),
                                         thread_num)
 
-        self.slice = self.queries[start:end]
+        self.slice = queries[start:end]
         self.query_fn_dict = {
             SinglePlotQuery:        self.query_instances[0].generate,
             MultiPlotQuery:         self.query_instances[1].generate,
