@@ -13,19 +13,33 @@ class AbstractQuery(object):
     one_day = (1000 * 60 * 60 * 24)
 
     query_interval_name = None
-    num_queries_for_current_node = 0
+
+    @staticmethod
+    def _get_num_queries_for_current_node(agent_number, query_interval_name,
+                                          config=default_config):
+        total_queries = config[query_interval_name]
+        start_job, end_job = generate_job_range(
+            total_queries, config['num_nodes'], agent_number)
+        num_queries_for_current_node = end_job - start_job
+
+        return num_queries_for_current_node
+
+    @classmethod
+    def get_num_queries_for_current_node(cls, agent_number,
+                                         config=default_config):
+        return cls._get_num_queries_for_current_node(agent_number,
+                                                     cls.query_interval_name,
+                                                     config)
 
     @staticmethod
     def _create_metrics(cls, agent_number, query_interval_name,
                         config=default_config):
         # divide the total number of each query type into the ones need by this
         # worker
-        total_queries = config[query_interval_name]
-        start_job, end_job = generate_job_range(
-            total_queries, config['num_nodes'], agent_number)
-        num_queries_for_current_node = end_job - start_job
+        num = AbstractQuery._get_num_queries_for_current_node(
+            agent_number, query_interval_name, config)
 
-        return [cls] * num_queries_for_current_node
+        return [cls] * num
 
     @classmethod
     def create_metrics(cls, agent_number, config=default_config):
@@ -33,7 +47,6 @@ class AbstractQuery(object):
         # worker
         queries = cls._create_metrics(
             cls, agent_number, cls.query_interval_name, config)
-        cls.num_queries_for_current_node = len(queries)
         return queries
 
     def __init__(self, thread_num, num_threads, config):
@@ -226,7 +239,8 @@ class QueryThread(AbstractThread):
         self.requests_by_query_type = requests_by_query_type
         total_queries_for_current_node = 0
         for qi in self.query_instances:
-            total_queries_for_current_node += qi.num_queries_for_current_node
+            total_queries_for_current_node += \
+                qi.get_num_queries_for_current_node(agent_num)
         start, end = generate_job_range(total_queries_for_current_node,
                                         self.num_threads(),
                                         thread_num)
