@@ -213,7 +213,7 @@ class QueryThread(AbstractThread):
         for qtype in query_types:
             qq = qtype.create_metrics(agent_number)
             queries.extend(qq)
-        return shuffled(queries)
+        return queries
 
     @classmethod
     def num_threads(cls, config=default_config):
@@ -221,7 +221,8 @@ class QueryThread(AbstractThread):
 
     def __init__(self, thread_num, agent_num, requests_by_query_type, config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
-        queries = self._create_metrics(self.agent_num, self.query_types)
+        queries = shuffled(
+            self._create_metrics(self.agent_num, self.query_types))
         self.query_instances = [
             SinglePlotQuery(thread_num, self.num_threads(), self.config),
             MultiPlotQuery(thread_num, self.num_threads(), self.config),
