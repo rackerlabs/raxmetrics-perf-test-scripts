@@ -306,7 +306,6 @@ class InitProcessTest(unittest.TestCase):
         agent_num = 0
         # confirm that the number of queries is correctly distributed across
         #  each thread in this worker process
-        query.QueryThread.create_metrics(agent_num, query.QueryThread.query_types)
 
         thread = query.QueryThread(0, agent_num, requests_by_type)
         self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
