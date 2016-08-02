@@ -309,37 +309,37 @@ class InitProcessTest(unittest.TestCase):
 
         thread = query.QueryThread(0, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.SinglePlotQuery)
-        self.assertIs(thread.slice[1], query.SinglePlotQuery)
+        self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
+        self.assertIsInstance(thread.slice[1], query.SinglePlotQuery)
 
         thread = query.QueryThread(3, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.MultiPlotQuery)
-        self.assertIs(thread.slice[1], query.MultiPlotQuery)
+        self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
+        self.assertIsInstance(thread.slice[1], query.MultiPlotQuery)
 
         thread = query.QueryThread(6, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.SearchQuery)
-        self.assertIs(thread.slice[1], query.SearchQuery)
+        self.assertIsInstance(thread.slice[0], query.SearchQuery)
+        self.assertIsInstance(thread.slice[1], query.SearchQuery)
 
         thread = query.QueryThread(9, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.EnumSearchQuery)
-        self.assertIs(thread.slice[1], query.EnumSearchQuery)
+        self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
+        self.assertIsInstance(thread.slice[1], query.EnumSearchQuery)
 
         thread = query.QueryThread(12, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.EnumSinglePlotQuery)
-        self.assertIs(thread.slice[1], query.EnumSinglePlotQuery)
+        self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
+        self.assertIsInstance(thread.slice[1], query.EnumSinglePlotQuery)
 
         thread = query.QueryThread(14, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.AnnotationsQuery)
-        self.assertIs(thread.slice[1], query.AnnotationsQuery)
+        self.assertIsInstance(thread.slice[0], query.AnnotationsQuery)
+        self.assertIsInstance(thread.slice[1], query.AnnotationsQuery)
 
         thread = query.QueryThread(16, agent_num, requests_by_type)
         self.assertEqual(1, len(thread.slice))
-        self.assertIs(thread.slice[0], query.EnumMultiPlotQuery)
+        self.assertIsInstance(thread.slice[0], query.EnumMultiPlotQuery)
 
     def test_init_process_ingest_agent_one(self):
 
@@ -390,36 +390,36 @@ class InitProcessTest(unittest.TestCase):
 
         thread = query.QueryThread(0, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.SinglePlotQuery)
-        self.assertIs(thread.slice[1], query.SinglePlotQuery)
+        self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
+        self.assertIsInstance(thread.slice[1], query.SinglePlotQuery)
 
         thread = query.QueryThread(4, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.MultiPlotQuery)
-        self.assertIs(thread.slice[1], query.MultiPlotQuery)
+        self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
+        self.assertIsInstance(thread.slice[1], query.MultiPlotQuery)
 
         thread = query.QueryThread(6, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.SearchQuery)
-        self.assertIs(thread.slice[1], query.SearchQuery)
+        self.assertIsInstance(thread.slice[0], query.SearchQuery)
+        self.assertIsInstance(thread.slice[1], query.SearchQuery)
 
         thread = query.QueryThread(8, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.EnumSearchQuery)
-        self.assertIs(thread.slice[1], query.EnumSearchQuery)
+        self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
+        self.assertIsInstance(thread.slice[1], query.EnumSearchQuery)
 
         thread = query.QueryThread(10, agent_num, requests_by_type)
         self.assertEqual(2, len(thread.slice))
-        self.assertIs(thread.slice[0], query.EnumSinglePlotQuery)
-        self.assertIs(thread.slice[1], query.EnumSinglePlotQuery)
+        self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
+        self.assertIsInstance(thread.slice[1], query.EnumSinglePlotQuery)
 
         thread = query.QueryThread(12, agent_num, requests_by_type)
         self.assertEqual(1, len(thread.slice))
-        self.assertIs(thread.slice[0], query.AnnotationsQuery)
+        self.assertIsInstance(thread.slice[0], query.AnnotationsQuery)
 
         thread = query.QueryThread(16, agent_num, requests_by_type)
         self.assertEqual(1, len(thread.slice))
-        self.assertIs(thread.slice[0], query.EnumMultiPlotQuery)
+        self.assertIsInstance(thread.slice[0], query.EnumMultiPlotQuery)
 
     def tearDown(self):
         random.shuffle = self.real_shuffle

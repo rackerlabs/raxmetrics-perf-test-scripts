@@ -211,7 +211,8 @@ class QueryThread(AbstractThread):
     def _create_metrics(agent_number, query_types):
         queries = []
         for qtype in query_types:
-            qq = qtype.create_metrics(agent_number)
+            qq = qtype._create_metrics(qtype, agent_number,
+                                       qtype.query_interval_name)
             queries.extend(qq)
         return queries
 
@@ -221,8 +222,6 @@ class QueryThread(AbstractThread):
 
     def __init__(self, thread_num, agent_num, requests_by_query_type, config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
-        queries = shuffled(
-            self._create_metrics(self.agent_num, self.query_types))
         self.query_instances = [
             SinglePlotQuery(thread_num, self.num_threads(), self.config),
             MultiPlotQuery(thread_num, self.num_threads(), self.config),
@@ -232,6 +231,8 @@ class QueryThread(AbstractThread):
             AnnotationsQuery(thread_num, self.num_threads(), self.config),
             EnumMultiPlotQuery(thread_num, self.num_threads(), self.config)
         ]
+        queries = shuffled(
+            self._create_metrics(self.agent_num, self.query_instances))
         self.requests_by_query_type = requests_by_query_type
         total_queries_for_current_node = 0
         for qi in self.query_instances:
