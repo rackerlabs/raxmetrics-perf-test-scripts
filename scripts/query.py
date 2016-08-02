@@ -216,10 +216,6 @@ class QueryThread(AbstractThread):
         return queries
 
     @classmethod
-    def create_metrics(cls, agent_number, query_types):
-        pass
-
-    @classmethod
     def num_threads(cls, config=default_config):
         return config['query_concurrency']
 

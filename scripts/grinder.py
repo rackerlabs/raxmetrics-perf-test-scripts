@@ -48,7 +48,6 @@ class TestRunner:
         agent_number = grinder.getAgentNumber()
         IngestThread.create_metrics(agent_number)
         EnumIngestThread.create_metrics(agent_number)
-        QueryThread.create_metrics(agent_number, QueryThread.query_types)
         AnnotationsIngestThread.create_metrics(agent_number)
         self.thread = thread_manager.setup_thread(
             grinder.getThreadNumber(), agent_number)
