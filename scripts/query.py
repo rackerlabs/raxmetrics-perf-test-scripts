@@ -276,7 +276,8 @@ class QueryThread(AbstractThread):
             return None
         self.check_position(logger, len(self.slice))
         query_instance_or_type = self.slice[self.position]
-        if issubclass(query_instance_or_type, AbstractQuery):
+        if (type(query_instance_or_type) == type and
+                issubclass(query_instance_or_type, AbstractQuery)):
             query = self.query_instances_by_type[query_instance_or_type]
         else:
             query = query_instance_or_type

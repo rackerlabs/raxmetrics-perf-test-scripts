@@ -103,6 +103,9 @@ grinder_props = {
 
 
 class TestCaseBase(unittest.TestCase):
+    def assertIs(self, expr1, expr2, msg=None):
+        return self.assertTrue(expr1 is expr2, msg)
+
     def assertIsInstance(self, obj, cls, msg=None):
         return self.assertTrue(isinstance(obj, cls), msg)
 
@@ -803,8 +806,35 @@ class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
         agent_num = 0
         self.num_threads = query.QueryThread.num_threads()
-        self.thread = query.QueryThread(0, agent_num, requests_by_type)
+        self.requests_by_type = requests_by_type.copy()
+        self.thread = query.QueryThread(0, agent_num, self.requests_by_type)
         self.config = abstract_thread.default_config.copy()
+
+    def test_make_request_calls_generate(self):
+        generate_was_called = []
+        expected_result = object()
+
+        class DummyQueryType(query.AbstractQuery):
+            def generate(self, time, logger, request, *args, **kwargs):
+                generate_was_called.append(True)
+                return expected_result
+        self.requests_by_type[DummyQueryType] = MockReq()
+        random.randint = lambda x, y: 40
+        req = requests_by_type[query.SinglePlotQuery]
+        qq = DummyQueryType(0, self.num_threads, self.config)
+        self.thread.slice = [qq]
+        self.thread.position = 0
+
+        # pre-condition
+        self.assertEquals(0, self.thread.position)
+
+        # when
+        result = self.thread.make_request(pp)
+
+        # then
+        self.assertEquals([True], generate_was_called)
+        self.assertIs(expected_result, result)
+        self.assertEquals(1, self.thread.position)
 
     def test_query_make_SinglePlotQuery_request(self):
         random.randint = lambda x, y: 40
