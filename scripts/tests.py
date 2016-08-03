@@ -94,7 +94,11 @@ grinder_props = {
 }
 
 
-class InitProcessTest(unittest.TestCase):
+class TestCaseBase(unittest.TestCase):
+    pass
+
+
+class InitProcessTest(TestCaseBase):
     def setUp(self):
         self.real_shuffle = random.shuffle
         self.real_randint = random.randint
@@ -428,7 +432,7 @@ class InitProcessTest(unittest.TestCase):
         abstract_thread.AbstractThread.sleep = self.real_sleep
 
 
-class GeneratePayloadTest(unittest.TestCase):
+class GeneratePayloadTest(TestCaseBase):
     def setUp(self):
         self.real_shuffle = random.shuffle
         self.real_randint = random.randint
@@ -534,7 +538,7 @@ class GeneratePayloadTest(unittest.TestCase):
         abstract_thread.AbstractThread.sleep = self.real_sleep
 
 
-class MakeRequestsTest(unittest.TestCase):
+class MakeRequestsTest(TestCaseBase):
     def setUp(self):
         self.real_shuffle = random.shuffle
         self.real_randint = random.randint
