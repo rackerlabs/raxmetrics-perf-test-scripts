@@ -165,7 +165,6 @@ class InitProcessTest(TestCaseBase):
             self.test_config[
                 'annotations_queries_per_interval'] / self.num_query_nodes))
 
-
         self.single_plot_queries_agent1 = \
             self.test_config['singleplot_per_interval'] - \
             self.single_plot_queries_agent0
@@ -303,7 +302,8 @@ class InitProcessTest(TestCaseBase):
              [query.MultiPlotQuery] * self.multi_plot_queries_agent0 +
              [query.SearchQuery] * self.search_queries_agent0 +
              [query.EnumSearchQuery] * self.enum_search_queries_agent0 +
-             [query.EnumSinglePlotQuery] * self.enum_single_plot_queries_agent0 +
+             [query.EnumSinglePlotQuery] *
+                self.enum_single_plot_queries_agent0 +
              [query.AnnotationsQuery] * self.annotation_queries_agent0) +
             [query.EnumMultiPlotQuery] * self.enum_multi_plot_queries_agent0)
 
@@ -386,7 +386,8 @@ class InitProcessTest(TestCaseBase):
              [query.MultiPlotQuery] * self.multi_plot_queries_agent1 +
              [query.SearchQuery] * self.search_queries_agent1 +
              [query.EnumSearchQuery] * self.enum_search_queries_agent1 +
-             [query.EnumSinglePlotQuery] * self.enum_single_plot_queries_agent1 +
+             [query.EnumSinglePlotQuery] *
+                self.enum_single_plot_queries_agent1 +
              [query.AnnotationsQuery] * self.annotation_queries_agent1) +
             [query.EnumMultiPlotQuery] * self.enum_multi_plot_queries_agent1)
 
@@ -628,8 +629,9 @@ class MakeRequestsTest(TestCaseBase):
 
         url, payload = thread.make_request(pp)
         # confirm request generates proper URL and payload
-        self.assertEqual(url,
-                         'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
+        self.assertEqual(
+            url,
+            'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
 
         # confirm request increments position if not at end of report interval
@@ -649,11 +651,24 @@ class MakeRequestsTest(TestCaseBase):
         thread.slice = [[[2, 0], [2, 1]]]
         thread.position = 0
         thread.finish_time = 10000
-        valid_payload = [{'tenantId': '2', 'timestamp': 1000, 'enums': [
-            {'value': 'e_g_0_0', 'name': generate_enum_metric_name(0)}]},
-                         {'tenantId': '2', 'timestamp': 1000, 'enums': [
-                             {'value': 'e_g_1_0',
-                              'name': generate_enum_metric_name(1)}]}]
+        valid_payload = [
+            {
+                'tenantId': '2',
+                'timestamp': 1000,
+                'enums': [{
+                    'value': 'e_g_0_0',
+                    'name': generate_enum_metric_name(0)
+                }]
+            },
+            {
+                'tenantId': '2',
+                'timestamp': 1000,
+                'enums': [{
+                    'value': 'e_g_1_0',
+                    'name': generate_enum_metric_name(1)
+                }]
+            }
+        ]
 
         url, payload = thread.make_request(pp)
         # confirm request generates proper URL and payload
