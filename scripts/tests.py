@@ -95,7 +95,8 @@ grinder_props = {
 
 
 class TestCaseBase(unittest.TestCase):
-    pass
+    def assertIsInstance(self, obj, cls, msg=None):
+        return self.assertTrue(isinstance(obj, cls), msg)
 
 
 class InitProcessTest(TestCaseBase):
