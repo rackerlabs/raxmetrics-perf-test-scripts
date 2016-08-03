@@ -277,7 +277,7 @@ class QueryThread(AbstractThread):
             self.sleep(1000000)
             return None
         self.check_position(logger, len(self.slice))
-        query_instance_or_type = self.slice[self.position]
+        query_instance_or_type = self.get_next_item()
         if (type(query_instance_or_type) == type and
                 issubclass(query_instance_or_type, AbstractQuery)):
             query = self.query_instances_by_type[query_instance_or_type]
@@ -286,5 +286,4 @@ class QueryThread(AbstractThread):
         request = self.requests_by_query_type[type(query)]
         result = query.generate(
             int(self.time()), logger, request)
-        self.position += 1
         return result

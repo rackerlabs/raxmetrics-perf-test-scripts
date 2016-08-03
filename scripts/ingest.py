@@ -96,8 +96,7 @@ class IngestThread(AbstractThread):
             self.sleep(1000000)
             return None
         self.check_position(logger, len(self.slice))
-        payload = self.generate_payload(int(self.time()),
-                                        self.slice[self.position])
-        self.position += 1
+        batch = self.get_next_item()
+        payload = self.generate_payload(int(self.time()), batch)
         result = self.request.POST(self.ingest_url(), payload)
         return result

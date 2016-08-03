@@ -74,6 +74,11 @@ class AbstractThread(object):
         unit_number = tenant_id % 6
         return units_map[unit_number]
 
+    def get_next_item(self):
+        payload = self.slice[self.position]
+        self.position += 1
+        return payload
+
     def check_position(self, logger, max_position):
         """Sleep if finished all work for report interval"""
         if self.position >= max_position:

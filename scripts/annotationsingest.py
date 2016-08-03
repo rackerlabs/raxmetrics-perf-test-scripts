@@ -69,11 +69,10 @@ class AnnotationsIngestThread(AbstractThread):
             self.sleep(1000000)
             return None
         self.check_position(logger, len(self.slice))
-        batch = self.slice[self.position]
+        batch = self.get_next_item()
         tenant_id = batch[0]
         metric_id = batch[1]
         payload = self.generate_payload(int(self.time()), metric_id)
 
-        self.position += 1
         result = self.request.POST(self.ingest_url(tenant_id), payload)
         return result
