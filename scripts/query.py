@@ -252,15 +252,6 @@ class QueryThread(AbstractThread):
                                         thread_num)
 
         self.slice = queries[start:end]
-        self.query_fn_dict = {
-            SinglePlotQuery:        self.query_instances[0].generate,
-            MultiPlotQuery:         self.query_instances[1].generate,
-            SearchQuery:            self.query_instances[2].generate,
-            EnumSearchQuery:        self.query_instances[3].generate,
-            EnumSinglePlotQuery:    self.query_instances[4].generate,
-            AnnotationsQuery:       self.query_instances[5].generate,
-            EnumMultiPlotQuery:     self.query_instances[6].generate,
-        }
 
     def make_request(self, logger):
         if len(self.slice) == 0:
@@ -274,7 +265,7 @@ class QueryThread(AbstractThread):
         else:
             query = query_instance_or_type
         request = self.requests_by_query_type[type(query)]
-        result = self.query_fn_dict[type(query)](
+        result = query.generate(
             int(self.time()), logger, request)
         self.position += 1
         return result
