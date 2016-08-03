@@ -782,7 +782,8 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
         url, payload = thread.make_request(pp)
         # confirm request generates proper URL and payload
         self.assertEqual(url,
-                         'http://metrics-ingest.example.org/v2.0/tenantId/ingest/aggregated/multi')
+                         'http://metrics-ingest.example.org/v2.0/tenantId/' +
+                         'ingest/aggregated/multi')
         self.assertEqual(eval(payload), valid_payload)
 
         # confirm request increments position if not at end of report interval
@@ -843,7 +844,9 @@ class MakeQueryRequestsTest(TestCaseBase):
         result = qq.generate(1000, None, req, 0,
                              'org.example.metric.metric123')
         self.assertEqual(req.get_url,
-                         "http://metrics.example.org/v2.0/0/views/org.example.metric.metric123?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/0/views/" +
+                         "org.example.metric.metric123?from=-86399000&" +
+                         "to=1000&resolution=FULL")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_SearchQuery_request(self):
@@ -852,7 +855,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         result = qq.generate(1000, None, req, 10,
                              'org.example.metric.*')
         self.assertEqual(req.get_url,
-                         "http://metrics.example.org/v2.0/10/metrics/search?query=org.example.metric.*")
+                         "http://metrics.example.org/v2.0/10/metrics/search?" +
+                         "query=org.example.metric.*")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_MultiPlotQuery_request(self):
@@ -873,7 +877,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         result = qq.generate(1000, None, req, 20,
                              payload_sent)
         self.assertEqual(req.post_url,
-                         "http://metrics.example.org/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/20/views?" +
+                         "from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(req.post_payload, payload_sent)
         self.assertEquals((req.post_url, req.post_payload), result)
 
@@ -882,7 +887,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         qq = query.AnnotationsQuery(0, self.num_threads, self.config)
         result = qq.generate(1000, None, req, 30)
         self.assertEqual(req.get_url,
-                         "http://metrics.example.org/v2.0/30/events/getEvents?from=-86399000&until=1000")
+                         "http://metrics.example.org/v2.0/30/events/" +
+                         "getEvents?from=-86399000&until=1000")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_EnumSearchQuery_request(self):
@@ -890,7 +896,9 @@ class MakeQueryRequestsTest(TestCaseBase):
         qq = query.EnumSearchQuery(0, self.num_threads, self.config)
         result = qq.generate(1000, None, req, 40)
         self.assertEqual(req.get_url,
-                         "http://metrics.example.org/v2.0/40/metrics/search?query=enum_grinder_org.example.metric.*&include_enum_values=true")
+                         "http://metrics.example.org/v2.0/40/metrics/search?" +
+                         "query=enum_grinder_org.example.metric.*&" +
+                         "include_enum_values=true")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_EnumSinglePlotQuery_request(self):
@@ -899,7 +907,9 @@ class MakeQueryRequestsTest(TestCaseBase):
         result = qq.generate(1000, None, req, 50,
                              'enum_grinder_org.example.metric.metric456')
         self.assertEqual(req.get_url,
-                         "http://metrics.example.org/v2.0/50/views/enum_grinder_org.example.metric.metric456?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/50/views/" +
+                         "enum_grinder_org.example.metric.metric456?" +
+                         "from=-86399000&to=1000&resolution=FULL")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_EnumMultiPlotQuery_request(self):
@@ -914,7 +924,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         result = qq.generate(1000, None, req, 4,
                              payload_sent)
         self.assertEqual(req.post_url,
-                         "http://metrics.example.org/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/4/views?" +
+                         "from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(req.post_payload, payload_sent)
         self.assertEquals((req.post_url, req.post_payload), result)
 

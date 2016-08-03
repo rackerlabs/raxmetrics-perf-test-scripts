@@ -62,7 +62,8 @@ class AbstractQuery(object):
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_per_interval'
 
-    def generate(self, time, logger, request, tenant_id=None, metric_name=None):
+    def generate(self, time, logger, request, tenant_id=None,
+                 metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if metric_name is None:
@@ -236,7 +237,8 @@ class QueryThread(AbstractThread):
     def num_threads(cls, config=default_config):
         return config['query_concurrency']
 
-    def __init__(self, thread_num, agent_num, requests_by_query_type, config=None):
+    def __init__(self, thread_num, agent_num, requests_by_query_type,
+                 config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         self.query_instances = [
             SinglePlotQuery(thread_num, self.num_threads(), self.config),
