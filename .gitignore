@@ -5,3 +5,4 @@
 _scratch*
 dependencies
 resources/logs/
+htmlcov/
