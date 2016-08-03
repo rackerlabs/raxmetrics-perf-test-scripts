@@ -4,7 +4,7 @@ import random
 import time
 
 default_config = {
-    'name_fmt': "t4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+    'name_fmt': "org.example.metric.%d",
     'report_interval': (1000 * 10),
     'annotations_num_tenants': 5,
     'num_tenants': 4,
