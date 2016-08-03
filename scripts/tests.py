@@ -116,12 +116,6 @@ class InitProcessTest(TestCaseBase):
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
         self.tm = tm.ThreadManager(grinder_props, requests_by_type)
-        req = MockReq()
-        ingest.IngestThread.request = req
-        ingestenum.EnumIngestThread.request = req
-        annotationsingest.AnnotationsIngestThread.request = req
-        for x in query.QueryThread.query_types:
-            x.query_request = req
         random.shuffle = lambda x: None
         random.randint = lambda x, y: 0
         abstract_thread.AbstractThread.time = lambda x: 1000
@@ -450,13 +444,6 @@ class GeneratePayloadTest(TestCaseBase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
-        req = MockReq()
-        ingest.IngestThread.request = req
-        ingestenum.EnumIngestThread.request = req
-        annotationsingest.AnnotationsIngestThread.request = req
-        for x in query.QueryThread.query_types:
-            x.query_request = req
         random.shuffle = lambda x: None
         random.randint = lambda x, y: 0
         abstract_thread.AbstractThread.time = lambda x: 1000
@@ -563,13 +550,6 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
-        req = MockReq()
-        ingest.IngestThread.request = req
-        ingestenum.EnumIngestThread.request = req
-        annotationsingest.AnnotationsIngestThread.request = req
-        for x in query.QueryThread.query_types:
-            x.query_request = req
         random.shuffle = lambda x: None
         random.randint = lambda x, y: 0
         abstract_thread.AbstractThread.time = lambda x: 1000
@@ -642,13 +622,6 @@ class MakeIngestRequestsTest(TestCaseBase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
-        req = MockReq()
-        ingest.IngestThread.request = req
-        ingestenum.EnumIngestThread.request = req
-        annotationsingest.AnnotationsIngestThread.request = req
-        for x in query.QueryThread.query_types:
-            x.query_request = req
         random.shuffle = lambda x: None
         random.randint = lambda x, y: 0
         abstract_thread.AbstractThread.time = lambda x: 1000
@@ -723,13 +696,6 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
-        req = MockReq()
-        ingest.IngestThread.request = req
-        ingestenum.EnumIngestThread.request = req
-        annotationsingest.AnnotationsIngestThread.request = req
-        for x in query.QueryThread.query_types:
-            x.query_request = req
         random.shuffle = lambda x: None
         random.randint = lambda x, y: 0
         abstract_thread.AbstractThread.time = lambda x: 1000
