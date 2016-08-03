@@ -6,7 +6,7 @@ try:
 except ImportError:
     import json
 from abstract_thread import AbstractThread, default_config, generate_job_range
-from abstract_thread import generate_metrics_tenants, generate_enum_metric_name
+from abstract_thread import generate_metrics_tenants
 
 
 class EnumIngestThread(AbstractThread):
@@ -58,6 +58,11 @@ class EnumIngestThread(AbstractThread):
             b.append(metrics[i:i + batch_size])
         return b
 
+    # TODO: Add enum prefix to config
+    @staticmethod
+    def generate_enum_metric_name(metric_id, config=default_config):
+        return "enum_grinder_" + config['name_fmt'] % metric_id
+
     def __init__(self, thread_num, agent_num, request, config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
@@ -72,7 +77,7 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_metric(self, time, tenant_id, metric_id):
         return {'tenantId': str(tenant_id),
                 'timestamp': time,
-                'enums': [{'name': generate_enum_metric_name(metric_id),
+                'enums': [{'name': self.generate_enum_metric_name(metric_id),
                            'value': 'e_g_' + str(
                                metric_id) + self.generate_enum_suffix()}]
                 }

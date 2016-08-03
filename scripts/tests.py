@@ -13,7 +13,6 @@ import query
 import annotationsingest
 import abstract_thread
 import thread_manager as tm
-from abstract_thread import AbstractThread, generate_enum_metric_name
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -521,12 +520,12 @@ class GeneratePayloadTest(TestCaseBase):
         valid_payload = [{u'timestamp': 1,
                           u'tenantId': u'2',
                           u'enums': [{u'value': u'e_g_1_0',
-                                      u'name': generate_enum_metric_name(
+                                      u'name': ingestenum.EnumIngestThread.generate_enum_metric_name(
                                           1)}]},
                          {u'timestamp': 1,
                           u'tenantId': u'2',
                           u'enums': [{u'value': u'e_g_2_0',
-                                      u'name': generate_enum_metric_name(
+                                      u'name': ingestenum.EnumIngestThread.generate_enum_metric_name(
                                           2)}]}
                          ]
         self.assertEqual(payload, valid_payload)
@@ -766,7 +765,8 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                 'timestamp': 1000,
                 'enums': [{
                     'value': 'e_g_0_0',
-                    'name': generate_enum_metric_name(0)
+                    'name': ingestenum.EnumIngestThread.
+                        generate_enum_metric_name(0)
                 }]
             },
             {
@@ -774,7 +774,8 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                 'timestamp': 1000,
                 'enums': [{
                     'value': 'e_g_1_0',
-                    'name': generate_enum_metric_name(1)
+                    'name': ingestenum.EnumIngestThread.
+                        generate_enum_metric_name(1)
                 }]
             }
         ]

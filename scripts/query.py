@@ -4,10 +4,10 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-import itertools
 from abstract_thread import AbstractThread, default_config, generate_job_range
-from abstract_thread import generate_metric_name, generate_enum_metric_name
+from abstract_thread import generate_metric_name
 from abstract_thread import shuffled
+from ingestenum import EnumIngestThread
 
 
 class AbstractQuery(object):
@@ -175,7 +175,7 @@ class EnumSinglePlotQuery(AbstractQuery):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if metric_name is None:
-            metric_name = generate_enum_metric_name(
+            metric_name = EnumIngestThread.generate_enum_metric_name(
                 random.randint(0, self.config['enum_metrics_per_tenant']))
         to = time
         frm = time - self.one_day
@@ -196,7 +196,7 @@ class EnumMultiPlotQuery(AbstractQuery):
         metrics_count = min(self.config['max_multiplot_metrics'],
                             random.randint(0, self.config[
                                 'enum_metrics_per_tenant']))
-        metrics_list = map(generate_enum_metric_name,
+        metrics_list = map(EnumIngestThread.generate_enum_metric_name,
                            range(metrics_count))
         return json.dumps(metrics_list)
 

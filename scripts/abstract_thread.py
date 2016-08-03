@@ -131,6 +131,3 @@ def generate_metric_name(metric_id, config=default_config):
     return config['name_fmt'] % metric_id
 
 
-# TODO: Add enum prefix to config
-def generate_enum_metric_name(metric_id, config=default_config):
-    return "enum_grinder_" + config['name_fmt'] % metric_id
