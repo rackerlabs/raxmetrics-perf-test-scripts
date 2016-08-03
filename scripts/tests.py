@@ -80,8 +80,8 @@ grinder_props = {
     'grinder.bf.annotations_per_tenant': '5',
     'grinder.bf.annotations_concurrency': '5',
     'grinder.bf.num_nodes': '1',
-    'grinder.bf.url': 'http://qe01.metrics-ingest.api.rackspacecloud.com',
-    'grinder.bf.query_url': 'http://qe01.metrics.api.rackspacecloud.com',
+    'grinder.bf.url': 'http://metrics-ingest.example.org',
+    'grinder.bf.query_url': 'http://metrics.example.org',
     'grinder.bf.query_concurrency': '10',
     'grinder.bf.max_multiplot_metrics': '10',
     'grinder.bf.search_queries_per_interval': '10',
@@ -597,7 +597,7 @@ class MakeRequestsTest(TestCaseBase):
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
-            'http://qe01.metrics-ingest.api.rackspacecloud.com/v2.0/2/events')
+            'http://metrics-ingest.example.org/v2.0/2/events')
         self.assertEqual(eval(payload), valid_payload)
 
         # confirm request increments position if not at end of report interval
@@ -629,7 +629,7 @@ class MakeRequestsTest(TestCaseBase):
         url, payload = thread.make_request(pp)
         # confirm request generates proper URL and payload
         self.assertEqual(url,
-                         'http://qe01.metrics-ingest.api.rackspacecloud.com/v2.0/tenantId/ingest/multi')
+                         'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
 
         # confirm request increments position if not at end of report interval
@@ -658,7 +658,7 @@ class MakeRequestsTest(TestCaseBase):
         url, payload = thread.make_request(pp)
         # confirm request generates proper URL and payload
         self.assertEqual(url,
-                         'http://qe01.metrics-ingest.api.rackspacecloud.com/v2.0/tenantId/ingest/aggregated/multi')
+                         'http://metrics-ingest.example.org/v2.0/tenantId/ingest/aggregated/multi')
         self.assertEqual(eval(payload), valid_payload)
 
         # confirm request increments position if not at end of report interval
@@ -681,17 +681,17 @@ class MakeRequestsTest(TestCaseBase):
         thread.position = 0
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/0/views/org.example.metric.0?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/0/views/org.example.metric.0?from=-86399000&to=1000&resolution=FULL")
 
         random.randint = lambda x, y: 10
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/10/metrics/search?query=org.example.metric.*")
+                         "http://metrics.example.org/v2.0/10/metrics/search?query=org.example.metric.*")
 
         random.randint = lambda x, y: 20
         thread.make_request(pp)
         self.assertEqual(post_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(eval(post_payload), [
             "org.example.metric.0",
             "org.example.metric.1",
@@ -707,22 +707,22 @@ class MakeRequestsTest(TestCaseBase):
         random.randint = lambda x, y: 30
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/30/events/getEvents?from=-86399000&until=1000")
+                         "http://metrics.example.org/v2.0/30/events/getEvents?from=-86399000&until=1000")
 
         random.randint = lambda x, y: 40
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/40/metrics/search?query=enum_grinder_org.example.metric.*&include_enum_values=true")
+                         "http://metrics.example.org/v2.0/40/metrics/search?query=enum_grinder_org.example.metric.*&include_enum_values=true")
 
         random.randint = lambda x, y: 50
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/50/views/enum_grinder_org.example.metric.50?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/50/views/enum_grinder_org.example.metric.50?from=-86399000&to=1000&resolution=FULL")
 
         random.randint = lambda x, y: 4
         thread.make_request(pp)
         self.assertEqual(post_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
+                         "http://metrics.example.org/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(eval(post_payload), [
             "enum_grinder_org.example.metric.0",
             "enum_grinder_org.example.metric.1",
