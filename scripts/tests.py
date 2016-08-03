@@ -735,25 +735,35 @@ class MakeQueryRequestsTest(TestCaseBase):
 
         ingest.default_config.update(self.test_config)
 
-    def test_query_make_request(self):
         agent_num = 0
-        thread = query.QueryThread(0, agent_num, requests_by_type)
-        thread.slice = [query.SinglePlotQuery, query.SearchQuery,
+        self.thread = query.QueryThread(0, agent_num, requests_by_type)
+        self.thread.slice = [query.SinglePlotQuery, query.SearchQuery,
                         query.MultiPlotQuery, query.AnnotationsQuery,
                         query.EnumSearchQuery, query.EnumSinglePlotQuery,
                         query.EnumMultiPlotQuery]
-        thread.position = 0
-        thread.make_request(pp)
+
+    def test_query_make_request_0(self):
+        self.thread.position = 0
+        self.assertEquals(0, self.thread.position)
+        self.thread.make_request(pp)
         self.assertEqual(get_url,
                          "http://metrics.example.org/v2.0/0/views/org.example.metric.0?from=-86399000&to=1000&resolution=FULL")
+        self.assertEquals(1, self.thread.position)
 
+    def test_query_make_request_1(self):
         random.randint = lambda x, y: 10
-        thread.make_request(pp)
+        self.thread.position = 1
+        self.assertEquals(1, self.thread.position)
+        self.thread.make_request(pp)
         self.assertEqual(get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?query=org.example.metric.*")
+        self.assertEquals(2, self.thread.position)
 
+    def test_query_make_request_2(self):
         random.randint = lambda x, y: 20
-        thread.make_request(pp)
+        self.thread.position = 2
+        self.assertEquals(2, self.thread.position)
+        self.thread.make_request(pp)
         self.assertEqual(post_url,
                          "http://metrics.example.org/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(eval(post_payload), [
@@ -767,24 +777,40 @@ class MakeQueryRequestsTest(TestCaseBase):
             "org.example.metric.7",
             "org.example.metric.8",
             "org.example.metric.9"])
+        self.assertEquals(3, self.thread.position)
 
+    def test_query_make_request_3(self):
         random.randint = lambda x, y: 30
-        thread.make_request(pp)
+        self.thread.position = 3
+        self.assertEquals(3, self.thread.position)
+        self.thread.make_request(pp)
         self.assertEqual(get_url,
                          "http://metrics.example.org/v2.0/30/events/getEvents?from=-86399000&until=1000")
+        self.assertEquals(4, self.thread.position)
 
+    def test_query_make_request_4(self):
         random.randint = lambda x, y: 40
-        thread.make_request(pp)
+        self.thread.position = 4
+        self.assertEquals(4, self.thread.position)
+        self.thread.make_request(pp)
         self.assertEqual(get_url,
                          "http://metrics.example.org/v2.0/40/metrics/search?query=enum_grinder_org.example.metric.*&include_enum_values=true")
+        self.assertEquals(5, self.thread.position)
 
+    def test_query_make_request_5(self):
         random.randint = lambda x, y: 50
-        thread.make_request(pp)
+        self.thread.position = 5
+        self.assertEquals(5, self.thread.position)
+        self.thread.make_request(pp)
         self.assertEqual(get_url,
                          "http://metrics.example.org/v2.0/50/views/enum_grinder_org.example.metric.50?from=-86399000&to=1000&resolution=FULL")
+        self.assertEquals(6, self.thread.position)
 
+    def test_query_make_request_6(self):
         random.randint = lambda x, y: 4
-        thread.make_request(pp)
+        self.thread.position = 6
+        self.assertEquals(6, self.thread.position)
+        self.thread.make_request(pp)
         self.assertEqual(post_url,
                          "http://metrics.example.org/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(eval(post_payload), [
@@ -792,6 +818,7 @@ class MakeQueryRequestsTest(TestCaseBase):
             "enum_grinder_org.example.metric.1",
             "enum_grinder_org.example.metric.2",
             "enum_grinder_org.example.metric.3"])
+        self.assertEquals(7, self.thread.position)
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
