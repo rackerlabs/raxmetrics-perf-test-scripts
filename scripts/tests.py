@@ -67,7 +67,7 @@ grinder_props = {
     'grinder.threads': '45',
     'grinder.useConsole': 'false',
     'grinder.logDirectory': 'resources/logs',
-    'grinder.bf.name_fmt': 't4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d',
+    'grinder.bf.name_fmt': 'org.example.metric.%d',
     'grinder.bf.report_interval': '10000',
     'grinder.bf.annotations_num_tenants': '4',
     'grinder.bf.num_tenants': '4',
@@ -136,7 +136,7 @@ class InitProcessTest(TestCaseBase):
                             'enum_single_plot_queries_per_interval': 10,
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
-                            'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                            'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2}
 
         ingest.default_config.update(self.test_config)
@@ -470,7 +470,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'enum_single_plot_queries_per_interval': 10,
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
-                            'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                            'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2}
 
         ingest.default_config.update(self.test_config)
@@ -482,19 +482,19 @@ class GeneratePayloadTest(TestCaseBase):
         payload = json.loads(
             thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
         valid_payload = [{u'collectionTime': 0,
-                          u'metricName': u'int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3',
+                          u'metricName': u'org.example.metric.3',
                           u'metricValue': 0,
                           u'tenantId': u'2',
                           u'ttlInSeconds': 172800,
                           u'unit': u'days'},
                          {u'collectionTime': 0,
-                          u'metricName': u'int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.4',
+                          u'metricName': u'org.example.metric.4',
                           u'metricValue': 0,
                           u'tenantId': u'2',
                           u'ttlInSeconds': 172800,
                           u'unit': u'days'},
                          {u'collectionTime': 0,
-                          u'metricName': u'int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.5',
+                          u'metricName': u'org.example.metric.5',
                           u'metricValue': 0,
                           u'tenantId': u'2',
                           u'ttlInSeconds': 172800,
@@ -526,7 +526,7 @@ class GeneratePayloadTest(TestCaseBase):
             0, agent_num, MockReq())
         payload = json.loads(thread.generate_payload(0, 3))
         valid_payload = {
-            'what': 'annotation int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3',
+            'what': 'annotation org.example.metric.3',
             'when': 0,
             'tags': 'tag',
             'data': 'data'}
@@ -576,7 +576,7 @@ class MakeRequestsTest(TestCaseBase):
                             'enum_single_plot_queries_per_interval': 10,
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
-                            'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
+                            'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2}
 
         ingest.default_config.update(self.test_config)
@@ -590,7 +590,7 @@ class MakeRequestsTest(TestCaseBase):
         thread.position = 0
         thread.finish_time = 10000
         valid_payload = {
-            "what": "annotation int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0",
+            "what": "annotation org.example.metric.0",
             "when": 1000, "tags": "tag", "data": "data"}
 
         url, payload = thread.make_request(pp)
@@ -621,10 +621,10 @@ class MakeRequestsTest(TestCaseBase):
         valid_payload = [
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
-             "metricName": "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0"},
+             "metricName": "org.example.metric.0"},
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
-             "metricName": "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.1"}]
+             "metricName": "org.example.metric.1"}]
 
         url, payload = thread.make_request(pp)
         # confirm request generates proper URL and payload
@@ -681,28 +681,28 @@ class MakeRequestsTest(TestCaseBase):
         thread.position = 0
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/0/views/int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0?from=-86399000&to=1000&resolution=FULL")
+                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/0/views/org.example.metric.0?from=-86399000&to=1000&resolution=FULL")
 
         random.randint = lambda x, y: 10
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/10/metrics/search?query=int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.*")
+                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/10/metrics/search?query=org.example.metric.*")
 
         random.randint = lambda x, y: 20
         thread.make_request(pp)
         self.assertEqual(post_url,
                          "http://qe01.metrics.api.rackspacecloud.com/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(eval(post_payload), [
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.1",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.2",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.4",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.5",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.6",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.7",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.8",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.9"])
+            "org.example.metric.0",
+            "org.example.metric.1",
+            "org.example.metric.2",
+            "org.example.metric.3",
+            "org.example.metric.4",
+            "org.example.metric.5",
+            "org.example.metric.6",
+            "org.example.metric.7",
+            "org.example.metric.8",
+            "org.example.metric.9"])
 
         random.randint = lambda x, y: 30
         thread.make_request(pp)
@@ -712,22 +712,22 @@ class MakeRequestsTest(TestCaseBase):
         random.randint = lambda x, y: 40
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/40/metrics/search?query=enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.*&include_enum_values=true")
+                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/40/metrics/search?query=enum_grinder_org.example.metric.*&include_enum_values=true")
 
         random.randint = lambda x, y: 50
         thread.make_request(pp)
         self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/50/views/enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.50?from=-86399000&to=1000&resolution=FULL")
+                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/50/views/enum_grinder_org.example.metric.50?from=-86399000&to=1000&resolution=FULL")
 
         random.randint = lambda x, y: 4
         thread.make_request(pp)
         self.assertEqual(post_url,
                          "http://qe01.metrics.api.rackspacecloud.com/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(eval(post_payload), [
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0",
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.1",
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.2",
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3"])
+            "enum_grinder_org.example.metric.0",
+            "enum_grinder_org.example.metric.1",
+            "enum_grinder_org.example.metric.2",
+            "enum_grinder_org.example.metric.3"])
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
