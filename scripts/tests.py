@@ -749,30 +749,28 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.config = abstract_thread.default_config.copy()
 
     def test_query_make_SinglePlotQuery_request(self):
+        random.randint = lambda x, y: 40
         req = requests_by_type[query.SinglePlotQuery]
         qq = query.SinglePlotQuery(0, self.num_threads, self.config)
-        result = qq.generate(int(self.thread.time()), None, req)
-        self.assertEqual(get_url,
-                         "http://metrics.example.org/v2.0/0/views/org.example.metric.0?from=-86399000&to=1000&resolution=FULL")
+        result = qq.generate(int(self.thread.time()), None, req, 0,
+                             'org.example.metric.metric123')
+        self.assertEqual(req.get_url,
+                         "http://metrics.example.org/v2.0/0/views/org.example.metric.metric123?from=-86399000&to=1000&resolution=FULL")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_SearchQuery_request(self):
         req = requests_by_type[query.SearchQuery]
         qq = query.SearchQuery(0, self.num_threads, self.config)
-        random.randint = lambda x, y: 10
-        result = qq.generate(int(self.thread.time()), None, req)
-        self.assertEqual(get_url,
+        result = qq.generate(int(self.thread.time()), None, req, 10,
+                             'org.example.metric.*')
+        self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?query=org.example.metric.*")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_MultiPlotQuery_request(self):
         req = requests_by_type[query.MultiPlotQuery]
         qq = query.MultiPlotQuery(0, self.num_threads, self.config)
-        random.randint = lambda x, y: 20
-        result = qq.generate(int(self.thread.time()), None, req)
-        self.assertEqual(post_url,
-                         "http://metrics.example.org/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
-        self.assertEqual(eval(post_payload), [
+        payload_sent = json.dumps([
             "org.example.metric.0",
             "org.example.metric.1",
             "org.example.metric.2",
@@ -782,48 +780,54 @@ class MakeQueryRequestsTest(TestCaseBase):
             "org.example.metric.6",
             "org.example.metric.7",
             "org.example.metric.8",
-            "org.example.metric.9"])
+            "org.example.metric.9"
+        ])
+        result = qq.generate(int(self.thread.time()), None, req, 20,
+                             payload_sent)
+        self.assertEqual(req.post_url,
+                         "http://metrics.example.org/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
+        self.assertEqual(req.post_payload, payload_sent)
         self.assertEquals((req.post_url, req.post_payload), result)
 
     def test_query_make_AnnotationsQuery_request(self):
         req = requests_by_type[query.AnnotationsQuery]
         qq = query.AnnotationsQuery(0, self.num_threads, self.config)
-        random.randint = lambda x, y: 30
-        result = qq.generate(int(self.thread.time()), None, req)
-        self.assertEqual(get_url,
+        result = qq.generate(int(self.thread.time()), None, req, 30)
+        self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/getEvents?from=-86399000&until=1000")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_EnumSearchQuery_request(self):
         req = requests_by_type[query.EnumSearchQuery]
         qq = query.EnumSearchQuery(0, self.num_threads, self.config)
-        random.randint = lambda x, y: 40
-        result = qq.generate(int(self.thread.time()), None, req)
-        self.assertEqual(get_url,
+        result = qq.generate(int(self.thread.time()), None, req, 40)
+        self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/40/metrics/search?query=enum_grinder_org.example.metric.*&include_enum_values=true")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_EnumSinglePlotQuery_request(self):
         req = requests_by_type[query.EnumSinglePlotQuery]
         qq = query.EnumSinglePlotQuery(0, self.num_threads, self.config)
-        random.randint = lambda x, y: 50
-        result = qq.generate(int(self.thread.time()), None, req)
-        self.assertEqual(get_url,
-                         "http://metrics.example.org/v2.0/50/views/enum_grinder_org.example.metric.50?from=-86399000&to=1000&resolution=FULL")
+        result = qq.generate(int(self.thread.time()), None, req, 50,
+                             'enum_grinder_org.example.metric.metric456')
+        self.assertEqual(req.get_url,
+                         "http://metrics.example.org/v2.0/50/views/enum_grinder_org.example.metric.metric456?from=-86399000&to=1000&resolution=FULL")
         self.assertEquals(req.get_url, result)
 
     def test_query_make_EnumMultiPlotQuery_request(self):
         req = requests_by_type[query.EnumMultiPlotQuery]
         qq = query.EnumMultiPlotQuery(0, self.num_threads, self.config)
-        random.randint = lambda x, y: 4
-        result = qq.generate(int(self.thread.time()), None, req)
-        self.assertEqual(req.post_url,
-                         "http://metrics.example.org/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
-        self.assertEqual(eval(req.post_payload), [
+        payload_sent = json.dumps([
             "enum_grinder_org.example.metric.0",
             "enum_grinder_org.example.metric.1",
             "enum_grinder_org.example.metric.2",
-            "enum_grinder_org.example.metric.3"])
+            "enum_grinder_org.example.metric.3"
+        ])
+        result = qq.generate(int(self.thread.time()), None, req, 4,
+                             payload_sent)
+        self.assertEqual(req.post_url,
+                         "http://metrics.example.org/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
+        self.assertEqual(req.post_payload, payload_sent)
         self.assertEquals((req.post_url, req.post_payload), result)
 
     def tearDown(self):
