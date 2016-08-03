@@ -517,17 +517,24 @@ class GeneratePayloadTest(TestCaseBase):
         ingestenum.EnumIngestThread.create_metrics(agent_num)
         thread = ingestenum.EnumIngestThread(0, agent_num, MockReq())
         payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
-        valid_payload = [{u'timestamp': 1,
-                          u'tenantId': u'2',
-                          u'enums': [{u'value': u'e_g_1_0',
-                                      u'name': ingestenum.EnumIngestThread.generate_enum_metric_name(
-                                          1)}]},
-                         {u'timestamp': 1,
-                          u'tenantId': u'2',
-                          u'enums': [{u'value': u'e_g_2_0',
-                                      u'name': ingestenum.EnumIngestThread.generate_enum_metric_name(
-                                          2)}]}
-                         ]
+        valid_payload = [{
+            u'timestamp': 1,
+            u'tenantId': u'2',
+            u'enums': [{
+                u'value': u'e_g_1_0',
+                u'name': ingestenum.EnumIngestThread.
+                         generate_enum_metric_name(1)
+            }]},
+            {
+                u'timestamp': 1,
+                u'tenantId': u'2',
+                u'enums': [{
+                    u'value': u'e_g_2_0',
+                    u'name': ingestenum.EnumIngestThread.
+                             generate_enum_metric_name(2)
+                }]
+            }
+        ]
         self.assertEqual(payload, valid_payload)
 
     def test_generate_annotations_payload(self):
@@ -766,7 +773,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                 'enums': [{
                     'value': 'e_g_0_0',
                     'name': ingestenum.EnumIngestThread.
-                        generate_enum_metric_name(0)
+                            generate_enum_metric_name(0)
                 }]
             },
             {
@@ -775,7 +782,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                 'enums': [{
                     'value': 'e_g_1_0',
                     'name': ingestenum.EnumIngestThread.
-                        generate_enum_metric_name(1)
+                            generate_enum_metric_name(1)
                 }]
             }
         ]

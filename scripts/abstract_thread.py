@@ -129,5 +129,3 @@ def generate_metrics_tenants(num_tenants, metrics_per_tenant,
 
 def generate_metric_name(metric_id, config=default_config):
     return config['name_fmt'] % metric_id
-
-
