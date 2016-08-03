@@ -55,15 +55,16 @@ class AbstractQuery(object):
         self.num_threads = num_threads
         self.config = config
 
-    def generate(self, time, logger, request):
+    def generate(self, time, logger, request, tenant_id=None):
         raise Exception("Can't instantiate abstract query")
 
 
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_per_interval'
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, self.config['num_tenants'])
+    def generate(self, time, logger, request, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = random.randint(0, self.config['num_tenants'])
         metric_name = generate_metric_name(
             random.randint(0, self.config['metrics_per_tenant']))
         to = time
@@ -89,8 +90,9 @@ class MultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, self.config['num_tenants'])
+    def generate(self, time, logger, request, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = random.randint(0, self.config['num_tenants'])
         payload = self.generate_multiplot_payload()
         to = time
         frm = time - self.one_day
@@ -112,8 +114,9 @@ class SearchQuery(AbstractQuery):
             random.randint(0, self.config['metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, self.config['num_tenants'])
+    def generate(self, time, logger, request, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = random.randint(0, self.config['num_tenants'])
         metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%d/metrics/search?query=%s" % (
             self.config['query_url'],
@@ -126,9 +129,10 @@ class SearchQuery(AbstractQuery):
 class AnnotationsQuery(AbstractQuery):
     query_interval_name = 'annotations_queries_per_interval'
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0,
-                                   self.config['annotations_num_tenants'])
+    def generate(self, time, logger, request, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = random.randint(0,
+                                       self.config['annotations_num_tenants'])
         to = time
         frm = time - self.one_day
         url = "%s/v2.0/%d/events/getEvents?from=%d&until=%d" % (
@@ -145,8 +149,9 @@ class EnumSearchQuery(AbstractQuery):
             random.randint(0, self.config['enum_metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, self.config['enum_num_tenants'])
+    def generate(self, time, logger, request, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = random.randint(0, self.config['enum_num_tenants'])
         metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%d/metrics/search?query=%s&include_enum_values=true" % (
             self.config['query_url'],
@@ -158,8 +163,9 @@ class EnumSearchQuery(AbstractQuery):
 class EnumSinglePlotQuery(AbstractQuery):
     query_interval_name = 'enum_single_plot_queries_per_interval'
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, self.config['enum_num_tenants'])
+    def generate(self, time, logger, request, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = random.randint(0, self.config['enum_num_tenants'])
         metric_name = generate_enum_metric_name(
             random.randint(0, self.config['enum_metrics_per_tenant']))
         to = time
@@ -185,8 +191,9 @@ class EnumMultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def generate(self, time, logger, request):
-        tenant_id = random.randint(0, self.config['enum_num_tenants'])
+    def generate(self, time, logger, request, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = random.randint(0, self.config['enum_num_tenants'])
         payload = self.generate_multiplot_payload()
         to = time
         frm = time - self.one_day
