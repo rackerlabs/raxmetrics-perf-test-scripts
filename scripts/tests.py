@@ -34,15 +34,23 @@ def mock_sleep(cls, x):
 
 
 class MockReq():
+    def __init__(self):
+        self.post_url = None
+        self.post_payload = None
+        self.get_url = None
+
     def POST(self, url, payload):
         global post_url, post_payload
         post_url = url
         post_payload = payload
+        self.post_url = url
+        self.post_payload = payload
         return url, payload
 
     def GET(self, url):
         global get_url
         get_url = url
+        self.get_url = url
         return url
 
 requests_by_type = {
@@ -736,6 +744,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         ingest.default_config.update(self.test_config)
 
         agent_num = 0
+        self.num_threads = query.QueryThread.num_threads()
         self.thread = query.QueryThread(0, agent_num, requests_by_type)
         self.thread.slice = [query.SinglePlotQuery, query.SearchQuery,
                         query.MultiPlotQuery, query.AnnotationsQuery,
@@ -819,6 +828,21 @@ class MakeQueryRequestsTest(TestCaseBase):
             "enum_grinder_org.example.metric.2",
             "enum_grinder_org.example.metric.3"])
         self.assertEquals(7, self.thread.position)
+
+    def test_query_make_EnumMultiPlotQuery_request_6(self):
+        config = abstract_thread.default_config.copy()
+        req = requests_by_type[query.EnumMultiPlotQuery]
+        qq = query.EnumMultiPlotQuery(0, self.num_threads, config)
+        random.randint = lambda x, y: 4
+        result = qq.generate(int(self.thread.time()), None, req)
+        self.assertEqual(req.post_url,
+                         "http://metrics.example.org/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
+        self.assertEqual(eval(req.post_payload), [
+            "enum_grinder_org.example.metric.0",
+            "enum_grinder_org.example.metric.1",
+            "enum_grinder_org.example.metric.2",
+            "enum_grinder_org.example.metric.3"])
+        self.assertEquals((req.post_url, req.post_payload), result)
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
