@@ -12,6 +12,16 @@ RAND_MAX = 982374239
 
 
 class IngestThread(AbstractThread):
+
+    units_map = {
+        0: 'minutes',
+        1: 'hours',
+        2: 'days',
+        3: 'months',
+        4: 'years',
+        5: 'decades'
+    }
+
     # The list of metric numbers for all threads in this worker
     metrics = []
 
@@ -65,6 +75,10 @@ class IngestThread(AbstractThread):
                                         self.num_threads(), thread_num)
         self.slice = self.metrics[start:end]
         self.request = request
+
+    def generate_unit(self, tenant_id):
+        unit_number = tenant_id % 6
+        return self.units_map[unit_number]
 
     def generate_metric(self, time, tenant_id, metric_id):
         ingest_delay_millis = self.config['ingest_delay_millis']

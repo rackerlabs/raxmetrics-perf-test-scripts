@@ -33,13 +33,6 @@ default_config = {
     # ingestion
     'ingest_delay_millis': ""}
 
-units_map = {0: 'minutes',
-             1: 'hours',
-             2: 'days',
-             3: 'months',
-             4: 'years',
-             5: 'decades'}
-
 
 class AbstractThread(object):
     # superclass for the various thread types
@@ -69,10 +62,6 @@ class AbstractThread(object):
 
         # finish_time is the end time of the interval
         self.finish_time = self.time() + self.config['report_interval']
-
-    def generate_unit(self, tenant_id):
-        unit_number = tenant_id % 6
-        return units_map[unit_number]
 
     def get_next_item(self):
         payload = self.slice[self.position]
