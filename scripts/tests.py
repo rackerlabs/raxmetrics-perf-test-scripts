@@ -703,46 +703,6 @@ class MakeRequestsTest(TestCaseBase):
 
 class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = abstract_thread.AbstractThread.time
-        self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
-        req = MockReq()
-        ingest.IngestThread.request = req
-        ingestenum.EnumIngestThread.request = req
-        annotationsingest.AnnotationsIngestThread.request = req
-        for x in query.QueryThread.query_types:
-            x.query_request = req
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        abstract_thread.AbstractThread.time = lambda x: 1000
-        abstract_thread.AbstractThread.sleep = mock_sleep
-
-        self.test_config = {'report_interval': (1000 * 6),
-                            'num_tenants': 3,
-                            'enum_num_tenants': 4,
-                            'annotations_num_tenants': 3,
-                            'metrics_per_tenant': 7,
-                            'enum_metrics_per_tenant': 2,
-                            'annotations_per_tenant': 2,
-                            'batch_size': 3,
-                            'ingest_concurrency': 2,
-                            'enum_ingest_concurrency': 2,
-                            'query_concurrency': 20,
-                            'annotations_concurrency': 2,
-                            'singleplot_per_interval': 11,
-                            'multiplot_per_interval': 10,
-                            'search_queries_per_interval': 9,
-                            'enum_search_queries_per_interval': 9,
-                            'enum_single_plot_queries_per_interval': 10,
-                            'enum_multiplot_per_interval': 10,
-                            'annotations_queries_per_interval': 8,
-                            'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2}
-
-        ingest.default_config.update(self.test_config)
-
         agent_num = 0
         self.num_threads = query.QueryThread.num_threads()
         self.thread = query.QueryThread(0, agent_num, requests_by_type)
@@ -829,12 +789,6 @@ class MakeQueryRequestsTest(TestCaseBase):
                          "http://metrics.example.org/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(req.post_payload, payload_sent)
         self.assertEquals((req.post_url, req.post_payload), result)
-
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        abstract_thread.AbstractThread.time = self.real_time
-        abstract_thread.AbstractThread.sleep = self.real_sleep
 
 
 suite = unittest.TestSuite()
