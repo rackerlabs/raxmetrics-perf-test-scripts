@@ -62,11 +62,12 @@ class AbstractQuery(object):
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_per_interval'
 
-    def generate(self, time, logger, request, tenant_id=None):
+    def generate(self, time, logger, request, tenant_id=None, metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
-        metric_name = generate_metric_name(
-            random.randint(0, self.config['metrics_per_tenant']))
+        if metric_name is None:
+            metric_name = generate_metric_name(
+                random.randint(0, self.config['metrics_per_tenant']))
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
@@ -90,10 +91,11 @@ class MultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def generate(self, time, logger, request, tenant_id=None):
+    def generate(self, time, logger, request, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
-        payload = self.generate_multiplot_payload()
+        if payload is None:
+            payload = self.generate_multiplot_payload()
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
@@ -114,10 +116,12 @@ class SearchQuery(AbstractQuery):
             random.randint(0, self.config['metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def generate(self, time, logger, request, tenant_id=None):
+    def generate(self, time, logger, request, tenant_id=None,
+                 metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
-        metric_regex = self.generate_metrics_regex()
+        if metric_regex is None:
+            metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%d/metrics/search?query=%s" % (
             self.config['query_url'],
             tenant_id, metric_regex)
@@ -149,10 +153,12 @@ class EnumSearchQuery(AbstractQuery):
             random.randint(0, self.config['enum_metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def generate(self, time, logger, request, tenant_id=None):
+    def generate(self, time, logger, request, tenant_id=None,
+                 metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
-        metric_regex = self.generate_metrics_regex()
+        if metric_regex is None:
+            metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%d/metrics/search?query=%s&include_enum_values=true" % (
             self.config['query_url'],
             tenant_id, metric_regex)
@@ -163,11 +169,13 @@ class EnumSearchQuery(AbstractQuery):
 class EnumSinglePlotQuery(AbstractQuery):
     query_interval_name = 'enum_single_plot_queries_per_interval'
 
-    def generate(self, time, logger, request, tenant_id=None):
+    def generate(self, time, logger, request, tenant_id=None,
+                 metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
-        metric_name = generate_enum_metric_name(
-            random.randint(0, self.config['enum_metrics_per_tenant']))
+        if metric_name is None:
+            metric_name = generate_enum_metric_name(
+                random.randint(0, self.config['enum_metrics_per_tenant']))
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
@@ -191,10 +199,11 @@ class EnumMultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def generate(self, time, logger, request, tenant_id=None):
+    def generate(self, time, logger, request, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
-        payload = self.generate_multiplot_payload()
+        if payload is None:
+            payload = self.generate_multiplot_payload()
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
