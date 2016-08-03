@@ -231,6 +231,15 @@ class QueryThread(AbstractThread):
             AnnotationsQuery(thread_num, self.num_threads(), self.config),
             EnumMultiPlotQuery(thread_num, self.num_threads(), self.config)
         ]
+        self.query_instances_by_type = {
+            SinglePlotQuery:        self.query_instances[0],
+            MultiPlotQuery:         self.query_instances[1],
+            SearchQuery:            self.query_instances[2],
+            EnumSearchQuery:        self.query_instances[3],
+            EnumSinglePlotQuery:    self.query_instances[4],
+            AnnotationsQuery:       self.query_instances[5],
+            EnumMultiPlotQuery:     self.query_instances[6],
+        }
         queries = shuffled(
             self._create_metrics(self.agent_num, self.query_instances))
         self.requests_by_query_type = requests_by_query_type
@@ -259,9 +268,13 @@ class QueryThread(AbstractThread):
             self.sleep(1000000)
             return None
         self.check_position(logger, len(self.slice))
-        query_type = self.slice[self.position]
-        request = self.requests_by_query_type[query_type]
-        result = self.query_fn_dict[query_type](
+        query_instance_or_type = self.slice[self.position]
+        if issubclass(query_instance_or_type, AbstractQuery):
+            query = self.query_instances_by_type[query_instance_or_type]
+        else:
+            query = query_instance_or_type
+        request = self.requests_by_query_type[type(query)]
+        result = self.query_fn_dict[type(query)](
             int(self.time()), logger, request)
         self.position += 1
         return result
