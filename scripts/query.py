@@ -261,20 +261,7 @@ class QueryThread(AbstractThread):
             EnumMultiPlotQuery:     self.query_instances[6],
         }
 
-        queries = []
-        for qinst in self.query_instances:
-            qq = qinst.queries
-            queries.extend(qq)
-        queries = shuffled(queries)
-
         self.requests_by_query_type = requests_by_query_type
-        total_queries_for_current_node = 0
-        for qi in self.query_instances:
-            total_queries_for_current_node += \
-                qi.get_num_queries_for_current_node(agent_num)
-        start, end = generate_job_range(total_queries_for_current_node,
-                                        self.num_threads(),
-                                        thread_num)
 
         self.query_instance = query_type(thread_num, agent_num, self.num_threads(), self.config)
         self.slice = [self.query_instance]
