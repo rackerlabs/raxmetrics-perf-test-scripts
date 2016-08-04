@@ -1,5 +1,7 @@
 
 from net.grinder.script.Grinder import grinder
+from net.grinder.script import Test
+from net.grinder.plugin.http import HTTPRequest
 
 import thread_manager as tm
 import py_java
