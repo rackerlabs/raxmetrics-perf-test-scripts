@@ -272,13 +272,7 @@ class QueryThread(AbstractThread):
             logger("Warning: no work for current thread")
             self.sleep(1000000)
             return None
-        self.check_position(logger, len(self.slice))
-        query_instance_or_type = self.get_next_item()
-        if (type(query_instance_or_type) == type and
-                issubclass(query_instance_or_type, AbstractQuery)):
-            query = self.query_instances_by_type[query_instance_or_type]
-        else:
-            query = query_instance_or_type
+        query = self.query_instance
         request = self.requests_by_query_type[type(query)]
         result = query._make_request(
             int(self.time()), logger, request)

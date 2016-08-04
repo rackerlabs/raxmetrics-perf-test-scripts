@@ -791,10 +791,6 @@ class MakeQueryRequestsTest(TestCaseBase):
                                         self.config)
         qq = DummyQueryType(0, self.agent_num, self.num_threads, self.config)
         self.thread.slice = [qq]
-        self.thread.position = 0
-
-        # pre-condition
-        self.assertEquals(0, self.thread.position)
 
         # when
         result = self.thread.make_request(pp)
@@ -802,7 +798,6 @@ class MakeQueryRequestsTest(TestCaseBase):
         # then
         self.assertEquals([True], generate_was_called)
         self.assertIs(expected_result, result)
-        self.assertEquals(1, self.thread.position)
 
     def test_query_make_SinglePlotQuery_request(self):
         random.randint = lambda x, y: 40
