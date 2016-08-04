@@ -23,19 +23,6 @@ class ThreadManager(object):
         # concurrent_threads is the sum of the various thread types, (currently
         # ingest and query)
         self.concurrent_threads = 0
-        self.setup_config(config)
-
-        # Sanity check the concurrent_threads to make sure they are the same as
-        # the value
-        #  passed to the grinder
-        if self.tot_threads != self.concurrent_threads:
-            raise Exception(
-                "Configuration error: grinder.threads doesn't equal total "
-                "concurrent threads")
-
-        self.requests_by_type = requests_by_type
-
-    def setup_config(self, config):
         # Parse the properties file and update default_config dictionary
         for k, v in config.iteritems():
             if v.startswith(".."):
@@ -48,6 +35,16 @@ class ThreadManager(object):
                 continue
             k = k.replace("grinder.bf.", "")
             default_config[k] = self.convert(v)
+
+        # Sanity check the concurrent_threads to make sure they are the same as
+        # the value
+        #  passed to the grinder
+        if self.tot_threads != self.concurrent_threads:
+            raise Exception(
+                "Configuration error: grinder.threads doesn't equal total "
+                "concurrent threads")
+
+        self.requests_by_type = requests_by_type
 
     def convert(self, s):
         try:
