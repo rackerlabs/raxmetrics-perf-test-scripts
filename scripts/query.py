@@ -49,12 +49,13 @@ class AbstractQuery(object):
             cls, agent_number, cls.query_interval_name, config)
         return queries
 
-    def __init__(self, thread_num, agent_number, num_threads, config):
+    def __init__(self, thread_num, agent_number, num_threads, config, request):
         self.thread_num = thread_num
         self.num_threads = num_threads
         self.config = config
         self.queries = self._create_metrics(
             self, agent_number, self.query_interval_name, config)
+        self.request = request
 
     def _make_request(self, time, logger, request, tenant_id=None):
         raise Exception("Can't instantiate abstract query")
