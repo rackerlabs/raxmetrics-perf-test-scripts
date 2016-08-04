@@ -277,7 +277,7 @@ class QueryThread(AbstractThread):
                                         thread_num)
 
         self.query_instance = query_type(thread_num, agent_num, self.num_threads(), self.config)
-        self.slice = [self.query_instance] * (end - start)
+        self.slice = [self.query_instance]
         return
 
     def make_request(self, logger):

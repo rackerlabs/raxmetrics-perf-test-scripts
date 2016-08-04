@@ -317,34 +317,28 @@ class InitProcessTest(TestCaseBase):
         #  each thread in this worker process
 
         thread = query.QueryThread(0, agent_num, requests_by_type, query.SinglePlotQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
-        self.assertIsInstance(thread.slice[1], query.SinglePlotQuery)
 
         thread = query.QueryThread(3, agent_num, requests_by_type, query.MultiPlotQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
-        self.assertIsInstance(thread.slice[1], query.MultiPlotQuery)
 
         thread = query.QueryThread(6, agent_num, requests_by_type, query.SearchQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SearchQuery)
-        self.assertIsInstance(thread.slice[1], query.SearchQuery)
 
         thread = query.QueryThread(9, agent_num, requests_by_type, query.EnumSearchQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
-        self.assertIsInstance(thread.slice[1], query.EnumSearchQuery)
 
         thread = query.QueryThread(12, agent_num, requests_by_type, query.EnumSinglePlotQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
-        self.assertIsInstance(thread.slice[1], query.EnumSinglePlotQuery)
 
         thread = query.QueryThread(14, agent_num, requests_by_type, query.AnnotationsQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.AnnotationsQuery)
-        self.assertIsInstance(thread.slice[1], query.AnnotationsQuery)
 
         thread = query.QueryThread(16, agent_num, requests_by_type, query.EnumMultiPlotQuery)
         self.assertEqual(1, len(thread.slice))
@@ -399,29 +393,24 @@ class InitProcessTest(TestCaseBase):
         agent_num = 1
 
         thread = query.QueryThread(0, agent_num, requests_by_type, query.SinglePlotQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
-        self.assertIsInstance(thread.slice[1], query.SinglePlotQuery)
 
         thread = query.QueryThread(4, agent_num, requests_by_type, query.MultiPlotQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
-        self.assertIsInstance(thread.slice[1], query.MultiPlotQuery)
 
         thread = query.QueryThread(6, agent_num, requests_by_type, query.SearchQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SearchQuery)
-        self.assertIsInstance(thread.slice[1], query.SearchQuery)
 
         thread = query.QueryThread(8, agent_num, requests_by_type, query.EnumSearchQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
-        self.assertIsInstance(thread.slice[1], query.EnumSearchQuery)
 
         thread = query.QueryThread(10, agent_num, requests_by_type, query.EnumSinglePlotQuery)
-        self.assertEqual(2, len(thread.slice))
+        self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
-        self.assertIsInstance(thread.slice[1], query.EnumSinglePlotQuery)
 
         thread = query.QueryThread(12, agent_num, requests_by_type, query.AnnotationsQuery)
         self.assertEqual(1, len(thread.slice))
