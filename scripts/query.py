@@ -57,14 +57,14 @@ class AbstractQuery(object):
             self, agent_number, self.query_interval_name, config)
         self.request = request
 
-    def _make_request(self, time, logger, request, tenant_id=None):
+    def _make_request(self, time, logger, tenant_id=None):
         raise Exception("Can't instantiate abstract query")
 
 
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_per_interval'
 
-    def _make_request(self, time, logger, request, tenant_id=None,
+    def _make_request(self, time, logger, tenant_id=None,
                       metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
@@ -78,7 +78,7 @@ class SinglePlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, metric_name, frm,
             to, resolution)
-        result = request.GET(url)
+        result = self.request.GET(url)
         #    logger(result.getText())
         return result
 
@@ -94,7 +94,7 @@ class MultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def _make_request(self, time, logger, request, tenant_id=None, payload=None):
+    def _make_request(self, time, logger, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if payload is None:
@@ -106,7 +106,7 @@ class MultiPlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, frm,
             to, resolution)
-        result = request.POST(url, payload)
+        result = self.request.POST(url, payload)
         #    logger(result.getText())
         return result
 
@@ -119,7 +119,7 @@ class SearchQuery(AbstractQuery):
             random.randint(0, self.config['metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def _make_request(self, time, logger, request, tenant_id=None,
+    def _make_request(self, time, logger, tenant_id=None,
                       metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
@@ -128,7 +128,7 @@ class SearchQuery(AbstractQuery):
         url = "%s/v2.0/%d/metrics/search?query=%s" % (
             self.config['query_url'],
             tenant_id, metric_regex)
-        result = request.GET(url)
+        result = self.request.GET(url)
         #    logger(result.getText())
         return result
 
@@ -136,7 +136,7 @@ class SearchQuery(AbstractQuery):
 class AnnotationsQuery(AbstractQuery):
     query_interval_name = 'annotations_queries_per_interval'
 
-    def _make_request(self, time, logger, request, tenant_id=None):
+    def _make_request(self, time, logger, tenant_id=None):
         if tenant_id is None:
             tenant_id = random.randint(0,
                                        self.config['annotations_num_tenants'])
@@ -144,7 +144,7 @@ class AnnotationsQuery(AbstractQuery):
         frm = time - self.one_day
         url = "%s/v2.0/%d/events/getEvents?from=%d&until=%d" % (
             self.config['query_url'], tenant_id, frm, to)
-        result = request.GET(url)
+        result = self.request.GET(url)
         return result
 
 
@@ -156,7 +156,7 @@ class EnumSearchQuery(AbstractQuery):
             random.randint(0, self.config['enum_metrics_per_tenant']), self.config)
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def _make_request(self, time, logger, request, tenant_id=None,
+    def _make_request(self, time, logger, tenant_id=None,
                       metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
@@ -165,14 +165,14 @@ class EnumSearchQuery(AbstractQuery):
         url = "%s/v2.0/%d/metrics/search?query=%s&include_enum_values=true" % (
             self.config['query_url'],
             tenant_id, metric_regex)
-        result = request.GET(url)
+        result = self.request.GET(url)
         return result
 
 
 class EnumSinglePlotQuery(AbstractQuery):
     query_interval_name = 'enum_single_plot_queries_per_interval'
 
-    def _make_request(self, time, logger, request, tenant_id=None,
+    def _make_request(self, time, logger, tenant_id=None,
                       metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
@@ -186,7 +186,7 @@ class EnumSinglePlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, metric_name, frm,
             to, resolution)
-        result = request.GET(url)
+        result = self.request.GET(url)
         #    logger(result.getText())
         return result
 
@@ -202,7 +202,7 @@ class EnumMultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def _make_request(self, time, logger, request, tenant_id=None, payload=None):
+    def _make_request(self, time, logger, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if payload is None:
@@ -214,7 +214,7 @@ class EnumMultiPlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, frm,
             to, resolution)
-        result = request.POST(url, payload)
+        result = self.request.POST(url, payload)
         #    logger(result.getText())
         return result
 
@@ -240,5 +240,5 @@ class QueryThread(AbstractThread):
         query = self.query_instance
         request = self.requests_by_query_type[type(query)]
         result = query._make_request(
-            int(self.time()), logger, request)
+            int(self.time()), logger)
         return result
