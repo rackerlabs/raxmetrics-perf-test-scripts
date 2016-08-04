@@ -258,8 +258,14 @@ class QueryThread(AbstractThread):
             AnnotationsQuery:       self.query_instances[5],
             EnumMultiPlotQuery:     self.query_instances[6],
         }
-        queries = shuffled(
-            self._create_metrics(self.agent_num, self.query_instances))
+
+        queries = []
+        for qinst in self.query_instances:
+            qq = qinst._create_metrics(qinst, agent_num,
+                                       qinst.query_interval_name)
+            queries.extend(qq)
+        queries = shuffled(queries)
+
         self.requests_by_query_type = requests_by_query_type
         total_queries_for_current_node = 0
         for qi in self.query_instances:
