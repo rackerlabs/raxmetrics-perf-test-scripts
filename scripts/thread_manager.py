@@ -23,7 +23,9 @@ class ThreadManager(object):
         # concurrent_threads is the sum of the various thread types, (currently
         # ingest and query)
         self.concurrent_threads = 0
+
         # Parse the properties file and update default_config dictionary
+        self.config = default_config.copy()
         for k, v in config.iteritems():
             if v.startswith(".."):
                 continue
@@ -35,6 +37,7 @@ class ThreadManager(object):
                 continue
             k = k.replace("grinder.bf.", "")
             default_config[k] = self.convert(v)
+            self.config[k] = self.convert(v)
 
         # Sanity check the concurrent_threads to make sure they are the same as
         # the value
