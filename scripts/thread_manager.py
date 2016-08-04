@@ -36,7 +36,6 @@ class ThreadManager(object):
             if not k.startswith("grinder.bf."):
                 continue
             k = k.replace("grinder.bf.", "")
-            default_config[k] = self.convert(v)
             self.config[k] = self.convert(v)
 
         # Sanity check the concurrent_threads to make sure they are the same as

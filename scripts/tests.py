@@ -573,7 +573,9 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2})
+                            'num_nodes': 2,
+                            'query_url': 'http://metrics.example.org',
+                            'url': 'http://metrics-ingest.example.org'})
 
     def test_annotationsingest_make_request(self):
         global sleep_time
@@ -645,7 +647,9 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2})
+                            'num_nodes': 2,
+                            'query_url': 'http://metrics.example.org',
+                            'url': 'http://metrics-ingest.example.org'})
 
     def test_ingest_make_request(self):
         global sleep_time
@@ -719,7 +723,9 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2})
+                            'num_nodes': 2,
+                            'query_url': 'http://metrics.example.org',
+                            'url': 'http://metrics-ingest.example.org'})
 
     def test_ingest_enum_make_request(self):
         global sleep_time
@@ -776,7 +782,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
 class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
         self.agent_num = 0
-        self.config = abstract_thread.default_config.copy()
+        self.config = from_config_file(grinder_props)
         self.num_threads = query.QueryThread.num_threads(self.config)
         self.requests_by_type = requests_by_type.copy()
 
