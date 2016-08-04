@@ -225,11 +225,11 @@ class QueryThread(AbstractThread):
                    EnumMultiPlotQuery]
 
     @staticmethod
-    def _create_metrics(agent_number, query_types):
+    def _create_metrics(agent_number, query_instances):
         queries = []
-        for qtype in query_types:
-            qq = qtype._create_metrics(qtype, agent_number,
-                                       qtype.query_interval_name)
+        for qinst in query_instances:
+            qq = qinst._create_metrics(qinst, agent_number,
+                                       qinst.query_interval_name)
             queries.extend(qq)
         return queries
 
