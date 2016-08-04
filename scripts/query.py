@@ -242,30 +242,9 @@ class QueryThread(AbstractThread):
     def __init__(self, thread_num, agent_num, requests_by_query_type,
                  query_type, config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
-        self.query_instances = [
-            SinglePlotQuery(thread_num, agent_num, self.num_threads(), self.config),
-            MultiPlotQuery(thread_num, agent_num, self.num_threads(), self.config),
-            SearchQuery(thread_num, agent_num, self.num_threads(), self.config),
-            EnumSearchQuery(thread_num, agent_num, self.num_threads(), self.config),
-            EnumSinglePlotQuery(thread_num, agent_num, self.num_threads(), self.config),
-            AnnotationsQuery(thread_num, agent_num, self.num_threads(), self.config),
-            EnumMultiPlotQuery(thread_num, agent_num, self.num_threads(), self.config)
-        ]
-        self.query_instances_by_type = {
-            SinglePlotQuery:        self.query_instances[0],
-            MultiPlotQuery:         self.query_instances[1],
-            SearchQuery:            self.query_instances[2],
-            EnumSearchQuery:        self.query_instances[3],
-            EnumSinglePlotQuery:    self.query_instances[4],
-            AnnotationsQuery:       self.query_instances[5],
-            EnumMultiPlotQuery:     self.query_instances[6],
-        }
-
         self.requests_by_query_type = requests_by_query_type
-
         self.query_instance = query_type(thread_num, agent_num, self.num_threads(), self.config)
         self.slice = [self.query_instance]
-        return
 
     def make_request(self, logger):
         if len(self.slice) == 0:
