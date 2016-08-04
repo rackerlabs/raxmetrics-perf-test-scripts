@@ -293,24 +293,6 @@ class InitProcessTest(TestCaseBase):
                          [[[1, 2], [1, 3], [1, 4]],
                           [[1, 5], [1, 6]]])
 
-    def test_init_process_query_agent_zero_create_all_metrics(self):
-        agent_num = 0
-        # confirm that the number of queries is correctly distributed across
-        #  each thread in this worker process
-        queries = query.QueryThread._create_metrics(
-            agent_num, query.QueryThread.query_types)
-
-        self.assertEqual(
-            queries,
-            ([query.SinglePlotQuery] * self.single_plot_queries_agent0 +
-             [query.MultiPlotQuery] * self.multi_plot_queries_agent0 +
-             [query.SearchQuery] * self.search_queries_agent0 +
-             [query.EnumSearchQuery] * self.enum_search_queries_agent0 +
-             [query.EnumSinglePlotQuery] *
-                self.enum_single_plot_queries_agent0 +
-             [query.AnnotationsQuery] * self.annotation_queries_agent0) +
-            [query.EnumMultiPlotQuery] * self.enum_multi_plot_queries_agent0)
-
     def test_init_process_query_agent_zero_thread_zero(self):
         agent_num = 0
         thread = query.QueryThread(0, agent_num, requests_by_type, query.SinglePlotQuery)
@@ -379,24 +361,6 @@ class InitProcessTest(TestCaseBase):
         annotationsingest.AnnotationsIngestThread.create_metrics(agent_num)
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[2, 0], [2, 1]])
-
-    def test_init_process_query_agent_one_create_all_metrics(self):
-        agent_num = 1
-        queries = query.QueryThread._create_metrics(
-            agent_num, query.QueryThread.query_types)
-
-        # confirm that the correct batches of queries are created for worker 1
-
-        self.assertEqual(
-            queries,
-            ([query.SinglePlotQuery] * self.single_plot_queries_agent1 +
-             [query.MultiPlotQuery] * self.multi_plot_queries_agent1 +
-             [query.SearchQuery] * self.search_queries_agent1 +
-             [query.EnumSearchQuery] * self.enum_search_queries_agent1 +
-             [query.EnumSinglePlotQuery] *
-                self.enum_single_plot_queries_agent1 +
-             [query.AnnotationsQuery] * self.annotation_queries_agent1) +
-            [query.EnumMultiPlotQuery] * self.enum_multi_plot_queries_agent1)
 
     def test_init_process_query_agent_one_thread_zero(self):
         agent_num = 1

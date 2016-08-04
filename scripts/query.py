@@ -226,15 +226,6 @@ class QueryThread(AbstractThread):
                    EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery,
                    EnumMultiPlotQuery]
 
-    @staticmethod
-    def _create_metrics(agent_number, query_instances):
-        queries = []
-        for qinst in query_instances:
-            qq = qinst._create_metrics(qinst, agent_number,
-                                       qinst.query_interval_name)
-            queries.extend(qq)
-        return queries
-
     @classmethod
     def num_threads(cls, config=default_config):
         return config['query_concurrency']
