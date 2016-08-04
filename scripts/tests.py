@@ -110,7 +110,7 @@ class TestCaseBase(unittest.TestCase):
         return self.assertTrue(isinstance(obj, cls), msg)
 
 
-class InitProcessTest(TestCaseBase):
+class ThreadManagerTest(TestCaseBase):
     def setUp(self):
         self.real_shuffle = random.shuffle
         self.real_randint = random.randint
@@ -122,8 +122,66 @@ class InitProcessTest(TestCaseBase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        self.tm_config = abstract_thread.default_config.copy()
-        self.tm_config.update(from_config_file(grinder_props))
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(from_config_file(grinder_props))
+
+    def test_setup_thread_zero(self):
+        # confirm that threadnum 0 is an ingest thread
+        t1 = self.tm.setup_thread(0, 0)
+        self.assertEqual(type(t1), ingest.IngestThread)
+
+    def test_setup_thread_second_type(self):
+        # confirm that the threadnum after all ingest threads is
+        # EnumIngestThread
+        t1 = self.tm.setup_thread(
+            self.test_config['enum_ingest_concurrency'], 0)
+        self.assertEqual(type(t1), ingestenum.EnumIngestThread)
+
+    def test_setup_thread_third_type(self):
+        # confirm that the threadnum after all ingest threads is a query thread
+        t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
+                                  self.test_config[
+                                      'enum_ingest_concurrency'],
+                                  0)
+        self.assertEqual(type(t1), query.QueryThread)
+
+    def test_setup_thread_fourth_type(self):
+        # confirm that the threadnum after all ingest+query threads is an
+        # annotations query thread
+        t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
+                                  self.test_config[
+                                      'enum_ingest_concurrency'] +
+                                  self.test_config['query_concurrency'],
+                                  0)
+        self.assertEqual(type(t1), annotationsingest.AnnotationsIngestThread)
+
+    def test_setup_thread_invalid_thread_type(self):
+        # confirm that a threadnum after all valid thread types raises an
+        # exception
+        tot_threads = (
+            self.test_config['ingest_concurrency'] +
+            self.test_config['enum_ingest_concurrency'] +
+            self.test_config['query_concurrency'] +
+            self.test_config['annotations_concurrency'])
+        self.assertRaises(Exception, self.tm.setup_thread, (tot_threads, 0))
+
+    def tearDown(self):
+        random.shuffle = self.real_shuffle
+        random.randint = self.real_randint
+        abstract_thread.AbstractThread.time = self.real_time
+        abstract_thread.AbstractThread.sleep = self.real_sleep
+
+
+class InitProcessTest(TestCaseBase):
+    def setUp(self):
+        self.real_shuffle = random.shuffle
+        self.real_randint = random.randint
+        self.real_time = abstract_thread.AbstractThread.time
+        self.real_sleep = abstract_thread.AbstractThread.sleep
+        random.shuffle = lambda x: None
+        random.randint = lambda x, y: 0
+        abstract_thread.AbstractThread.time = lambda x: 1000
+        abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(from_config_file(grinder_props))
@@ -195,46 +253,6 @@ class InitProcessTest(TestCaseBase):
         self.enum_multi_plot_queries_agent1 = \
             self.test_config['enum_multiplot_per_interval'] - \
             self.enum_multi_plot_queries_agent0
-
-    def test_setup_thread_zero(self):
-        # confirm that threadnum 0 is an ingest thread
-        t1 = self.tm.setup_thread(0, 0)
-        self.assertEqual(type(t1), ingest.IngestThread)
-
-    def test_setup_thread_second_type(self):
-        # confirm that the threadnum after all ingest threads is
-        # EnumIngestThread
-        t1 = self.tm.setup_thread(
-            self.tm_config['enum_ingest_concurrency'], 0)
-        self.assertEqual(type(t1), ingestenum.EnumIngestThread)
-
-    def test_setup_thread_third_type(self):
-        # confirm that the threadnum after all ingest threads is a query thread
-        t1 = self.tm.setup_thread(self.tm_config['ingest_concurrency'] +
-                                  self.tm_config[
-                                      'enum_ingest_concurrency'],
-                                  0)
-        self.assertEqual(type(t1), query.QueryThread)
-
-    def test_setup_thread_fourth_type(self):
-        # confirm that the threadnum after all ingest+query threads is an
-        # annotations query thread
-        t1 = self.tm.setup_thread(self.tm_config['ingest_concurrency'] +
-                                  self.tm_config[
-                                      'enum_ingest_concurrency'] +
-                                  self.tm_config['query_concurrency'],
-                                  0)
-        self.assertEqual(type(t1), annotationsingest.AnnotationsIngestThread)
-
-    def test_setup_thread_invalid_thread_type(self):
-        # confirm that a threadnum after all valid thread types raises an
-        # exception
-        tot_threads = (
-            self.tm_config['ingest_concurrency'] +
-            self.tm_config['enum_ingest_concurrency'] +
-            self.tm_config['query_concurrency'] +
-            self.tm_config['annotations_concurrency'])
-        self.assertRaises(Exception, self.tm.setup_thread, (tot_threads, 0))
 
     def test_init_process_annotationsingest_agent_zero(self):
 
