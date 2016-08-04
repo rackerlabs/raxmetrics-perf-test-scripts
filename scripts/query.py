@@ -240,7 +240,7 @@ class QueryThread(AbstractThread):
         return config['query_concurrency']
 
     def __init__(self, thread_num, agent_num, requests_by_query_type,
-                 config=None):
+                 query_type, config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         self.query_instances = [
             SinglePlotQuery(thread_num, agent_num, self.num_threads(), self.config),
@@ -276,7 +276,9 @@ class QueryThread(AbstractThread):
                                         self.num_threads(),
                                         thread_num)
 
-        self.slice = queries[start:end]
+        self.query_instance = query_type(thread_num, agent_num, self.num_threads(), self.config)
+        self.slice = [self.query_instance] * (end - start)
+        return
 
     def make_request(self, logger):
         if len(self.slice) == 0:

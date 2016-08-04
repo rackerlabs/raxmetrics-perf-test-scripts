@@ -6,7 +6,9 @@ from abstract_thread import default_config
 from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
 from ingestenum import EnumIngestThread
-from query import QueryThread
+from query import QueryThread, SinglePlotQuery, MultiPlotQuery, SearchQuery
+from query import EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery
+from query import EnumMultiPlotQuery
 
 
 class ThreadManager(object):
@@ -77,6 +79,7 @@ class ThreadManager(object):
 
         thread_types = [IngestThread, EnumIngestThread, QueryThread,
                         AnnotationsIngestThread]
+        _thread_num = thread_num
         for x in thread_types:
             if thread_num < x.num_threads():
                 thread_type = x
@@ -89,10 +92,26 @@ class ThreadManager(object):
 
         if thread_type is QueryThread:
             # query threads will look up by query type
+            query_types = [
+                SinglePlotQuery,
+                MultiPlotQuery,
+                SearchQuery,
+                EnumSearchQuery,
+                EnumSinglePlotQuery,
+                AnnotationsQuery,
+                EnumMultiPlotQuery,
+            ]
+            query_type = SinglePlotQuery
+            n = _thread_num
+            for qt in query_types:
+                if n < qt.get_num_queries_for_current_node(agent_num):
+                    query_type = qt
+                    break
+                n -= qt.get_num_queries_for_current_node(agent_num)
             req = self.requests_by_type
+            return QueryThread(thread_num, agent_num, req, query_type)
         elif thread_type in self.requests_by_type:
             req = self.requests_by_type[thread_type]
+            return thread_type(thread_num, agent_num, req)
         else:
             raise TypeError("Unknown thread type: %s" % str(thread_type))
-
-        return thread_type(thread_num, agent_num, req)
