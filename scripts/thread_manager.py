@@ -81,11 +81,11 @@ class ThreadManager(object):
                         AnnotationsIngestThread]
         _thread_num = thread_num
         for x in thread_types:
-            if thread_num < x.num_threads():
+            if thread_num < x.num_threads(self.config):
                 thread_type = x
                 break
             else:
-                thread_num -= x.num_threads()
+                thread_num -= x.num_threads(self.config)
 
         if thread_type is None:
             raise Exception("Invalid Thread Type")
@@ -104,14 +104,14 @@ class ThreadManager(object):
             query_type = SinglePlotQuery
             n = _thread_num
             for qt in query_types:
-                if n < qt.get_num_queries_for_current_node(agent_num):
+                if n < qt.get_num_queries_for_current_node(agent_num, self.config):
                     query_type = qt
                     break
-                n -= qt.get_num_queries_for_current_node(agent_num)
+                n -= qt.get_num_queries_for_current_node(agent_num, self.config)
             req = self.requests_by_type
-            return QueryThread(thread_num, agent_num, req, query_type)
+            return QueryThread(thread_num, agent_num, req, query_type, self.config)
         elif thread_type in self.requests_by_type:
             req = self.requests_by_type[thread_type]
-            return thread_type(thread_num, agent_num, req)
+            return thread_type(thread_num, agent_num, req, self.config)
         else:
             raise TypeError("Unknown thread type: %s" % str(thread_type))

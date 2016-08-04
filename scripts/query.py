@@ -17,7 +17,7 @@ class AbstractQuery(object):
 
     @staticmethod
     def _get_num_queries_for_current_node(agent_number, query_interval_name,
-                                          config=default_config):
+                                          config):
         total_queries = config[query_interval_name]
         start_job, end_job = generate_job_range(
             total_queries, config['num_nodes'], agent_number)
@@ -27,14 +27,14 @@ class AbstractQuery(object):
 
     @classmethod
     def get_num_queries_for_current_node(cls, agent_number,
-                                         config=default_config):
+                                         config):
         return cls._get_num_queries_for_current_node(agent_number,
                                                      cls.query_interval_name,
                                                      config)
 
     @staticmethod
     def _create_metrics(cls, agent_number, query_interval_name,
-                        config=default_config):
+                        config):
         # divide the total number of each query type into the ones need by this
         # worker
         num = AbstractQuery._get_num_queries_for_current_node(
@@ -43,7 +43,7 @@ class AbstractQuery(object):
         return [cls] * num
 
     @classmethod
-    def create_metrics(cls, agent_number, config=default_config):
+    def create_metrics(cls, agent_number, config):
         # divide the total number of each query type into the ones need by this
         # worker
         queries = cls._create_metrics(
@@ -153,7 +153,7 @@ class EnumSearchQuery(AbstractQuery):
 
     def generate_metrics_regex(self):
         metric_name = 'enum_grinder_' + generate_metric_name(
-            random.randint(0, self.config['enum_metrics_per_tenant']))
+            random.randint(0, self.config['enum_metrics_per_tenant']), self.config)
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
     def _make_request(self, time, logger, request, tenant_id=None,
@@ -227,14 +227,14 @@ class QueryThread(AbstractThread):
                    EnumMultiPlotQuery]
 
     @classmethod
-    def num_threads(cls, config=default_config):
+    def num_threads(cls, config):
         return config['query_concurrency']
 
     def __init__(self, thread_num, agent_num, requests_by_query_type,
-                 query_type, config=None):
+                 query_type, config):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         self.requests_by_query_type = requests_by_query_type
-        self.query_instance = query_type(thread_num, agent_num, self.num_threads(), self.config)
+        self.query_instance = query_type(thread_num, agent_num, self.num_threads(self.config), self.config)
         self.slice = [self.query_instance]
 
     def make_request(self, logger):

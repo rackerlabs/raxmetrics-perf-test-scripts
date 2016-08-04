@@ -13,6 +13,7 @@ import query
 import annotationsingest
 import abstract_thread
 import thread_manager as tm
+from config import from_config_file
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -121,7 +122,13 @@ class InitProcessTest(TestCaseBase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        self.test_config = {'report_interval': (1000 * 6),
+        self.tm_config = abstract_thread.default_config.copy()
+        self.tm_config.update(from_config_file(grinder_props))
+
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(from_config_file(grinder_props))
+        self.test_config.update(
+                           {'report_interval': (1000 * 6),
                             'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
@@ -141,9 +148,7 @@ class InitProcessTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2}
-
-        ingest.default_config.update(self.test_config)
+                            'num_nodes': 2})
 
         self.num_query_nodes = self.test_config['num_nodes']
         self.single_plot_queries_agent0 = int(math.ceil(
@@ -200,13 +205,13 @@ class InitProcessTest(TestCaseBase):
         # confirm that the threadnum after all ingest threads is
         # EnumIngestThread
         t1 = self.tm.setup_thread(
-            self.test_config['enum_ingest_concurrency'], 0)
+            self.tm_config['enum_ingest_concurrency'], 0)
         self.assertEqual(type(t1), ingestenum.EnumIngestThread)
 
     def test_setup_thread_third_type(self):
         # confirm that the threadnum after all ingest threads is a query thread
-        t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
-                                  self.test_config[
+        t1 = self.tm.setup_thread(self.tm_config['ingest_concurrency'] +
+                                  self.tm_config[
                                       'enum_ingest_concurrency'],
                                   0)
         self.assertEqual(type(t1), query.QueryThread)
@@ -214,10 +219,10 @@ class InitProcessTest(TestCaseBase):
     def test_setup_thread_fourth_type(self):
         # confirm that the threadnum after all ingest+query threads is an
         # annotations query thread
-        t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
-                                  self.test_config[
+        t1 = self.tm.setup_thread(self.tm_config['ingest_concurrency'] +
+                                  self.tm_config[
                                       'enum_ingest_concurrency'] +
-                                  self.test_config['query_concurrency'],
+                                  self.tm_config['query_concurrency'],
                                   0)
         self.assertEqual(type(t1), annotationsingest.AnnotationsIngestThread)
 
@@ -225,10 +230,10 @@ class InitProcessTest(TestCaseBase):
         # confirm that a threadnum after all valid thread types raises an
         # exception
         tot_threads = (
-            self.test_config['ingest_concurrency'] +
-            self.test_config['enum_ingest_concurrency'] +
-            self.test_config['query_concurrency'] +
-            self.test_config['annotations_concurrency'])
+            self.tm_config['ingest_concurrency'] +
+            self.tm_config['enum_ingest_concurrency'] +
+            self.tm_config['query_concurrency'] +
+            self.tm_config['annotations_concurrency'])
         self.assertRaises(Exception, self.tm.setup_thread, (tot_threads, 0))
 
     def test_init_process_annotationsingest_agent_zero(self):
@@ -237,23 +242,23 @@ class InitProcessTest(TestCaseBase):
         # worker 0
         agent_num = 0
         # confirm annotationsingest
-        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num)
+        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num, self.test_config)
 
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[0, 0], [0, 1], [1, 0], [1, 1]])
 
         thread = annotationsingest.AnnotationsIngestThread(
-            0, agent_num, MockReq())
+            0, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice, [[0, 0], [0, 1]])
 
         thread = annotationsingest.AnnotationsIngestThread(
-            1, agent_num, MockReq())
+            1, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice, [[1, 0], [1, 1]])
 
     def test_init_process_enumingest_agent_zero(self):
         agent_num = 0
         # confirm enum metrics ingest
-        ingestenum.EnumIngestThread.create_metrics(agent_num)
+        ingestenum.EnumIngestThread.create_metrics(agent_num, self.test_config)
 
         self.assertEqual(ingestenum.EnumIngestThread.metrics,
                          [
@@ -261,10 +266,10 @@ class InitProcessTest(TestCaseBase):
                              [[1, 1]]
                          ])
 
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq())
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice, [[[0, 0], [0, 1], [1, 0]]])
 
-        thread = ingestenum.EnumIngestThread(1, agent_num, MockReq())
+        thread = ingestenum.EnumIngestThread(1, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice, [[[1, 1]]])
 
     def test_init_process_ingest_agent_zero(self):
@@ -272,7 +277,7 @@ class InitProcessTest(TestCaseBase):
         agent_num = 0
 
         # confirm metrics ingest
-        ingest.IngestThread.create_metrics(agent_num)
+        ingest.IngestThread.create_metrics(agent_num, self.test_config)
 
         self.assertEqual(ingest.IngestThread.metrics,
                          [[[0, 0], [0, 1], [0, 2]],
@@ -283,55 +288,55 @@ class InitProcessTest(TestCaseBase):
 
         # confirm that the correct batch slices are created for individual
         # threads
-        thread = ingest.IngestThread(0, agent_num, MockReq())
+        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice,
                          [[[0, 0], [0, 1], [0, 2]],
                           [[0, 3], [0, 4], [0, 5]],
                           [[0, 6], [1, 0], [1, 1]]])
-        thread = ingest.IngestThread(1, agent_num, MockReq())
+        thread = ingest.IngestThread(1, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice,
                          [[[1, 2], [1, 3], [1, 4]],
                           [[1, 5], [1, 6]]])
 
     def test_init_process_query_agent_zero_thread_zero(self):
         agent_num = 0
-        thread = query.QueryThread(0, agent_num, requests_by_type, query.SinglePlotQuery)
+        thread = query.QueryThread(0, agent_num, requests_by_type, query.SinglePlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
 
     def test_init_process_query_agent_zero_thread_three(self):
         agent_num = 0
-        thread = query.QueryThread(3, agent_num, requests_by_type, query.MultiPlotQuery)
+        thread = query.QueryThread(3, agent_num, requests_by_type, query.MultiPlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
 
     def test_init_process_query_agent_zero_thread_six(self):
         agent_num = 0
-        thread = query.QueryThread(6, agent_num, requests_by_type, query.SearchQuery)
+        thread = query.QueryThread(6, agent_num, requests_by_type, query.SearchQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SearchQuery)
 
     def test_init_process_query_agent_zero_thread_nine(self):
         agent_num = 0
-        thread = query.QueryThread(9, agent_num, requests_by_type, query.EnumSearchQuery)
+        thread = query.QueryThread(9, agent_num, requests_by_type, query.EnumSearchQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
 
     def test_init_process_query_agent_zero_thread_twelve(self):
         agent_num = 0
-        thread = query.QueryThread(12, agent_num, requests_by_type, query.EnumSinglePlotQuery)
+        thread = query.QueryThread(12, agent_num, requests_by_type, query.EnumSinglePlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
 
     def test_init_process_query_agent_zero_thread_fourteen(self):
         agent_num = 0
-        thread = query.QueryThread(14, agent_num, requests_by_type, query.AnnotationsQuery)
+        thread = query.QueryThread(14, agent_num, requests_by_type, query.AnnotationsQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.AnnotationsQuery)
 
     def test_init_process_query_agent_zero_thread_sixteen(self):
         agent_num = 0
-        thread = query.QueryThread(16, agent_num, requests_by_type, query.EnumMultiPlotQuery)
+        thread = query.QueryThread(16, agent_num, requests_by_type, query.EnumMultiPlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumMultiPlotQuery)
 
@@ -341,66 +346,66 @@ class InitProcessTest(TestCaseBase):
 
         # confirm that the correct batches of ingest metrics are created for
         # worker 1
-        ingest.IngestThread.create_metrics(agent_num)
+        ingest.IngestThread.create_metrics(agent_num, self.test_config)
 
         self.assertEqual(ingest.IngestThread.metrics,
                          [[[2, 0], [2, 1], [2, 2]],
                           [[2, 3], [2, 4], [2, 5]],
                           [[2, 6]]])
 
-        thread = ingest.IngestThread(0, agent_num, MockReq())
+        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice,
                          [[[2, 0], [2, 1], [2, 2]],
                           [[2, 3], [2, 4], [2, 5]]])
-        thread = ingest.IngestThread(1, agent_num, MockReq())
+        thread = ingest.IngestThread(1, agent_num, MockReq(), self.test_config)
         self.assertEqual(thread.slice,
                          [[[2, 6]]])
 
     def test_init_process_annotationsingest_agent_one(self):
         agent_num = 1
-        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num)
+        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num, self.test_config)
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[2, 0], [2, 1]])
 
     def test_init_process_query_agent_one_thread_zero(self):
         agent_num = 1
-        thread = query.QueryThread(0, agent_num, requests_by_type, query.SinglePlotQuery)
+        thread = query.QueryThread(0, agent_num, requests_by_type, query.SinglePlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
 
     def test_init_process_query_agent_one_thread_four(self):
         agent_num = 1
-        thread = query.QueryThread(4, agent_num, requests_by_type, query.MultiPlotQuery)
+        thread = query.QueryThread(4, agent_num, requests_by_type, query.MultiPlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
 
     def test_init_process_query_agent_one_thread_six(self):
         agent_num = 1
-        thread = query.QueryThread(6, agent_num, requests_by_type, query.SearchQuery)
+        thread = query.QueryThread(6, agent_num, requests_by_type, query.SearchQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SearchQuery)
 
     def test_init_process_query_agent_one_thread_eight(self):
         agent_num = 1
-        thread = query.QueryThread(8, agent_num, requests_by_type, query.EnumSearchQuery)
+        thread = query.QueryThread(8, agent_num, requests_by_type, query.EnumSearchQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
 
     def test_init_process_query_agent_one_thread_ten(self):
         agent_num = 1
-        thread = query.QueryThread(10, agent_num, requests_by_type, query.EnumSinglePlotQuery)
+        thread = query.QueryThread(10, agent_num, requests_by_type, query.EnumSinglePlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
 
     def test_init_process_query_agent_one_thread_twelve(self):
         agent_num = 1
-        thread = query.QueryThread(12, agent_num, requests_by_type, query.AnnotationsQuery)
+        thread = query.QueryThread(12, agent_num, requests_by_type, query.AnnotationsQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.AnnotationsQuery)
 
     def test_init_process_query_agent_one_thread_sixteen(self):
         agent_num = 1
-        thread = query.QueryThread(16, agent_num, requests_by_type, query.EnumMultiPlotQuery)
+        thread = query.QueryThread(16, agent_num, requests_by_type, query.EnumMultiPlotQuery, self.test_config)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumMultiPlotQuery)
 
@@ -422,7 +427,9 @@ class GeneratePayloadTest(TestCaseBase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        self.test_config = {'report_interval': (1000 * 6),
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(
+                           {'report_interval': (1000 * 6),
                             'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
@@ -442,14 +449,12 @@ class GeneratePayloadTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2}
-
-        ingest.default_config.update(self.test_config)
+                            'num_nodes': 2})
 
     def test_generate_payload(self):
         agent_num = 1
-        ingest.IngestThread.create_metrics(agent_num)
-        thread = ingest.IngestThread(0, agent_num, MockReq())
+        ingest.IngestThread.create_metrics(agent_num, self.test_config)
+        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         payload = json.loads(
             thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
         valid_payload = [{u'collectionTime': 0,
@@ -474,8 +479,8 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_enum_payload(self):
         agent_num = 1
-        ingestenum.EnumIngestThread.create_metrics(agent_num)
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq())
+        ingestenum.EnumIngestThread.create_metrics(agent_num, self.test_config)
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(), self.test_config)
         payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
         valid_payload = [{
             u'timestamp': 1,
@@ -483,7 +488,7 @@ class GeneratePayloadTest(TestCaseBase):
             u'enums': [{
                 u'value': u'e_g_1_0',
                 u'name': ingestenum.EnumIngestThread.
-                         generate_enum_metric_name(1)
+                         generate_enum_metric_name(1, self.test_config)
             }]},
             {
                 u'timestamp': 1,
@@ -491,7 +496,7 @@ class GeneratePayloadTest(TestCaseBase):
                 u'enums': [{
                     u'value': u'e_g_2_0',
                     u'name': ingestenum.EnumIngestThread.
-                             generate_enum_metric_name(2)
+                             generate_enum_metric_name(2, self.test_config)
                 }]
             }
         ]
@@ -499,9 +504,9 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_annotations_payload(self):
         agent_num = 1
-        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num)
+        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num, self.test_config)
         thread = annotationsingest.AnnotationsIngestThread(
-            0, agent_num, MockReq())
+            0, agent_num, MockReq(), self.test_config)
         payload = json.loads(thread.generate_payload(0, 3))
         valid_payload = {
             'what': 'annotation org.example.metric.3',
@@ -528,7 +533,9 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        self.test_config = {'report_interval': (1000 * 6),
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(
+                           {'report_interval': (1000 * 6),
                             'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
@@ -548,15 +555,13 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2}
-
-        ingest.default_config.update(self.test_config)
+                            'num_nodes': 2})
 
     def test_annotationsingest_make_request(self):
         global sleep_time
         agent_num = 0
         thread = annotationsingest.AnnotationsIngestThread(
-            0, agent_num, MockReq())
+            0, agent_num, MockReq(), self.test_config)
         thread.slice = [[2, 0]]
         thread.position = 0
         thread.finish_time = 10000
@@ -600,7 +605,9 @@ class MakeIngestRequestsTest(TestCaseBase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        self.test_config = {'report_interval': (1000 * 6),
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(
+                           {'report_interval': (1000 * 6),
                             'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
@@ -620,14 +627,12 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2}
-
-        ingest.default_config.update(self.test_config)
+                            'num_nodes': 2})
 
     def test_ingest_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = ingest.IngestThread(0, agent_num, MockReq())
+        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         thread.slice = [[[2, 0], [2, 1]]]
         thread.position = 0
         thread.finish_time = 10000
@@ -674,7 +679,9 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
         abstract_thread.AbstractThread.time = lambda x: 1000
         abstract_thread.AbstractThread.sleep = mock_sleep
 
-        self.test_config = {'report_interval': (1000 * 6),
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(
+                           {'report_interval': (1000 * 6),
                             'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
@@ -694,14 +701,12 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'enum_multiplot_per_interval': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2}
-
-        ingest.default_config.update(self.test_config)
+                            'num_nodes': 2})
 
     def test_ingest_enum_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq())
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(), self.test_config)
         thread.slice = [[[2, 0], [2, 1]]]
         thread.position = 0
         thread.finish_time = 10000
@@ -712,7 +717,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                 'enums': [{
                     'value': 'e_g_0_0',
                     'name': ingestenum.EnumIngestThread.
-                            generate_enum_metric_name(0)
+                            generate_enum_metric_name(0, self.test_config)
                 }]
             },
             {
@@ -721,7 +726,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                 'enums': [{
                     'value': 'e_g_1_0',
                     'name': ingestenum.EnumIngestThread.
-                            generate_enum_metric_name(1)
+                            generate_enum_metric_name(1, self.test_config)
                 }]
             }
         ]
@@ -753,9 +758,9 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
 class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
         self.agent_num = 0
-        self.num_threads = query.QueryThread.num_threads()
-        self.requests_by_type = requests_by_type.copy()
         self.config = abstract_thread.default_config.copy()
+        self.num_threads = query.QueryThread.num_threads(self.config)
+        self.requests_by_type = requests_by_type.copy()
 
     def test_make_request_calls_make_request(self):
         generate_was_called = []

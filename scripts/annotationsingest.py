@@ -13,7 +13,7 @@ class AnnotationsIngestThread(AbstractThread):
     annotations = []
 
     @staticmethod
-    def _create_metrics(agent_number, config=default_config):
+    def _create_metrics(agent_number, config):
         """ Generate all the annotations for this worker
 
         """
@@ -24,14 +24,14 @@ class AnnotationsIngestThread(AbstractThread):
             AnnotationsIngestThread.generate_annotations_for_tenant)
 
     @classmethod
-    def create_metrics(cls, agent_number, config=default_config):
+    def create_metrics(cls, agent_number, config):
         """ Generate all the annotations for this worker
 
         """
         cls.annotations = cls._create_metrics(agent_number, config)
 
     @classmethod
-    def num_threads(cls, config=default_config):
+    def num_threads(cls, config):
         return config['annotations_concurrency']
 
     @staticmethod
@@ -41,16 +41,16 @@ class AnnotationsIngestThread(AbstractThread):
             l.append([tenant_id, x])
         return l
 
-    def __init__(self, thread_num, agent_num, request, config=None):
+    def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.annotations),
-                                        self.num_threads(), thread_num)
+                                        self.num_threads(self.config), thread_num)
         self.slice = self.annotations[start:end]
         self.request = request
 
     def generate_annotation(self, time, metric_id):
-        metric_name = generate_metric_name(metric_id)
+        metric_name = generate_metric_name(metric_id, self.config)
         return {'what': 'annotation ' + metric_name,
                 'when': time,
                 'tags': 'tag',

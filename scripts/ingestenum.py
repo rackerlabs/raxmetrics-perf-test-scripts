@@ -14,7 +14,7 @@ class EnumIngestThread(AbstractThread):
     metrics = []
 
     @staticmethod
-    def _create_metrics(agent_number, config=default_config):
+    def _create_metrics(agent_number, config):
         """ Generate all the metrics for this worker
 
         The metrics are a list of batches.  Each batch is a list of metrics
@@ -32,7 +32,7 @@ class EnumIngestThread(AbstractThread):
             config['batch_size'])
 
     @classmethod
-    def create_metrics(cls, agent_number, config=default_config):
+    def create_metrics(cls, agent_number, config):
         """ Generate all the metrics for this worker
 
         The metrics are a list of batches.  Each batch is a list of metrics
@@ -41,7 +41,7 @@ class EnumIngestThread(AbstractThread):
         cls.metrics = cls._create_metrics(agent_number, config)
 
     @classmethod
-    def num_threads(cls, config=default_config):
+    def num_threads(cls, config):
         return config['enum_ingest_concurrency']
 
     @staticmethod
@@ -60,14 +60,14 @@ class EnumIngestThread(AbstractThread):
 
     # TODO: Add enum prefix to config
     @staticmethod
-    def generate_enum_metric_name(metric_id, config=default_config):
+    def generate_enum_metric_name(metric_id, config):
         return "enum_grinder_" + config['name_fmt'] % metric_id
 
-    def __init__(self, thread_num, agent_num, request, config=None):
+    def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
-                                        self.num_threads(), thread_num)
+                                        self.num_threads(self.config), thread_num)
         self.slice = self.metrics[start:end]
         self.request = request
 
@@ -77,7 +77,7 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_metric(self, time, tenant_id, metric_id):
         return {'tenantId': str(tenant_id),
                 'timestamp': time,
-                'enums': [{'name': self.generate_enum_metric_name(metric_id),
+                'enums': [{'name': self.generate_enum_metric_name(metric_id, self.config),
                            'value': 'e_g_' + str(
                                metric_id) + self.generate_enum_suffix()}]
                 }

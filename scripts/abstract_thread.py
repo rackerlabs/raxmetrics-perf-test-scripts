@@ -127,5 +127,5 @@ def generate_metrics_tenants(num_tenants, metrics_per_tenant,
     return shuffled(metrics)
 
 
-def generate_metric_name(metric_id, config=default_config):
+def generate_metric_name(metric_id, config):
     return config['name_fmt'] % metric_id

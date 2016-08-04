@@ -26,7 +26,7 @@ class IngestThread(AbstractThread):
     metrics = []
 
     @staticmethod
-    def _create_metrics(agent_number, config=default_config):
+    def _create_metrics(agent_number, config):
         """ Generate all the metrics for this worker
 
         The metrics are a list of batches.  Each batch is a list of metrics
@@ -42,7 +42,7 @@ class IngestThread(AbstractThread):
             metrics, config['batch_size'])
 
     @classmethod
-    def create_metrics(cls, agent_number, config=default_config):
+    def create_metrics(cls, agent_number, config):
         """ Generate all the metrics for this worker
 
         The metrics are a list of batches.  Each batch is a list of metrics
@@ -51,7 +51,7 @@ class IngestThread(AbstractThread):
         cls.metrics = cls._create_metrics(agent_number, config)
 
     @classmethod
-    def num_threads(cls, config=default_config):
+    def num_threads(cls, config):
         return config['ingest_concurrency']
 
     @staticmethod
@@ -68,11 +68,11 @@ class IngestThread(AbstractThread):
             b.append(metrics[i:i + batch_size])
         return b
 
-    def __init__(self, thread_num, agent_num, request, config=None):
+    def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
-                                        self.num_threads(), thread_num)
+                                        self.num_threads(self.config), thread_num)
         self.slice = self.metrics[start:end]
         self.request = request
 
@@ -91,7 +91,7 @@ class IngestThread(AbstractThread):
             collection_time = random.choice(collection_times)
 
         return {'tenantId': str(tenant_id),
-                'metricName': generate_metric_name(metric_id),
+                'metricName': generate_metric_name(metric_id, self.config),
                 'unit': self.generate_unit(tenant_id),
                 'metricValue': random.randint(0, RAND_MAX),
                 'ttlInSeconds': (2 * 24 * 60 * 60),
