@@ -57,15 +57,15 @@ class AbstractQuery(object):
         self.queries = self._create_metrics(
             self, agent_number, self.query_interval_name, config)
 
-    def make_request(self, time, logger, request, tenant_id=None):
+    def _make_request(self, time, logger, request, tenant_id=None):
         raise Exception("Can't instantiate abstract query")
 
 
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_per_interval'
 
-    def make_request(self, time, logger, request, tenant_id=None,
-                     metric_name=None):
+    def _make_request(self, time, logger, request, tenant_id=None,
+                      metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if metric_name is None:
@@ -94,7 +94,7 @@ class MultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def make_request(self, time, logger, request, tenant_id=None, payload=None):
+    def _make_request(self, time, logger, request, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if payload is None:
@@ -119,8 +119,8 @@ class SearchQuery(AbstractQuery):
             random.randint(0, self.config['metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def make_request(self, time, logger, request, tenant_id=None,
-                     metric_regex=None):
+    def _make_request(self, time, logger, request, tenant_id=None,
+                      metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if metric_regex is None:
@@ -136,7 +136,7 @@ class SearchQuery(AbstractQuery):
 class AnnotationsQuery(AbstractQuery):
     query_interval_name = 'annotations_queries_per_interval'
 
-    def make_request(self, time, logger, request, tenant_id=None):
+    def _make_request(self, time, logger, request, tenant_id=None):
         if tenant_id is None:
             tenant_id = random.randint(0,
                                        self.config['annotations_num_tenants'])
@@ -156,8 +156,8 @@ class EnumSearchQuery(AbstractQuery):
             random.randint(0, self.config['enum_metrics_per_tenant']))
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def make_request(self, time, logger, request, tenant_id=None,
-                     metric_regex=None):
+    def _make_request(self, time, logger, request, tenant_id=None,
+                      metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if metric_regex is None:
@@ -172,8 +172,8 @@ class EnumSearchQuery(AbstractQuery):
 class EnumSinglePlotQuery(AbstractQuery):
     query_interval_name = 'enum_single_plot_queries_per_interval'
 
-    def make_request(self, time, logger, request, tenant_id=None,
-                     metric_name=None):
+    def _make_request(self, time, logger, request, tenant_id=None,
+                      metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if metric_name is None:
@@ -202,7 +202,7 @@ class EnumMultiPlotQuery(AbstractQuery):
                            range(metrics_count))
         return json.dumps(metrics_list)
 
-    def make_request(self, time, logger, request, tenant_id=None, payload=None):
+    def _make_request(self, time, logger, request, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if payload is None:
@@ -293,6 +293,6 @@ class QueryThread(AbstractThread):
         else:
             query = query_instance_or_type
         request = self.requests_by_query_type[type(query)]
-        result = query.make_request(
+        result = query._make_request(
             int(self.time()), logger, request)
         return result

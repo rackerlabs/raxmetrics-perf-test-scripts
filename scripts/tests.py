@@ -789,7 +789,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         expected_result = object()
 
         class DummyQueryType(query.AbstractQuery):
-            def make_request(self, time, logger, request, *args, **kwargs):
+            def _make_request(self, time, logger, request, *args, **kwargs):
                 generate_was_called.append(True)
                 return expected_result
             query_interval_name = 'DummyQueryType_per_interval'
@@ -819,7 +819,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         random.randint = lambda x, y: 40
         req = requests_by_type[query.SinglePlotQuery]
         qq = query.SinglePlotQuery(0, self.agent_num, self.num_threads, self.config)
-        result = qq.make_request(1000, None, req, 0,
+        result = qq._make_request(1000, None, req, 0,
                              'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
@@ -830,7 +830,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_SearchQuery_request(self):
         req = requests_by_type[query.SearchQuery]
         qq = query.SearchQuery(0, self.agent_num, self.num_threads, self.config)
-        result = qq.make_request(1000, None, req, 10,
+        result = qq._make_request(1000, None, req, 10,
                              'org.example.metric.*')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?" +
@@ -852,8 +852,8 @@ class MakeQueryRequestsTest(TestCaseBase):
             "org.example.metric.8",
             "org.example.metric.9"
         ])
-        result = qq.make_request(1000, None, req, 20,
-                                 payload_sent)
+        result = qq._make_request(1000, None, req, 20,
+                                  payload_sent)
         self.assertEqual(req.post_url,
                          "http://metrics.example.org/v2.0/20/views?" +
                          "from=-86399000&to=1000&resolution=FULL")
@@ -863,7 +863,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_AnnotationsQuery_request(self):
         req = requests_by_type[query.AnnotationsQuery]
         qq = query.AnnotationsQuery(0, self.agent_num, self.num_threads, self.config)
-        result = qq.make_request(1000, None, req, 30)
+        result = qq._make_request(1000, None, req, 30)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
                          "getEvents?from=-86399000&until=1000")
@@ -872,7 +872,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_EnumSearchQuery_request(self):
         req = requests_by_type[query.EnumSearchQuery]
         qq = query.EnumSearchQuery(0, self.agent_num, self.num_threads, self.config)
-        result = qq.make_request(1000, None, req, 40)
+        result = qq._make_request(1000, None, req, 40)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/40/metrics/search?" +
                          "query=enum_grinder_org.example.metric.*&" +
@@ -882,7 +882,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_EnumSinglePlotQuery_request(self):
         req = requests_by_type[query.EnumSinglePlotQuery]
         qq = query.EnumSinglePlotQuery(0, self.agent_num, self.num_threads, self.config)
-        result = qq.make_request(1000, None, req, 50,
+        result = qq._make_request(1000, None, req, 50,
                              'enum_grinder_org.example.metric.metric456')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/50/views/" +
@@ -899,8 +899,8 @@ class MakeQueryRequestsTest(TestCaseBase):
             "enum_grinder_org.example.metric.2",
             "enum_grinder_org.example.metric.3"
         ])
-        result = qq.make_request(1000, None, req, 4,
-                                 payload_sent)
+        result = qq._make_request(1000, None, req, 4,
+                                  payload_sent)
         self.assertEqual(req.post_url,
                          "http://metrics.example.org/v2.0/4/views?" +
                          "from=-86399000&to=1000&resolution=FULL")
