@@ -1,11 +1,10 @@
 import random
-import time
 
 try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, default_config, generate_job_range
+from abstract_thread import AbstractThread, generate_job_range
 from abstract_thread import generate_metrics_tenants
 
 
