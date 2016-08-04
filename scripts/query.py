@@ -50,10 +50,12 @@ class AbstractQuery(object):
             cls, agent_number, cls.query_interval_name, config)
         return queries
 
-    def __init__(self, thread_num, num_threads, config):
+    def __init__(self, thread_num, agent_number, num_threads, config):
         self.thread_num = thread_num
         self.num_threads = num_threads
         self.config = config
+        self.queries = self._create_metrics(
+            self, agent_number, self.query_interval_name, config)
 
     def make_request(self, time, logger, request, tenant_id=None):
         raise Exception("Can't instantiate abstract query")
@@ -241,13 +243,13 @@ class QueryThread(AbstractThread):
                  config=None):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         self.query_instances = [
-            SinglePlotQuery(thread_num, self.num_threads(), self.config),
-            MultiPlotQuery(thread_num, self.num_threads(), self.config),
-            SearchQuery(thread_num, self.num_threads(), self.config),
-            EnumSearchQuery(thread_num, self.num_threads(), self.config),
-            EnumSinglePlotQuery(thread_num, self.num_threads(), self.config),
-            AnnotationsQuery(thread_num, self.num_threads(), self.config),
-            EnumMultiPlotQuery(thread_num, self.num_threads(), self.config)
+            SinglePlotQuery(thread_num, agent_num, self.num_threads(), self.config),
+            MultiPlotQuery(thread_num, agent_num, self.num_threads(), self.config),
+            SearchQuery(thread_num, agent_num, self.num_threads(), self.config),
+            EnumSearchQuery(thread_num, agent_num, self.num_threads(), self.config),
+            EnumSinglePlotQuery(thread_num, agent_num, self.num_threads(), self.config),
+            AnnotationsQuery(thread_num, agent_num, self.num_threads(), self.config),
+            EnumMultiPlotQuery(thread_num, agent_num, self.num_threads(), self.config)
         ]
         self.query_instances_by_type = {
             SinglePlotQuery:        self.query_instances[0],
@@ -261,8 +263,7 @@ class QueryThread(AbstractThread):
 
         queries = []
         for qinst in self.query_instances:
-            qq = qinst._create_metrics(qinst, agent_num,
-                                       qinst.query_interval_name)
+            qq = qinst.queries
             queries.extend(qq)
         queries = shuffled(queries)
 

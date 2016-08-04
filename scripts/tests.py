@@ -779,10 +779,10 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
 
 class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
-        agent_num = 0
+        self.agent_num = 0
         self.num_threads = query.QueryThread.num_threads()
         self.requests_by_type = requests_by_type.copy()
-        self.thread = query.QueryThread(0, agent_num, self.requests_by_type)
+        self.thread = query.QueryThread(0, self.agent_num, self.requests_by_type)
         self.config = abstract_thread.default_config.copy()
 
     def test_make_request_calls_make_request(self):
@@ -793,10 +793,12 @@ class MakeQueryRequestsTest(TestCaseBase):
             def make_request(self, time, logger, request, *args, **kwargs):
                 generate_was_called.append(True)
                 return expected_result
+            query_interval_name = 'DummyQueryType_per_interval'
+        self.config['DummyQueryType_per_interval'] = 3
         self.requests_by_type[DummyQueryType] = MockReq()
         random.randint = lambda x, y: 40
         req = requests_by_type[query.SinglePlotQuery]
-        qq = DummyQueryType(0, self.num_threads, self.config)
+        qq = DummyQueryType(0, self.agent_num, self.num_threads, self.config)
         self.thread.slice = [qq]
         self.thread.position = 0
 
@@ -814,7 +816,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_SinglePlotQuery_request(self):
         random.randint = lambda x, y: 40
         req = requests_by_type[query.SinglePlotQuery]
-        qq = query.SinglePlotQuery(0, self.num_threads, self.config)
+        qq = query.SinglePlotQuery(0, self.agent_num, self.num_threads, self.config)
         result = qq.make_request(1000, None, req, 0,
                              'org.example.metric.metric123')
         self.assertEqual(req.get_url,
@@ -825,7 +827,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_SearchQuery_request(self):
         req = requests_by_type[query.SearchQuery]
-        qq = query.SearchQuery(0, self.num_threads, self.config)
+        qq = query.SearchQuery(0, self.agent_num, self.num_threads, self.config)
         result = qq.make_request(1000, None, req, 10,
                              'org.example.metric.*')
         self.assertEqual(req.get_url,
@@ -835,7 +837,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_MultiPlotQuery_request(self):
         req = requests_by_type[query.MultiPlotQuery]
-        qq = query.MultiPlotQuery(0, self.num_threads, self.config)
+        qq = query.MultiPlotQuery(0, self.agent_num, self.num_threads, self.config)
         payload_sent = json.dumps([
             "org.example.metric.0",
             "org.example.metric.1",
@@ -858,7 +860,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_AnnotationsQuery_request(self):
         req = requests_by_type[query.AnnotationsQuery]
-        qq = query.AnnotationsQuery(0, self.num_threads, self.config)
+        qq = query.AnnotationsQuery(0, self.agent_num, self.num_threads, self.config)
         result = qq.make_request(1000, None, req, 30)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
@@ -867,7 +869,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_EnumSearchQuery_request(self):
         req = requests_by_type[query.EnumSearchQuery]
-        qq = query.EnumSearchQuery(0, self.num_threads, self.config)
+        qq = query.EnumSearchQuery(0, self.agent_num, self.num_threads, self.config)
         result = qq.make_request(1000, None, req, 40)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/40/metrics/search?" +
@@ -877,7 +879,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_EnumSinglePlotQuery_request(self):
         req = requests_by_type[query.EnumSinglePlotQuery]
-        qq = query.EnumSinglePlotQuery(0, self.num_threads, self.config)
+        qq = query.EnumSinglePlotQuery(0, self.agent_num, self.num_threads, self.config)
         result = qq.make_request(1000, None, req, 50,
                              'enum_grinder_org.example.metric.metric456')
         self.assertEqual(req.get_url,
@@ -888,7 +890,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_EnumMultiPlotQuery_request(self):
         req = requests_by_type[query.EnumMultiPlotQuery]
-        qq = query.EnumMultiPlotQuery(0, self.num_threads, self.config)
+        qq = query.EnumMultiPlotQuery(0, self.agent_num, self.num_threads, self.config)
         payload_sent = json.dumps([
             "enum_grinder_org.example.metric.0",
             "enum_grinder_org.example.metric.1",
