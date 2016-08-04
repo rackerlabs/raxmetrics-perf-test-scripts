@@ -219,11 +219,6 @@ class EnumMultiPlotQuery(AbstractQuery):
 
 
 class QueryThread(AbstractThread):
-    # The list of queries to be invoked across all threads in this worker
-
-    query_types = [SinglePlotQuery, MultiPlotQuery, SearchQuery,
-                   EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery,
-                   EnumMultiPlotQuery]
 
     @classmethod
     def num_threads(cls, config):
