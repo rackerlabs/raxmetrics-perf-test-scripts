@@ -225,10 +225,10 @@ class QueryThread(AbstractThread):
         return config['query_concurrency']
 
     def __init__(self, thread_num, agent_num, requests_by_query_type,
-                 query_type, config):
+                 query, config):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         self.requests_by_query_type = requests_by_query_type
-        self.query_instance = query_type(thread_num, agent_num, self.num_threads(self.config), self.config)
+        self.query_instance = query
         self.slice = [self.query_instance]
 
     def make_request(self, logger):
