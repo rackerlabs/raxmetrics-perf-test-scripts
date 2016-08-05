@@ -21,7 +21,7 @@ class QueryThread(AbstractThread):
         self.slice = [self.query_instance]
 
     def make_request(self, logger, time):
-        return self.query_instance._make_request(logger, time)
+        return self._make_request(logger, time)
 
 
 class AbstractQuery(QueryThread):
