@@ -796,6 +796,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()
+suite.addTest(loader.loadTestsFromTestCase(ThreadManagerTest))
 suite.addTest(loader.loadTestsFromTestCase(InitProcessTest))
 suite.addTest(loader.loadTestsFromTestCase(GeneratePayloadTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeAnnotationsIngestRequestsTest))
