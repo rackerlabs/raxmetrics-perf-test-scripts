@@ -41,7 +41,7 @@ class EnumIngestThread(AbstractThread):
 
     @classmethod
     def num_threads(cls, config):
-        return config['enum_ingest_concurrency']
+        return config['enum_ingest_weight']
 
     @staticmethod
     def generate_metrics_for_tenant(tenant_id, metrics_per_tenant):

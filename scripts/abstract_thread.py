@@ -14,7 +14,7 @@ default_config = {
     'annotations_per_tenant': 10,
     'batch_size': 5,
     'ingest_concurrency': 15,
-    'enum_ingest_concurrency': 15,
+    'enum_ingest_weight': 15,
     'num_nodes': 1,
     'url': "http://localhost:19000",
     'query_url': "http://localhost:20000",
