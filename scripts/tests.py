@@ -404,7 +404,8 @@ class InitProcessTest(TestCaseBase):
         # worker 0
         agent_num = 0
         # confirm annotationsingest
-        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num, self.test_config)
+        annotationsingest.AnnotationsIngestThread.create_metrics(
+            agent_num, self.test_config)
 
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[0, 0], [0, 1], [1, 0], [1, 1]])
@@ -428,10 +429,12 @@ class InitProcessTest(TestCaseBase):
                              [[1, 1]]
                          ])
 
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(), self.test_config)
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
+                                             self.test_config)
         self.assertEqual(thread.slice, [[[0, 0], [0, 1], [1, 0]]])
 
-        thread = ingestenum.EnumIngestThread(1, agent_num, MockReq(), self.test_config)
+        thread = ingestenum.EnumIngestThread(1, agent_num, MockReq(),
+                                             self.test_config)
         self.assertEqual(thread.slice, [[[1, 1]]])
 
     def test_init_process_ingest_agent_zero(self):
@@ -483,7 +486,8 @@ class InitProcessTest(TestCaseBase):
 
     def test_init_process_annotationsingest_agent_one(self):
         agent_num = 1
-        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num, self.test_config)
+        annotationsingest.AnnotationsIngestThread.create_metrics(
+            agent_num, self.test_config)
         self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
                          [[2, 0], [2, 1]])
 
@@ -558,7 +562,8 @@ class GeneratePayloadTest(TestCaseBase):
     def test_generate_enum_payload(self):
         agent_num = 1
         ingestenum.EnumIngestThread.create_metrics(agent_num, self.test_config)
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(), self.test_config)
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
+                                             self.test_config)
         payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
         valid_payload = [{
             u'timestamp': 1,
@@ -582,7 +587,8 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_annotations_payload(self):
         agent_num = 1
-        annotationsingest.AnnotationsIngestThread.create_metrics(agent_num, self.test_config)
+        annotationsingest.AnnotationsIngestThread.create_metrics(
+            agent_num, self.test_config)
         thread = annotationsingest.AnnotationsIngestThread(
             0, agent_num, MockReq(), self.test_config)
         payload = json.loads(thread.generate_payload(0, 3))
@@ -790,7 +796,8 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
     def test_ingest_enum_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(), self.test_config)
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
+                                             self.test_config)
         thread.slice = [[[2, 0], [2, 1]]]
         thread.position = 0
         thread.finish_time = 10000
@@ -850,7 +857,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         req = requests_by_type[query.SinglePlotQuery]
         qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
         result = qq._make_request(None, 1000, 0,
-                             'org.example.metric.metric123')
+                                  'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
                          "org.example.metric.metric123?from=-86399000&" +
@@ -861,7 +868,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         req = requests_by_type[query.SearchQuery]
         qq = query.SearchQuery(0, self.agent_num, req, self.config)
         result = qq._make_request(None, 1000, 10,
-                             'org.example.metric.*')
+                                  'org.example.metric.*')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?" +
                          "query=org.example.metric.*")
@@ -913,7 +920,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         req = requests_by_type[query.EnumSinglePlotQuery]
         qq = query.EnumSinglePlotQuery(0, self.agent_num, req, self.config)
         result = qq._make_request(None, 1000, 50,
-                             'enum_grinder_org.example.metric.metric456')
+                                  'enum_grinder_org.example.metric.metric456')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/50/views/" +
                          "enum_grinder_org.example.metric.metric456?" +

@@ -51,8 +51,8 @@ class ThreadManager(object):
         #  passed to the grinder
         if self.tot_threads != self.concurrent_threads:
             raise Exception(
-                "Configuration error: grinder.threads (%s) doesn't equal total "
-                "concurrent threads (%s)" %
+                "Configuration error: grinder.threads (%s) doesn't equal total"
+                " concurrent threads (%s)" %
                 (self.tot_threads, self.concurrent_threads))
 
         self.requests_by_type = requests_by_type

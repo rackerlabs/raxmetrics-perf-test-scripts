@@ -64,7 +64,8 @@ class AbstractQuery(QueryThread):
         return queries
 
     def __init__(self, thread_num, agent_number, request, config):
-        QueryThread.__init__(self, thread_num, agent_number, config, request, self)
+        QueryThread.__init__(self, thread_num, agent_number, config, request,
+                             self)
         self.thread_num = thread_num
         self.config = config
         self.queries = self._create_metrics(
@@ -172,7 +173,8 @@ class EnumSearchQuery(AbstractQuery):
 
     def generate_metrics_regex(self):
         metric_name = 'enum_grinder_' + generate_metric_name(
-            random.randint(0, self.config['enum_metrics_per_tenant']), self.config)
+            random.randint(0, self.config['enum_metrics_per_tenant']),
+            self.config)
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
     def _make_request(self, logger, time, tenant_id=None,
@@ -197,7 +199,8 @@ class EnumSinglePlotQuery(AbstractQuery):
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if metric_name is None:
             metric_name = EnumIngestThread.generate_enum_metric_name(
-                random.randint(0, self.config['enum_metrics_per_tenant']), self.config)
+                random.randint(0, self.config['enum_metrics_per_tenant']),
+                self.config)
         to = time
         frm = time - self.one_day
         resolution = 'FULL'

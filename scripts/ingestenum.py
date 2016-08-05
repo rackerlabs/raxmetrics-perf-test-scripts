@@ -66,7 +66,8 @@ class EnumIngestThread(AbstractThread):
         AbstractThread.__init__(self, thread_num, agent_num, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
-                                        self.num_threads(self.config), thread_num)
+                                        self.num_threads(self.config),
+                                        thread_num)
         self.slice = self.metrics[start:end]
         self.request = request
 
@@ -76,7 +77,8 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_metric(self, time, tenant_id, metric_id):
         return {'tenantId': str(tenant_id),
                 'timestamp': time,
-                'enums': [{'name': self.generate_enum_metric_name(metric_id, self.config),
+                'enums': [{'name': self.generate_enum_metric_name(metric_id,
+                                                                  self.config),
                            'value': 'e_g_' + str(
                                metric_id) + self.generate_enum_suffix()}]
                 }
