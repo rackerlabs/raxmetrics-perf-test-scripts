@@ -699,7 +699,6 @@ class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
         self.agent_num = 0
         self.config = from_config_file(grinder_props)
-        self.num_threads = query.QueryThread.num_threads(self.config)
         self.requests_by_type = requests_by_type.copy()
 
     def test_query_make_SinglePlotQuery_request(self):
