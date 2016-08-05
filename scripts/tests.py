@@ -466,13 +466,6 @@ class InitProcessTest(TestCaseBase):
         self.assertEqual(thread.slice,
                          [[[2, 6]]])
 
-    def test_init_process_annotationsingest_agent_one(self):
-        agent_num = 1
-        annots = annotationsingest.AnnotationsIngestThread._create_metrics(
-            agent_num, self.test_config)
-        self.assertEqual(annots,
-                         [[2, 0], [2, 1]])
-
     def tearDown(self):
         random.shuffle = self.real_shuffle
         random.randint = self.real_randint
@@ -571,8 +564,6 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_annotations_payload(self):
         agent_num = 1
-        annots = annotationsingest.AnnotationsIngestThread._create_metrics(
-            agent_num, self.test_config)
         thread = annotationsingest.AnnotationsIngestThread(
             0, agent_num, MockReq(), self.test_config)
         payload = json.loads(thread.generate_payload(0, 3))
