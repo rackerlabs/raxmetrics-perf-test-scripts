@@ -96,7 +96,7 @@ grinder_props = {
     'grinder.bf.multiplot_per_interval': '2',
     'grinder.bf.singleplot_per_interval': '2',
     'grinder.bf.enum_single_plot_queries_per_interval': '1',
-    'grinder.bf.enum_multiplot_per_interval': '2',
+    'grinder.bf.enum_multiplot_query_weight': '2',
     'grinder.bf.annotations_queries_per_interval': '1',
 }
 
@@ -346,7 +346,7 @@ class InitProcessTest(TestCaseBase):
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_queries_per_interval': 10,
-                            'enum_multiplot_per_interval': 10,
+                            'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2})
@@ -370,7 +370,7 @@ class InitProcessTest(TestCaseBase):
             self.num_query_nodes))
         self.enum_multi_plot_queries_agent0 = int(math.ceil(
             self.test_config[
-                'enum_multiplot_per_interval'] / self.num_query_nodes))
+                'enum_multiplot_query_weight'] / self.num_query_nodes))
         self.annotation_queries_agent0 = int(math.ceil(
             self.test_config[
                 'annotations_queries_per_interval'] / self.num_query_nodes))
@@ -394,7 +394,7 @@ class InitProcessTest(TestCaseBase):
             self.test_config['annotations_queries_per_interval'] - \
             self.annotation_queries_agent0
         self.enum_multi_plot_queries_agent1 = \
-            self.test_config['enum_multiplot_per_interval'] - \
+            self.test_config['enum_multiplot_query_weight'] - \
             self.enum_multi_plot_queries_agent0
 
     def test_init_process_annotationsingest_agent_zero(self):
@@ -527,7 +527,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_queries_per_interval': 10,
-                            'enum_multiplot_per_interval': 10,
+                            'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2})
@@ -635,7 +635,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_queries_per_interval': 10,
-                            'enum_multiplot_per_interval': 10,
+                            'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2,
@@ -709,7 +709,7 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_queries_per_interval': 10,
-                            'enum_multiplot_per_interval': 10,
+                            'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2,
@@ -785,7 +785,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_queries_per_interval': 10,
-                            'enum_multiplot_per_interval': 10,
+                            'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2,
