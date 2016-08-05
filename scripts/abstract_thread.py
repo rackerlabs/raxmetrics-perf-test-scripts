@@ -122,8 +122,7 @@ def generate_metrics_tenants(num_tenants, metrics_per_tenant,
     tenants_in_shard = range(
         *generate_job_range(num_tenants, num_nodes, agent_number))
     metrics = []
-    for y in map(lambda x: gen_fn(x, metrics_per_tenant),
-                 tenants_in_shard):
+    for y in [gen_fn(x, metrics_per_tenant) for x in tenants_in_shard]:
         metrics += y
     return shuffled(metrics)
 
