@@ -93,7 +93,7 @@ grinder_props = {
     'grinder.bf.max_multiplot_metrics': '10',
     'grinder.bf.search_queries_per_interval': '2',
     'grinder.bf.enum_search_queries_per_interval': '1',
-    'grinder.bf.multiplot_per_interval': '2',
+    'grinder.bf.multiplot_query_weight': '2',
     'grinder.bf.singleplot_query_weight': '2',
     'grinder.bf.enum_single_plot_query_weight': '1',
     'grinder.bf.enum_multiplot_query_weight': '2',
@@ -342,7 +342,7 @@ class InitProcessTest(TestCaseBase):
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
-                            'multiplot_per_interval': 10,
+                            'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_query_weight': 10,
@@ -356,7 +356,7 @@ class InitProcessTest(TestCaseBase):
             self.test_config['singleplot_query_weight'] /
             self.num_query_nodes))
         self.multi_plot_queries_agent0 = int(math.ceil(
-            self.test_config['multiplot_per_interval'] /
+            self.test_config['multiplot_query_weight'] /
             self.num_query_nodes))
         self.search_queries_agent0 = int(math.ceil(
             self.test_config[
@@ -379,7 +379,7 @@ class InitProcessTest(TestCaseBase):
             self.test_config['singleplot_query_weight'] - \
             self.single_plot_queries_agent0
         self.multi_plot_queries_agent1 = \
-            self.test_config['multiplot_per_interval'] - \
+            self.test_config['multiplot_query_weight'] - \
             self.multi_plot_queries_agent0
         self.search_queries_agent1 = \
             self.test_config['search_queries_per_interval'] - \
@@ -523,7 +523,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
-                            'multiplot_per_interval': 10,
+                            'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_query_weight': 10,
@@ -631,7 +631,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
-                            'multiplot_per_interval': 10,
+                            'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_query_weight': 10,
@@ -705,7 +705,7 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
-                            'multiplot_per_interval': 10,
+                            'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_query_weight': 10,
@@ -781,7 +781,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
-                            'multiplot_per_interval': 10,
+                            'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
                             'enum_single_plot_query_weight': 10,

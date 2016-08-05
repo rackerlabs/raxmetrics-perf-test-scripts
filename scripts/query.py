@@ -92,7 +92,7 @@ class SinglePlotQuery(AbstractQuery):
 
 
 class MultiPlotQuery(AbstractQuery):
-    query_interval_name = 'multiplot_per_interval'
+    query_interval_name = 'multiplot_query_weight'
 
     def generate_multiplot_payload(self):
         metrics_count = min(self.config['max_multiplot_metrics'],
