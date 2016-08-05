@@ -4,7 +4,7 @@ try:
 except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_job_range
-from abstract_thread import generate_metrics_tenants, generate_metric_name
+from abstract_thread import generate_metric_name, shuffled
 
 
 class AnnotationsIngestThread(AbstractThread):
@@ -16,11 +16,18 @@ class AnnotationsIngestThread(AbstractThread):
         """ Generate all the annotations for this worker
 
         """
-        return generate_metrics_tenants(
-            config['annotations_num_tenants'],
-            config['annotations_per_tenant'], agent_number,
-            config['num_nodes'],
-            AnnotationsIngestThread.generate_annotations_for_tenant)
+        num_tenants = config['annotations_num_tenants']
+        metrics_per_tenant = config['annotations_per_tenant']
+        num_nodes = config['num_nodes']
+
+        """generate the subset of the total metrics to be done by this agent"""
+        tenants_in_shard = range(
+            *generate_job_range(num_tenants, num_nodes, agent_number))
+        metrics = []
+        for y in [AnnotationsIngestThread.generate_annotations_for_tenant(x, metrics_per_tenant) for x in
+                     tenants_in_shard]:
+            metrics += y
+        return shuffled(metrics)
 
     @classmethod
     def create_metrics(cls, agent_number, config):
