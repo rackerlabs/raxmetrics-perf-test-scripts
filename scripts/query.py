@@ -9,6 +9,28 @@ from abstract_thread import generate_metric_name
 from ingestenum import EnumIngestThread
 
 
+class QueryThread(AbstractThread):
+
+    @classmethod
+    def num_threads(cls, config):
+        return config['query_concurrency']
+
+    def __init__(self, thread_num, agent_num, config, request, query):
+        AbstractThread.__init__(self, thread_num, agent_num, config)
+        self.query_instance = query
+        self.slice = [self.query_instance]
+
+    def make_request(self, logger, time):
+        if len(self.slice) == 0:
+            logger("Warning: no work for current thread")
+            self.sleep(1000000)
+            return None
+        query = self.query_instance
+        result = query._make_request(
+            logger, int(self.time()))
+        return result
+
+
 class AbstractQuery(object):
     one_day = (1000 * 60 * 60 * 24)
 
@@ -216,26 +238,4 @@ class EnumMultiPlotQuery(AbstractQuery):
             to, resolution)
         result = self.request.POST(url, payload)
         #    logger(result.getText())
-        return result
-
-
-class QueryThread(AbstractThread):
-
-    @classmethod
-    def num_threads(cls, config):
-        return config['query_concurrency']
-
-    def __init__(self, thread_num, agent_num, config, request, query):
-        AbstractThread.__init__(self, thread_num, agent_num, config)
-        self.query_instance = query
-        self.slice = [self.query_instance]
-
-    def make_request(self, logger, time):
-        if len(self.slice) == 0:
-            logger("Warning: no work for current thread")
-            self.sleep(1000000)
-            return None
-        query = self.query_instance
-        result = query._make_request(
-            logger, int(self.time()))
         return result
