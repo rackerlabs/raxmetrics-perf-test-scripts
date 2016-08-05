@@ -41,13 +41,12 @@ class AnnotationsIngestThread(AbstractThread):
         return l
 
     def __init__(self, thread_num, agent_num, request, config):
-        AbstractThread.__init__(self, thread_num, agent_num, config)
+        AbstractThread.__init__(self, thread_num, agent_num, request, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.annotations),
                                         self.num_threads(self.config),
                                         thread_num)
         self.slice = self.annotations[start:end]
-        self.request = request
 
     def generate_annotation(self, time, metric_id):
         metric_name = generate_metric_name(metric_id, self.config)

@@ -69,13 +69,12 @@ class IngestThread(AbstractThread):
         return b
 
     def __init__(self, thread_num, agent_num, request, config):
-        AbstractThread.__init__(self, thread_num, agent_num, config)
+        AbstractThread.__init__(self, thread_num, agent_num, request, config)
         # Initialize the "slice" of the metrics to be sent by this thread
         start, end = generate_job_range(len(self.metrics),
                                         self.num_threads(self.config),
                                         thread_num)
         self.slice = self.metrics[start:end]
-        self.request = request
 
     def generate_unit(self, tenant_id):
         unit_number = tenant_id % 6

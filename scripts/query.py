@@ -11,12 +11,8 @@ from ingestenum import EnumIngestThread
 
 class QueryThread(AbstractThread):
 
-    @classmethod
-    def num_threads(cls, config):
-        return config['query_concurrency']
-
     def __init__(self, thread_num, agent_num, config, request, query):
-        AbstractThread.__init__(self, thread_num, agent_num, config)
+        AbstractThread.__init__(self, thread_num, agent_num, request, config)
 
 
 class AbstractQuery(QueryThread):
