@@ -18,9 +18,6 @@ class QueryThread(AbstractThread):
     def __init__(self, thread_num, agent_num, config, request, query):
         AbstractThread.__init__(self, thread_num, agent_num, config)
 
-    def make_request(self, logger, time):
-        return self._make_request(logger, time)
-
 
 class AbstractQuery(QueryThread):
     one_day = (1000 * 60 * 60 * 24)
@@ -69,6 +66,9 @@ class AbstractQuery(QueryThread):
         self.queries = self._create_metrics(
             self, agent_number, self.query_interval_name, config)
         self.request = request
+
+    def make_request(self, logger, time):
+        return self._make_request(logger, time)
 
     def _make_request(self, logger, time, tenant_id=None):
         raise Exception("Can't instantiate abstract query")
