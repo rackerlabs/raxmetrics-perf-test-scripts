@@ -19,7 +19,7 @@ default_config = {
     'url': "http://localhost:19000",
     'query_url': "http://localhost:20000",
     'query_concurrency': 10,
-    'annotations_concurrency': 5,
+    'annotations_weight': 5,
     'max_multiplot_metrics': 10,
     'search_query_weight': 10,
     'enum_search_query_weight': 10,

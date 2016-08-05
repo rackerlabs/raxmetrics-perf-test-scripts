@@ -38,7 +38,7 @@ class ThreadManager(object):
         self.concurrent_threads = (
             self.config.get('ingest_concurrency', 0) +
             self.config.get('enum_ingest_concurrency', 0) +
-            self.config.get('annotations_concurrency', 0) +
+            self.config.get('annotations_weight', 0) +
             self.config.get('search_query_weight', 0) +
             self.config.get('enum_search_query_weight', 0) +
             self.config.get('multiplot_query_weight', 0) +

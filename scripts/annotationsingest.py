@@ -31,7 +31,7 @@ class AnnotationsIngestThread(AbstractThread):
 
     @classmethod
     def num_threads(cls, config):
-        return config['annotations_concurrency']
+        return config['annotations_weight']
 
     @staticmethod
     def generate_annotations_for_tenant(tenant_id, annotations_per_tenant):
