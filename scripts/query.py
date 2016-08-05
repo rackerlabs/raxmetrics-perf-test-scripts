@@ -14,45 +14,6 @@ class AbstractQuery(AbstractThread):
 
     query_interval_name = None
 
-    @classmethod
-    def num_threads(cls, config):
-        return config[cls.query_interval_name]
-
-    @staticmethod
-    def _get_num_queries_for_current_node(agent_number, query_interval_name,
-                                          config):
-        total_queries = config[query_interval_name]
-        start_job, end_job = generate_job_range(
-            total_queries, config['num_nodes'], agent_number)
-        num_queries_for_current_node = end_job - start_job
-
-        return num_queries_for_current_node
-
-    @classmethod
-    def get_num_queries_for_current_node(cls, agent_number,
-                                         config):
-        return cls._get_num_queries_for_current_node(agent_number,
-                                                     cls.query_interval_name,
-                                                     config)
-
-    @staticmethod
-    def _create_metrics(cls, agent_number, query_interval_name,
-                        config):
-        # divide the total number of each query type into the ones need by this
-        # worker
-        num = AbstractQuery._get_num_queries_for_current_node(
-            agent_number, query_interval_name, config)
-
-        return [cls] * num
-
-    @classmethod
-    def create_metrics(cls, agent_number, config):
-        # divide the total number of each query type into the ones need by this
-        # worker
-        queries = cls._create_metrics(
-            cls, agent_number, cls.query_interval_name, config)
-        return queries
-
     def __init__(self, thread_num, agent_number, request, config):
         AbstractThread.__init__(self, thread_num, agent_number, request,
                                 config)
