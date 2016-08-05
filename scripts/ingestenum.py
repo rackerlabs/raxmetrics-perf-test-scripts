@@ -65,6 +65,7 @@ class EnumIngestThread(AbstractThread):
     def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, request, config)
         # Initialize the "slice" of the metrics to be sent by this thread
+        self.metrics = self._create_metrics(agent_num, config)
         start, end = generate_job_range(len(self.metrics),
                                         self.num_threads(self.config),
                                         thread_num)

@@ -50,7 +50,6 @@ class TestRunner:
         }
         thread_manager = tm.ThreadManager(config, requests_by_type)
         agent_number = grinder.getAgentNumber()
-        EnumIngestThread.create_metrics(agent_number, config)
         self.thread = thread_manager.setup_thread(
             grinder.getThreadNumber(), agent_number)
 

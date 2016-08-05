@@ -421,9 +421,10 @@ class InitProcessTest(TestCaseBase):
     def test_init_process_enumingest_agent_zero(self):
         agent_num = 0
         # confirm enum metrics ingest
-        ingestenum.EnumIngestThread.create_metrics(agent_num, self.test_config)
+        metrics = ingestenum.EnumIngestThread._create_metrics(agent_num,
+                                                              self.test_config)
 
-        self.assertEqual(ingestenum.EnumIngestThread.metrics,
+        self.assertEqual(metrics,
                          [
                              [[0, 0], [0, 1], [1, 0]],
                              [[1, 1]]
@@ -564,7 +565,8 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_enum_payload(self):
         agent_num = 1
-        ingestenum.EnumIngestThread.create_metrics(agent_num, self.test_config)
+        metrics = ingestenum.EnumIngestThread._create_metrics(agent_num,
+                                                              self.test_config)
         thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
                                              self.test_config)
         payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
