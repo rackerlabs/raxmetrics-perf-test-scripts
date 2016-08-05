@@ -21,9 +21,6 @@ class AbstractQuery(AbstractThread):
         self.config = config
         self.request = request
 
-    def make_request(self, logger, time, tenant_id=None):
-        raise Exception("Can't instantiate abstract query")
-
 
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_query_weight'
