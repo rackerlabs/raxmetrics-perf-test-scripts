@@ -17,8 +17,6 @@ class QueryThread(AbstractThread):
 
     def __init__(self, thread_num, agent_num, config, request, query):
         AbstractThread.__init__(self, thread_num, agent_num, config)
-        self.query_instance = query
-        self.slice = [self.query_instance]
 
     def make_request(self, logger, time):
         return self._make_request(logger, time)
