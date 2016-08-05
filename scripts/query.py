@@ -24,6 +24,10 @@ class AbstractQuery(QueryThread):
 
     query_interval_name = None
 
+    @classmethod
+    def num_threads(cls, config):
+        return config[cls.query_interval_name]
+
     @staticmethod
     def _get_num_queries_for_current_node(agent_number, query_interval_name,
                                           config):
