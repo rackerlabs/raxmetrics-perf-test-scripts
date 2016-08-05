@@ -21,14 +21,7 @@ class QueryThread(AbstractThread):
         self.slice = [self.query_instance]
 
     def make_request(self, logger, time):
-        if len(self.slice) == 0:
-            logger("Warning: no work for current thread")
-            self.sleep(1000000)
-            return None
-        query = self.query_instance
-        result = query._make_request(
-            logger, int(self.time()))
-        return result
+        return self.query_instance._make_request(logger, time)
 
 
 class AbstractQuery(QueryThread):
