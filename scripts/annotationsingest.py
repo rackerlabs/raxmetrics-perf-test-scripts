@@ -30,13 +30,6 @@ class AnnotationsIngestThread(AbstractThread):
         return shuffled(metrics)
 
     @classmethod
-    def create_metrics(cls, agent_number, config):
-        """ Generate all the annotations for this worker
-
-        """
-        cls.annotations = cls._create_metrics(agent_number, config)
-
-    @classmethod
     def num_threads(cls, config):
         return config['annotations_weight']
 

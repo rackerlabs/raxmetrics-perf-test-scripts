@@ -37,10 +37,6 @@ default_config = {
 class AbstractThread(object):
     # superclass for the various thread types
     @classmethod
-    def create_metrics(cls, agent_number):
-        raise Exception("Can't create abstract thread")
-
-    @classmethod
     def num_threads(cls):
         raise Exception("Can't create abstract thread")
 

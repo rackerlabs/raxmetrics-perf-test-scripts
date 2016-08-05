@@ -31,15 +31,6 @@ class EnumIngestThread(AbstractThread):
             config['batch_size'])
 
     @classmethod
-    def create_metrics(cls, agent_number, config):
-        """ Generate all the metrics for this worker
-
-        The metrics are a list of batches.  Each batch is a list of metrics
-        processed by a single metrics ingest request.
-        """
-        cls.metrics = cls._create_metrics(agent_number, config)
-
-    @classmethod
     def num_threads(cls, config):
         return config['enum_ingest_weight']
 
