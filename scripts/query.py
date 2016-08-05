@@ -67,7 +67,6 @@ class AbstractQuery(QueryThread):
     def __init__(self, thread_num, agent_number, num_threads, config, request):
         QueryThread.__init__(self, thread_num, agent_number, config, request, self)
         self.thread_num = thread_num
-        self.num_threads = num_threads
         self.config = config
         self.queries = self._create_metrics(
             self, agent_number, self.query_interval_name, config)
