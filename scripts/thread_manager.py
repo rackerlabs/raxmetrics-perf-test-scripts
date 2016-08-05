@@ -21,10 +21,6 @@ class ThreadManager(object):
         # number of threads to start
         self.tot_threads = 0
 
-        # concurrent_threads is the sum of the various thread types, (currently
-        # ingest and query)
-        self.concurrent_threads = 0
-
         # Parse the properties file and update default_config dictionary
         self.config = default_config.copy()
         for k, v in clean_configs(config).iteritems():
@@ -34,26 +30,6 @@ class ThreadManager(object):
                 self.tot_threads = self.convert(v)
             k = k.replace("grinder.bf.", "")
             self.config[k] = self.convert(v)
-
-        self.concurrent_threads = (
-            self.config.get('ingest_weight', 0) +
-            self.config.get('enum_ingest_weight', 0) +
-            self.config.get('annotations_weight', 0) +
-            self.config.get('search_query_weight', 0) +
-            self.config.get('enum_search_query_weight', 0) +
-            self.config.get('multiplot_query_weight', 0) +
-            self.config.get('singleplot_query_weight', 0) +
-            self.config.get('enum_single_plot_query_weight', 0) +
-            self.config.get('enum_multiplot_query_weight', 0))
-
-        # Sanity check the concurrent_threads to make sure they are the same as
-        # the value
-        #  passed to the grinder
-        if self.tot_threads != self.concurrent_threads:
-            raise Exception(
-                "Configuration error: grinder.threads (%s) doesn't equal total"
-                " concurrent threads (%s)" %
-                (self.tot_threads, self.concurrent_threads))
 
         self.requests_by_type = requests_by_type
 
