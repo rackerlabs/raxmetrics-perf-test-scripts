@@ -43,7 +43,7 @@ class ThreadManager(object):
             self.config.get('enum_search_queries_per_interval', 0) +
             self.config.get('multiplot_per_interval', 0) +
             self.config.get('singleplot_per_interval', 0) +
-            self.config.get('enum_single_plot_queries_per_interval', 0) +
+            self.config.get('enum_single_plot_query_weight', 0) +
             self.config.get('enum_multiplot_query_weight', 0))
 
         # Sanity check the concurrent_threads to make sure they are the same as

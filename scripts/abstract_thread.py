@@ -23,7 +23,7 @@ default_config = {
     'max_multiplot_metrics': 10,
     'search_queries_per_interval': 10,
     'enum_search_queries_per_interval': 10,
-    'enum_single_plot_queries_per_interval': 10,
+    'enum_single_plot_query_weight': 10,
     'multiplot_per_interval': 10,
     'enum_multiplot_query_weight': 10,
     'enum_num_values': 10,

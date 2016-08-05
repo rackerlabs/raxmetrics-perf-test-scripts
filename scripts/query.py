@@ -180,7 +180,7 @@ class EnumSearchQuery(AbstractQuery):
 
 
 class EnumSinglePlotQuery(AbstractQuery):
-    query_interval_name = 'enum_single_plot_queries_per_interval'
+    query_interval_name = 'enum_single_plot_query_weight'
 
     def _make_request(self, logger, time, tenant_id=None,
                       metric_name=None):
