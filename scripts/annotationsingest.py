@@ -62,7 +62,7 @@ class AnnotationsIngestThread(AbstractThread):
     def ingest_url(self, tenant_id):
         return "%s/v2.0/%s/events" % (self.config['url'], tenant_id)
 
-    def make_request(self, logger):
+    def make_request(self, logger, time):
         if len(self.slice) == 0:
             logger("Warning: no work for current thread")
             self.sleep(1000000)

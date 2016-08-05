@@ -603,7 +603,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             "what": "annotation org.example.metric.0",
             "when": 1000, "tags": "tag", "data": "data"}
 
-        url, payload = thread.make_request(pp)
+        url, payload = thread.make_request(pp, thread.time())
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
@@ -614,7 +614,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
         self.assertEqual(thread.position, 1)
         self.assertEqual(thread.finish_time, 10000)
         thread.position = 2
-        thread.make_request(pp)
+        thread.make_request(pp, thread.time())
 
         # confirm request resets position at end of report interval
         self.assertEqual(sleep_time, 9000)
@@ -680,7 +680,7 @@ class MakeIngestRequestsTest(TestCaseBase):
              "metricValue": 0, "unit": "days",
              "metricName": "org.example.metric.1"}]
 
-        url, payload = thread.make_request(pp)
+        url, payload = thread.make_request(pp, thread.time())
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
@@ -691,7 +691,7 @@ class MakeIngestRequestsTest(TestCaseBase):
         self.assertEqual(thread.position, 1)
         self.assertEqual(thread.finish_time, 10000)
         thread.position = 2
-        thread.make_request(pp)
+        thread.make_request(pp, thread.time())
         # confirm request resets position at end of report interval
         self.assertEqual(sleep_time, 9000)
         self.assertEqual(thread.position, 1)
@@ -769,7 +769,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
             }
         ]
 
-        url, payload = thread.make_request(pp)
+        url, payload = thread.make_request(pp, thread.time())
         # confirm request generates proper URL and payload
         self.assertEqual(url,
                          'http://metrics-ingest.example.org/v2.0/tenantId/' +
@@ -780,7 +780,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
         self.assertEqual(thread.position, 1)
         self.assertEqual(thread.finish_time, 10000)
         thread.position = 2
-        thread.make_request(pp)
+        thread.make_request(pp, thread.time())
         # confirm request resets position at end of report interval
         self.assertEqual(sleep_time, 9000)
         self.assertEqual(thread.position, 1)
@@ -819,7 +819,7 @@ class MakeQueryRequestsTest(TestCaseBase):
                                         self.config)
 
         # when
-        result = self.thread.make_request(pp)
+        result = self.thread.make_request(pp, self.thread.time())
 
         # then
         self.assertEquals([True], generate_was_called)

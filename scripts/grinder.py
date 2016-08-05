@@ -55,4 +55,4 @@ class TestRunner:
             grinder.getThreadNumber(), agent_number)
 
     def __call__(self):
-        result = self.thread.make_request(grinder.logger.info)
+        result = self.thread.make_request(grinder.logger.info, self.thread.time())

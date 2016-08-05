@@ -44,7 +44,7 @@ class AbstractThread(object):
     def num_threads(cls):
         raise Exception("Can't create abstract thread")
 
-    def make_request(self, logger):
+    def make_request(self, logger, time):
         raise Exception("Can't create abstract thread")
 
     def __init__(self, thread_num, agent_num, config):

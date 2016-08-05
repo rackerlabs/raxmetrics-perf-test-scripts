@@ -232,7 +232,7 @@ class QueryThread(AbstractThread):
         self.query_instance = query
         self.slice = [self.query_instance]
 
-    def make_request(self, logger):
+    def make_request(self, logger, time):
         if len(self.slice) == 0:
             logger("Warning: no work for current thread")
             self.sleep(1000000)

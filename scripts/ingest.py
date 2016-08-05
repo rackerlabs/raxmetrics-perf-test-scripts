@@ -104,7 +104,7 @@ class IngestThread(AbstractThread):
     def ingest_url(self):
         return "%s/v2.0/tenantId/ingest/multi" % self.config['url']
 
-    def make_request(self, logger):
+    def make_request(self, logger, time):
         if len(self.slice) == 0:
             logger("Warning: no work for current thread")
             self.sleep(1000000)
