@@ -87,7 +87,8 @@ class SinglePlotQuery(AbstractQuery):
             tenant_id = random.randint(0, self.config['num_tenants'])
         if metric_name is None:
             metric_name = generate_metric_name(
-                random.randint(0, self.config['metrics_per_tenant']))
+                random.randint(0, self.config['metrics_per_tenant']),
+                self.config)
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
@@ -107,8 +108,9 @@ class MultiPlotQuery(AbstractQuery):
         metrics_count = min(self.config['max_multiplot_metrics'],
                             random.randint(0, self.config[
                                 'metrics_per_tenant']))
-        metrics_list = map(generate_metric_name,
-                           range(metrics_count))
+        metrics_list = [
+            generate_metric_name(i, self.config) for i in range(metrics_count)
+        ]
         return json.dumps(metrics_list)
 
     def _make_request(self, logger, time, tenant_id=None, payload=None):
@@ -133,7 +135,7 @@ class SearchQuery(AbstractQuery):
 
     def generate_metrics_regex(self):
         metric_name = generate_metric_name(
-            random.randint(0, self.config['metrics_per_tenant']))
+            random.randint(0, self.config['metrics_per_tenant']), self.config)
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
     def _make_request(self, logger, time, tenant_id=None,
@@ -195,7 +197,7 @@ class EnumSinglePlotQuery(AbstractQuery):
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if metric_name is None:
             metric_name = EnumIngestThread.generate_enum_metric_name(
-                random.randint(0, self.config['enum_metrics_per_tenant']))
+                random.randint(0, self.config['enum_metrics_per_tenant']), self.config)
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
@@ -215,8 +217,9 @@ class EnumMultiPlotQuery(AbstractQuery):
         metrics_count = min(self.config['max_multiplot_metrics'],
                             random.randint(0, self.config[
                                 'enum_metrics_per_tenant']))
-        metrics_list = map(EnumIngestThread.generate_enum_metric_name,
-                           range(metrics_count))
+        metrics_list = [
+            EnumIngestThread.generate_enum_metric_name(i, self.config) for i in
+            range(metrics_count)]
         return json.dumps(metrics_list)
 
     def _make_request(self, logger, time, tenant_id=None, payload=None):

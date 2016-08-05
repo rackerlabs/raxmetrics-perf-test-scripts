@@ -13,7 +13,7 @@ import query
 import annotationsingest
 import abstract_thread
 import thread_manager as tm
-from config import from_config_file
+from config import clean_configs
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -92,13 +92,13 @@ grinder_props = {
     'grinder.bf.query_url': 'http://metrics.example.org',
     'grinder.bf.query_concurrency': '10',
     'grinder.bf.max_multiplot_metrics': '10',
-    'grinder.bf.search_queries_per_interval': '10',
-    'grinder.bf.enum_search_queries_per_interval': '10',
-    'grinder.bf.multiplot_per_interval': '10',
-    'grinder.bf.singleplot_per_interval': '10',
-    'grinder.bf.enum_single_plot_queries_per_interval': '10',
-    'grinder.bf.enum_multiplot_per_interval': '10',
-    'grinder.bf.annotations_queries_per_interval': '8',
+    'grinder.bf.search_queries_per_interval': '2',
+    'grinder.bf.enum_search_queries_per_interval': '1',
+    'grinder.bf.multiplot_per_interval': '2',
+    'grinder.bf.singleplot_per_interval': '2',
+    'grinder.bf.enum_single_plot_queries_per_interval': '1',
+    'grinder.bf.enum_multiplot_per_interval': '2',
+    'grinder.bf.annotations_queries_per_interval': '1',
 }
 
 
@@ -109,6 +109,7 @@ class TestCaseBase(unittest.TestCase):
     def assertIsInstance(self, obj, cls, msg=None):
         return self.assertTrue(isinstance(obj, cls), msg)
     pass
+
 
 class ThreadManagerTest(TestCaseBase):
     def setUp(self):
@@ -123,47 +124,190 @@ class ThreadManagerTest(TestCaseBase):
         abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
-        self.test_config.update(from_config_file(grinder_props))
+        self.test_config.update(clean_configs(grinder_props))
 
-    def test_setup_thread_zero(self):
-        # confirm that threadnum 0 is an ingest thread
-        t1 = self.tm.setup_thread(0, 0)
-        self.assertEqual(type(t1), ingest.IngestThread)
+    def test_thread_type_assignment_0(self):
+        th = self.tm.setup_thread(0, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-    def test_setup_thread_second_type(self):
-        # confirm that the threadnum after all ingest threads is
-        # EnumIngestThread
-        t1 = self.tm.setup_thread(
-            self.test_config['enum_ingest_concurrency'], 0)
-        self.assertEqual(type(t1), ingestenum.EnumIngestThread)
+    def test_thread_type_assignment_1(self):
+        th = self.tm.setup_thread(1, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-    # def test_setup_thread_third_type(self):
-    #     # confirm that the threadnum after all ingest threads is a query thread
-    #     t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
-    #                               self.test_config[
-    #                                   'enum_ingest_concurrency'],
-    #                               0)
-    #     self.assertEqual(type(t1), query.QueryThread)
+    def test_thread_type_assignment_2(self):
+        th = self.tm.setup_thread(2, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-    def test_setup_thread_fourth_type(self):
-        # confirm that the threadnum after all ingest+query threads is an
-        # annotations query thread
-        t1 = self.tm.setup_thread(self.test_config['ingest_concurrency'] +
-                                  self.test_config[
-                                      'enum_ingest_concurrency'] +
-                                  self.test_config['query_concurrency'],
-                                  0)
-        self.assertEqual(type(t1), annotationsingest.AnnotationsIngestThread)
+    def test_thread_type_assignment_3(self):
+        th = self.tm.setup_thread(3, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_4(self):
+        th = self.tm.setup_thread(4, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_5(self):
+        th = self.tm.setup_thread(5, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_6(self):
+        th = self.tm.setup_thread(6, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_7(self):
+        th = self.tm.setup_thread(7, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_8(self):
+        th = self.tm.setup_thread(8, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_9(self):
+        th = self.tm.setup_thread(9, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_10(self):
+        th = self.tm.setup_thread(10, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_11(self):
+        th = self.tm.setup_thread(11, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_12(self):
+        th = self.tm.setup_thread(12, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_13(self):
+        th = self.tm.setup_thread(13, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_14(self):
+        th = self.tm.setup_thread(14, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_15(self):
+        th = self.tm.setup_thread(15, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_16(self):
+        th = self.tm.setup_thread(16, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_17(self):
+        th = self.tm.setup_thread(17, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_18(self):
+        th = self.tm.setup_thread(18, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_19(self):
+        th = self.tm.setup_thread(19, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_20(self):
+        th = self.tm.setup_thread(20, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_21(self):
+        th = self.tm.setup_thread(21, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_22(self):
+        th = self.tm.setup_thread(22, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_23(self):
+        th = self.tm.setup_thread(23, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_24(self):
+        th = self.tm.setup_thread(24, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_25(self):
+        th = self.tm.setup_thread(25, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_26(self):
+        th = self.tm.setup_thread(26, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_27(self):
+        th = self.tm.setup_thread(27, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_28(self):
+        th = self.tm.setup_thread(28, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_29(self):
+        th = self.tm.setup_thread(29, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
+
+    def test_thread_type_assignment_30(self):
+        th = self.tm.setup_thread(30, 0)
+        self.assertEqual(type(th), query.SinglePlotQuery)
+
+    def test_thread_type_assignment_31(self):
+        th = self.tm.setup_thread(31, 0)
+        self.assertEqual(type(th), query.SinglePlotQuery)
+
+    def test_thread_type_assignment_32(self):
+        th = self.tm.setup_thread(32, 0)
+        self.assertEqual(type(th), query.MultiPlotQuery)
+
+    def test_thread_type_assignment_33(self):
+        th = self.tm.setup_thread(33, 0)
+        self.assertEqual(type(th), query.MultiPlotQuery)
+
+    def test_thread_type_assignment_34(self):
+        th = self.tm.setup_thread(34, 0)
+        self.assertEqual(type(th), query.SearchQuery)
+
+    def test_thread_type_assignment_35(self):
+        th = self.tm.setup_thread(35, 0)
+        self.assertEqual(type(th), query.SearchQuery)
+
+    def test_thread_type_assignment_36(self):
+        th = self.tm.setup_thread(36, 0)
+        self.assertEqual(type(th), query.EnumSearchQuery)
+
+    def test_thread_type_assignment_37(self):
+        th = self.tm.setup_thread(37, 0)
+        self.assertEqual(type(th), query.EnumSinglePlotQuery)
+
+    def test_thread_type_assignment_38(self):
+        th = self.tm.setup_thread(38, 0)
+        self.assertEqual(type(th), query.AnnotationsQuery)
+
+    def test_thread_type_assignment_39(self):
+        th = self.tm.setup_thread(39, 0)
+        self.assertEqual(type(th), query.EnumMultiPlotQuery)
+
+    def test_thread_type_assignment_40(self):
+        th = self.tm.setup_thread(40, 0)
+        self.assertEqual(type(th), query.EnumMultiPlotQuery)
+
+    def test_thread_type_assignment_41(self):
+        th = self.tm.setup_thread(41, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
+    def test_thread_type_assignment_42(self):
+        th = self.tm.setup_thread(42, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
+    def test_thread_type_assignment_43(self):
+        th = self.tm.setup_thread(43, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
+    def test_thread_type_assignment_44(self):
+        th = self.tm.setup_thread(44, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
     def test_setup_thread_invalid_thread_type(self):
-        # confirm that a threadnum after all valid thread types raises an
-        # exception
-        tot_threads = (
-            self.test_config['ingest_concurrency'] +
-            self.test_config['enum_ingest_concurrency'] +
-            self.test_config['query_concurrency'] +
-            self.test_config['annotations_concurrency'])
-        self.assertRaises(Exception, self.tm.setup_thread, (tot_threads, 0))
+        self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
@@ -184,7 +328,7 @@ class InitProcessTest(TestCaseBase):
         abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
-        self.test_config.update(from_config_file(grinder_props))
+        self.test_config.update(clean_configs(grinder_props))
         self.test_config.update(
                            {'report_interval': (1000 * 6),
                             'num_tenants': 3,
@@ -698,7 +842,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
 class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
         self.agent_num = 0
-        self.config = from_config_file(grinder_props)
+        self.config = clean_configs(grinder_props)
         self.requests_by_type = requests_by_type.copy()
 
     def test_query_make_SinglePlotQuery_request(self):

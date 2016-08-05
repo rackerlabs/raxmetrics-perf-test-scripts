@@ -9,19 +9,16 @@ def convert(s):
     except:
         pass
     if isinstance(s, basestring):
-        if s[0] in ("'", '"'):
+        if len(s) > 0 and s[0] in ("'", '"'):
             return ast.literal_eval(s)
         return s
     return str(s)
 
 
-def from_config_file(cfg):
+def clean_configs(cfg):
     cfg2 = {}
     for k, v in cfg.iteritems():
-        if str(v).startswith(".."):
-            continue
-        if not k.startswith("grinder.bf."):
-            continue
-        k = k.replace("grinder.bf.", "")
+        if k.startswith("grinder.bf."):
+            k = k.replace("grinder.bf.", "")
         cfg2[k] = convert(v)
     return cfg2

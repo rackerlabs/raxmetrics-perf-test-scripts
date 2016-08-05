@@ -11,6 +11,8 @@ from ingestenum import EnumIngestThread
 from query import QueryThread, SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery
 from query import EnumMultiPlotQuery
+from config import clean_configs
+import abstract_thread
 
 # ENTRY POINT into the Grinder
 
@@ -31,7 +33,8 @@ def create_request_obj(test_num, test_name):
 
 class TestRunner:
     def __init__(self):
-        config = py_java.get_config_from_grinder(grinder)
+        config = abstract_thread.default_config.copy()
+        config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
         requests_by_type = {
             IngestThread: create_request_obj(1, "Ingest test"),
             EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
@@ -48,9 +51,9 @@ class TestRunner:
         }
         thread_manager = tm.ThreadManager(config, requests_by_type)
         agent_number = grinder.getAgentNumber()
-        IngestThread.create_metrics(agent_number)
-        EnumIngestThread.create_metrics(agent_number)
-        AnnotationsIngestThread.create_metrics(agent_number)
+        IngestThread.create_metrics(agent_number, config)
+        EnumIngestThread.create_metrics(agent_number, config)
+        AnnotationsIngestThread.create_metrics(agent_number, config)
         self.thread = thread_manager.setup_thread(
             grinder.getThreadNumber(), agent_number)
 
