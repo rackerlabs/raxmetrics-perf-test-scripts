@@ -62,18 +62,15 @@ class AbstractQuery(AbstractThread):
             self, agent_number, self.query_interval_name, config)
         self.request = request
 
-    def make_request(self, logger, time):
-        return self._make_request(logger, time)
-
-    def _make_request(self, logger, time, tenant_id=None):
+    def make_request(self, logger, time, tenant_id=None):
         raise Exception("Can't instantiate abstract query")
 
 
 class SinglePlotQuery(AbstractQuery):
     query_interval_name = 'singleplot_query_weight'
 
-    def _make_request(self, logger, time, tenant_id=None,
-                      metric_name=None):
+    def make_request(self, logger, time, tenant_id=None,
+                     metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if metric_name is None:
@@ -104,7 +101,7 @@ class MultiPlotQuery(AbstractQuery):
         ]
         return json.dumps(metrics_list)
 
-    def _make_request(self, logger, time, tenant_id=None, payload=None):
+    def make_request(self, logger, time, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if payload is None:
@@ -129,8 +126,8 @@ class SearchQuery(AbstractQuery):
             random.randint(0, self.config['metrics_per_tenant']), self.config)
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def _make_request(self, logger, time, tenant_id=None,
-                      metric_regex=None):
+    def make_request(self, logger, time, tenant_id=None,
+                     metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['num_tenants'])
         if metric_regex is None:
@@ -146,7 +143,7 @@ class SearchQuery(AbstractQuery):
 class AnnotationsQuery(AbstractQuery):
     query_interval_name = 'annotations_query_weight'
 
-    def _make_request(self, logger, time, tenant_id=None):
+    def make_request(self, logger, time, tenant_id=None):
         if tenant_id is None:
             tenant_id = random.randint(0,
                                        self.config['annotations_num_tenants'])
@@ -167,8 +164,8 @@ class EnumSearchQuery(AbstractQuery):
             self.config)
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
-    def _make_request(self, logger, time, tenant_id=None,
-                      metric_regex=None):
+    def make_request(self, logger, time, tenant_id=None,
+                     metric_regex=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if metric_regex is None:
@@ -183,8 +180,8 @@ class EnumSearchQuery(AbstractQuery):
 class EnumSinglePlotQuery(AbstractQuery):
     query_interval_name = 'enum_single_plot_query_weight'
 
-    def _make_request(self, logger, time, tenant_id=None,
-                      metric_name=None):
+    def make_request(self, logger, time, tenant_id=None,
+                     metric_name=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if metric_name is None:
@@ -215,7 +212,7 @@ class EnumMultiPlotQuery(AbstractQuery):
             range(metrics_count)]
         return json.dumps(metrics_list)
 
-    def _make_request(self, logger, time, tenant_id=None, payload=None):
+    def make_request(self, logger, time, tenant_id=None, payload=None):
         if tenant_id is None:
             tenant_id = random.randint(0, self.config['enum_num_tenants'])
         if payload is None:
