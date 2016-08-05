@@ -58,8 +58,6 @@ class AbstractQuery(AbstractThread):
                                 config)
         self.thread_num = thread_num
         self.config = config
-        self.queries = self._create_metrics(
-            self, agent_number, self.query_interval_name, config)
         self.request = request
 
     def make_request(self, logger, time, tenant_id=None):
