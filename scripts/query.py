@@ -121,7 +121,7 @@ class MultiPlotQuery(AbstractQuery):
 
 
 class SearchQuery(AbstractQuery):
-    query_interval_name = 'search_queries_per_interval'
+    query_interval_name = 'search_query_weight'
 
     def generate_metrics_regex(self):
         metric_name = generate_metric_name(

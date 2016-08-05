@@ -39,7 +39,7 @@ class ThreadManager(object):
             self.config.get('ingest_concurrency', 0) +
             self.config.get('enum_ingest_concurrency', 0) +
             self.config.get('annotations_concurrency', 0) +
-            self.config.get('search_queries_per_interval', 0) +
+            self.config.get('search_query_weight', 0) +
             self.config.get('enum_search_query_weight', 0) +
             self.config.get('multiplot_query_weight', 0) +
             self.config.get('singleplot_query_weight', 0) +

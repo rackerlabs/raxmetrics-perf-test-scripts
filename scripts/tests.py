@@ -91,7 +91,7 @@ grinder_props = {
     'grinder.bf.query_url': 'http://metrics.example.org',
     'grinder.bf.query_concurrency': '10',
     'grinder.bf.max_multiplot_metrics': '10',
-    'grinder.bf.search_queries_per_interval': '2',
+    'grinder.bf.search_query_weight': '2',
     'grinder.bf.enum_search_query_weight': '1',
     'grinder.bf.multiplot_query_weight': '2',
     'grinder.bf.singleplot_query_weight': '2',
@@ -343,7 +343,7 @@ class InitProcessTest(TestCaseBase):
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
-                            'search_queries_per_interval': 9,
+                            'search_query_weight': 9,
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
@@ -360,7 +360,7 @@ class InitProcessTest(TestCaseBase):
             self.num_query_nodes))
         self.search_queries_agent0 = int(math.ceil(
             self.test_config[
-                'search_queries_per_interval'] / self.num_query_nodes))
+                'search_query_weight'] / self.num_query_nodes))
         self.enum_search_queries_agent0 = int(math.ceil(
             self.test_config[
                 'enum_search_query_weight'] / self.num_query_nodes))
@@ -382,7 +382,7 @@ class InitProcessTest(TestCaseBase):
             self.test_config['multiplot_query_weight'] - \
             self.multi_plot_queries_agent0
         self.search_queries_agent1 = \
-            self.test_config['search_queries_per_interval'] - \
+            self.test_config['search_query_weight'] - \
             self.search_queries_agent0
         self.enum_search_queries_agent1 = \
             self.test_config['enum_search_query_weight'] - \
@@ -524,7 +524,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
-                            'search_queries_per_interval': 9,
+                            'search_query_weight': 9,
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
@@ -632,7 +632,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
-                            'search_queries_per_interval': 9,
+                            'search_query_weight': 9,
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
@@ -706,7 +706,7 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
-                            'search_queries_per_interval': 9,
+                            'search_query_weight': 9,
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
@@ -782,7 +782,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'annotations_concurrency': 2,
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
-                            'search_queries_per_interval': 9,
+                            'search_query_weight': 9,
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
