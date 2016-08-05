@@ -442,9 +442,10 @@ class InitProcessTest(TestCaseBase):
         agent_num = 0
 
         # confirm metrics ingest
-        ingest.IngestThread.create_metrics(agent_num, self.test_config)
+        metrics = ingest.IngestThread._create_metrics(agent_num,
+                                                      self.test_config)
 
-        self.assertEqual(ingest.IngestThread.metrics,
+        self.assertEqual(metrics,
                          [[[0, 0], [0, 1], [0, 2]],
                           [[0, 3], [0, 4], [0, 5]],
                           [[0, 6], [1, 0], [1, 1]],
@@ -469,9 +470,10 @@ class InitProcessTest(TestCaseBase):
 
         # confirm that the correct batches of ingest metrics are created for
         # worker 1
-        ingest.IngestThread.create_metrics(agent_num, self.test_config)
+        metrics = ingest.IngestThread._create_metrics(agent_num,
+                                                      self.test_config)
 
-        self.assertEqual(ingest.IngestThread.metrics,
+        self.assertEqual(metrics,
                          [[[2, 0], [2, 1], [2, 2]],
                           [[2, 3], [2, 4], [2, 5]],
                           [[2, 6]]])
@@ -535,7 +537,8 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_payload(self):
         agent_num = 1
-        ingest.IngestThread.create_metrics(agent_num, self.test_config)
+        metrics = ingest.IngestThread._create_metrics(agent_num,
+                                                      self.test_config)
         thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         payload = json.loads(
             thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
