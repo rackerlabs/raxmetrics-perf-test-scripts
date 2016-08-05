@@ -9,13 +9,7 @@ from abstract_thread import generate_metric_name
 from ingestenum import EnumIngestThread
 
 
-class QueryThread(AbstractThread):
-
-    def __init__(self, thread_num, agent_num, config, request):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config)
-
-
-class AbstractQuery(QueryThread):
+class AbstractQuery(AbstractThread):
     one_day = (1000 * 60 * 60 * 24)
 
     query_interval_name = None
@@ -60,7 +54,7 @@ class AbstractQuery(QueryThread):
         return queries
 
     def __init__(self, thread_num, agent_number, request, config):
-        QueryThread.__init__(self, thread_num, agent_number, config, request)
+        AbstractThread.__init__(self, thread_num, agent_number, request, config)
         self.thread_num = thread_num
         self.config = config
         self.queries = self._create_metrics(

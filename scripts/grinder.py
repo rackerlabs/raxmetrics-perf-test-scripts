@@ -8,7 +8,7 @@ import py_java
 from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
 from ingestenum import EnumIngestThread
-from query import QueryThread, SinglePlotQuery, MultiPlotQuery, SearchQuery
+from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery
 from query import EnumMultiPlotQuery
 from config import clean_configs
@@ -40,7 +40,6 @@ class TestRunner:
             EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
             AnnotationsIngestThread:
                 create_request_obj(2, "Annotations Ingest test"),
-            QueryThread: None,
             SinglePlotQuery: create_request_obj(3, "SinglePlotQuery"),
             MultiPlotQuery: create_request_obj(4, "MultiPlotQuery"),
             SearchQuery: create_request_obj(5, "SearchQuery"),

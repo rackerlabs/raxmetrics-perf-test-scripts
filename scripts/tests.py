@@ -57,7 +57,6 @@ requests_by_type = {
     ingest.IngestThread:                        MockReq(),
     ingestenum.EnumIngestThread:                MockReq(),
     annotationsingest.AnnotationsIngestThread:  MockReq(),
-    query.QueryThread:                          None,
     query.SinglePlotQuery:                      MockReq(),
     query.MultiPlotQuery:                       MockReq(),
     query.SearchQuery:                          MockReq(),

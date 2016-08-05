@@ -6,7 +6,7 @@ from abstract_thread import default_config
 from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
 from ingestenum import EnumIngestThread
-from query import QueryThread, SinglePlotQuery, MultiPlotQuery, SearchQuery
+from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery
 from query import EnumMultiPlotQuery
 from config import clean_configs
