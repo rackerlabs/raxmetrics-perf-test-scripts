@@ -13,7 +13,7 @@ default_config = {
     'enum_metrics_per_tenant': 10,
     'annotations_per_tenant': 10,
     'batch_size': 5,
-    'ingest_concurrency': 15,
+    'ingest_weight': 15,
     'enum_ingest_weight': 15,
     'num_nodes': 1,
     'url': "http://localhost:19000",
@@ -28,7 +28,7 @@ default_config = {
     'enum_multiplot_query_weight': 10,
     'enum_num_values': 10,
     'singleplot_query_weight': 10,
-    'annotations_queries_per_interval': 8,
+    'annotations_query_weight': 8,
     # ingest_delay_millis is comma separated list of delays used during
     # ingestion
     'ingest_delay_millis': ""}

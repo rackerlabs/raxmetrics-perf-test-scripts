@@ -82,7 +82,7 @@ grinder_props = {
     'grinder.bf.metrics_per_tenant': '15',
     'grinder.bf.enum_metrics_per_tenant': '5',
     'grinder.bf.batch_size': '5',
-    'grinder.bf.ingest_concurrency': '15',
+    'grinder.bf.ingest_weight': '15',
     'grinder.bf.enum_ingest_weight': '15',
     'grinder.bf.annotations_per_tenant': '5',
     'grinder.bf.annotations_weight': '5',
@@ -97,7 +97,7 @@ grinder_props = {
     'grinder.bf.singleplot_query_weight': '2',
     'grinder.bf.enum_single_plot_query_weight': '1',
     'grinder.bf.enum_multiplot_query_weight': '2',
-    'grinder.bf.annotations_queries_per_interval': '1',
+    'grinder.bf.annotations_query_weight': '1',
 }
 
 
@@ -337,7 +337,7 @@ class InitProcessTest(TestCaseBase):
                             'enum_metrics_per_tenant': 2,
                             'annotations_per_tenant': 2,
                             'batch_size': 3,
-                            'ingest_concurrency': 2,
+                            'ingest_weight': 2,
                             'enum_ingest_weight': 2,
                             'query_concurrency': 20,
                             'annotations_weight': 2,
@@ -347,7 +347,7 @@ class InitProcessTest(TestCaseBase):
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
-                            'annotations_queries_per_interval': 8,
+                            'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2})
 
@@ -373,7 +373,7 @@ class InitProcessTest(TestCaseBase):
                 'enum_multiplot_query_weight'] / self.num_query_nodes))
         self.annotation_queries_agent0 = int(math.ceil(
             self.test_config[
-                'annotations_queries_per_interval'] / self.num_query_nodes))
+                'annotations_query_weight'] / self.num_query_nodes))
 
         self.single_plot_queries_agent1 = \
             self.test_config['singleplot_query_weight'] - \
@@ -391,7 +391,7 @@ class InitProcessTest(TestCaseBase):
             self.test_config['enum_single_plot_query_weight'] - \
             self.enum_single_plot_queries_agent0
         self.annotation_queries_agent1 = \
-            self.test_config['annotations_queries_per_interval'] - \
+            self.test_config['annotations_query_weight'] - \
             self.annotation_queries_agent0
         self.enum_multi_plot_queries_agent1 = \
             self.test_config['enum_multiplot_query_weight'] - \
@@ -518,7 +518,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'enum_metrics_per_tenant': 2,
                             'annotations_per_tenant': 2,
                             'batch_size': 3,
-                            'ingest_concurrency': 2,
+                            'ingest_weight': 2,
                             'enum_ingest_weight': 2,
                             'query_concurrency': 20,
                             'annotations_weight': 2,
@@ -528,7 +528,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
-                            'annotations_queries_per_interval': 8,
+                            'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2})
 
@@ -626,7 +626,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'enum_metrics_per_tenant': 2,
                             'annotations_per_tenant': 2,
                             'batch_size': 3,
-                            'ingest_concurrency': 2,
+                            'ingest_weight': 2,
                             'enum_ingest_weight': 2,
                             'query_concurrency': 20,
                             'annotations_weight': 2,
@@ -636,7 +636,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
-                            'annotations_queries_per_interval': 8,
+                            'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2,
                             'query_url': 'http://metrics.example.org',
@@ -700,7 +700,7 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'enum_metrics_per_tenant': 2,
                             'annotations_per_tenant': 2,
                             'batch_size': 3,
-                            'ingest_concurrency': 2,
+                            'ingest_weight': 2,
                             'enum_ingest_weight': 2,
                             'query_concurrency': 20,
                             'annotations_weight': 2,
@@ -710,7 +710,7 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
-                            'annotations_queries_per_interval': 8,
+                            'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2,
                             'query_url': 'http://metrics.example.org',
@@ -776,7 +776,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'enum_metrics_per_tenant': 2,
                             'annotations_per_tenant': 2,
                             'batch_size': 3,
-                            'ingest_concurrency': 2,
+                            'ingest_weight': 2,
                             'enum_ingest_weight': 2,
                             'query_concurrency': 20,
                             'annotations_weight': 2,
@@ -786,7 +786,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
-                            'annotations_queries_per_interval': 8,
+                            'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
                             'num_nodes': 2,
                             'query_url': 'http://metrics.example.org',

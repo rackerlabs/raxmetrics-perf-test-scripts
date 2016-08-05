@@ -143,7 +143,7 @@ class SearchQuery(AbstractQuery):
 
 
 class AnnotationsQuery(AbstractQuery):
-    query_interval_name = 'annotations_queries_per_interval'
+    query_interval_name = 'annotations_query_weight'
 
     def _make_request(self, logger, time, tenant_id=None):
         if tenant_id is None:

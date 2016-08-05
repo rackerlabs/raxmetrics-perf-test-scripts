@@ -36,7 +36,7 @@ class ThreadManager(object):
             self.config[k] = self.convert(v)
 
         self.concurrent_threads = (
-            self.config.get('ingest_concurrency', 0) +
+            self.config.get('ingest_weight', 0) +
             self.config.get('enum_ingest_weight', 0) +
             self.config.get('annotations_weight', 0) +
             self.config.get('search_query_weight', 0) +
@@ -76,9 +76,9 @@ class ThreadManager(object):
         test various parts of blueflood.  The code is structured so that
         the thread type is determined by the thread num.  The grinder
         properties file determines how many of each type to create based
-        on the "ingest_concurrency" and "query_concurrency" options.
+        on the "ingest_weight" and "query_concurrency" options.
 
-        So for example, if "ingest_concurrency" is set to 4, and
+        So for example, if "ingest_weight" is set to 4, and
         "query_concurrency" is set to 2, thread numbers 0-3 will be ingest
         threads and thread numbers 4-5 will be query threads.
 
