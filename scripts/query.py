@@ -54,7 +54,8 @@ class AbstractQuery(AbstractThread):
         return queries
 
     def __init__(self, thread_num, agent_number, request, config):
-        AbstractThread.__init__(self, thread_num, agent_number, request, config)
+        AbstractThread.__init__(self, thread_num, agent_number, request,
+                                config)
         self.thread_num = thread_num
         self.config = config
         self.queries = self._create_metrics(
