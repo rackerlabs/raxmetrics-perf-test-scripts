@@ -109,7 +109,7 @@ class ThreadManager(object):
                 n -= qt.get_num_queries_for_current_node(agent_num, self.config)
             req = self.requests_by_type[query_type]
             query = query_type(0, agent_num, QueryThread.num_threads(self.config), self.config, req)
-            return QueryThread(thread_num, agent_num, self.config, req, query)
+            return query
         elif thread_type in self.requests_by_type:
             req = self.requests_by_type[thread_type]
             return thread_type(thread_num, agent_num, req, self.config)
