@@ -11,7 +11,7 @@ from ingestenum import EnumIngestThread
 
 class QueryThread(AbstractThread):
 
-    def __init__(self, thread_num, agent_num, config, request, query):
+    def __init__(self, thread_num, agent_num, config, request):
         AbstractThread.__init__(self, thread_num, agent_num, request, config)
 
 
@@ -60,8 +60,7 @@ class AbstractQuery(QueryThread):
         return queries
 
     def __init__(self, thread_num, agent_number, request, config):
-        QueryThread.__init__(self, thread_num, agent_number, config, request,
-                             self)
+        QueryThread.__init__(self, thread_num, agent_number, config, request)
         self.thread_num = thread_num
         self.config = config
         self.queries = self._create_metrics(
