@@ -85,16 +85,31 @@ class ThreadManager(object):
         """
         thread_type = None
 
-        thread_types = [IngestThread, EnumIngestThread, SinglePlotQuery,
-                        MultiPlotQuery, SearchQuery, EnumSearchQuery,
-                        EnumSinglePlotQuery, AnnotationsQuery,
-                        EnumMultiPlotQuery, AnnotationsIngestThread]
+        thread_types = [
+            (IngestThread, self.config['ingest_weight']),
+            (EnumIngestThread, self.config['enum_ingest_weight']),
+            (SinglePlotQuery, self.config['singleplot_query_weight']),
+            (MultiPlotQuery, self.config['multiplot_query_weight']),
+            (SearchQuery, self.config['search_query_weight']),
+            (EnumSearchQuery, self.config['enum_search_query_weight']),
+            (EnumSinglePlotQuery,
+                self.config['enum_single_plot_query_weight']),
+            (AnnotationsQuery, self.config['annotations_query_weight']),
+            (EnumMultiPlotQuery, self.config['enum_multiplot_query_weight']),
+            (AnnotationsIngestThread, self.config['annotations_weight'])
+        ]
+
+        total_weight = 0
         for x in thread_types:
-            if thread_num < x.num_threads(self.config):
-                thread_type = x
+            total_weight += x[1]
+
+        index = int(float(total_weight) * thread_num / float(self.tot_threads))
+
+        for x in thread_types:
+            if index < x[1]:
+                thread_type = x[0]
                 break
-            else:
-                thread_num -= x.num_threads(self.config)
+            index -= x[1]
 
         if thread_type is None:
             raise Exception("Invalid Thread Type")
