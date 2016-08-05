@@ -108,7 +108,7 @@ class ThreadManager(object):
                     break
                 n -= qt.get_num_queries_for_current_node(agent_num, self.config)
             req = self.requests_by_type[query_type]
-            query = query_type(0, agent_num, self.config, req)
+            query = query_type(0, agent_num, req, self.config)
             return query
         elif thread_type in self.requests_by_type:
             req = self.requests_by_type[thread_type]

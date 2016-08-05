@@ -63,7 +63,7 @@ class AbstractQuery(QueryThread):
             cls, agent_number, cls.query_interval_name, config)
         return queries
 
-    def __init__(self, thread_num, agent_number, config, request):
+    def __init__(self, thread_num, agent_number, request, config):
         QueryThread.__init__(self, thread_num, agent_number, config, request, self)
         self.thread_num = thread_num
         self.config = config
