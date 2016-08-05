@@ -94,7 +94,7 @@ grinder_props = {
     'grinder.bf.search_queries_per_interval': '2',
     'grinder.bf.enum_search_queries_per_interval': '1',
     'grinder.bf.multiplot_per_interval': '2',
-    'grinder.bf.singleplot_per_interval': '2',
+    'grinder.bf.singleplot_query_weight': '2',
     'grinder.bf.enum_single_plot_query_weight': '1',
     'grinder.bf.enum_multiplot_query_weight': '2',
     'grinder.bf.annotations_queries_per_interval': '1',
@@ -341,7 +341,7 @@ class InitProcessTest(TestCaseBase):
                             'enum_ingest_concurrency': 2,
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
-                            'singleplot_per_interval': 11,
+                            'singleplot_query_weight': 11,
                             'multiplot_per_interval': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
@@ -353,7 +353,7 @@ class InitProcessTest(TestCaseBase):
 
         self.num_query_nodes = self.test_config['num_nodes']
         self.single_plot_queries_agent0 = int(math.ceil(
-            self.test_config['singleplot_per_interval'] /
+            self.test_config['singleplot_query_weight'] /
             self.num_query_nodes))
         self.multi_plot_queries_agent0 = int(math.ceil(
             self.test_config['multiplot_per_interval'] /
@@ -376,7 +376,7 @@ class InitProcessTest(TestCaseBase):
                 'annotations_queries_per_interval'] / self.num_query_nodes))
 
         self.single_plot_queries_agent1 = \
-            self.test_config['singleplot_per_interval'] - \
+            self.test_config['singleplot_query_weight'] - \
             self.single_plot_queries_agent0
         self.multi_plot_queries_agent1 = \
             self.test_config['multiplot_per_interval'] - \
@@ -522,7 +522,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'enum_ingest_concurrency': 2,
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
-                            'singleplot_per_interval': 11,
+                            'singleplot_query_weight': 11,
                             'multiplot_per_interval': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
@@ -630,7 +630,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'enum_ingest_concurrency': 2,
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
-                            'singleplot_per_interval': 11,
+                            'singleplot_query_weight': 11,
                             'multiplot_per_interval': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
@@ -704,7 +704,7 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'enum_ingest_concurrency': 2,
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
-                            'singleplot_per_interval': 11,
+                            'singleplot_query_weight': 11,
                             'multiplot_per_interval': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,
@@ -780,7 +780,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'enum_ingest_concurrency': 2,
                             'query_concurrency': 20,
                             'annotations_concurrency': 2,
-                            'singleplot_per_interval': 11,
+                            'singleplot_query_weight': 11,
                             'multiplot_per_interval': 10,
                             'search_queries_per_interval': 9,
                             'enum_search_queries_per_interval': 9,

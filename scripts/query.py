@@ -69,7 +69,7 @@ class AbstractQuery(AbstractThread):
 
 
 class SinglePlotQuery(AbstractQuery):
-    query_interval_name = 'singleplot_per_interval'
+    query_interval_name = 'singleplot_query_weight'
 
     def _make_request(self, logger, time, tenant_id=None,
                       metric_name=None):

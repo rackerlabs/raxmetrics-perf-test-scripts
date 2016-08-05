@@ -27,7 +27,7 @@ default_config = {
     'multiplot_per_interval': 10,
     'enum_multiplot_query_weight': 10,
     'enum_num_values': 10,
-    'singleplot_per_interval': 10,
+    'singleplot_query_weight': 10,
     'annotations_queries_per_interval': 8,
     # ingest_delay_millis is comma separated list of delays used during
     # ingestion
