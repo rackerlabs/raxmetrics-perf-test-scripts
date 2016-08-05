@@ -31,7 +31,7 @@ class QueryThread(AbstractThread):
         return result
 
 
-class AbstractQuery(object):
+class AbstractQuery(QueryThread):
     one_day = (1000 * 60 * 60 * 24)
 
     query_interval_name = None
@@ -72,6 +72,7 @@ class AbstractQuery(object):
         return queries
 
     def __init__(self, thread_num, agent_number, num_threads, config, request):
+        QueryThread.__init__(self, thread_num, agent_number, config, request, self)
         self.thread_num = thread_num
         self.num_threads = num_threads
         self.config = config
