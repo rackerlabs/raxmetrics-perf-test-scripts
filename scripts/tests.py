@@ -403,10 +403,11 @@ class InitProcessTest(TestCaseBase):
         # worker 0
         agent_num = 0
         # confirm annotationsingest
-        annotationsingest.AnnotationsIngestThread.create_metrics(
+        annotations = annotationsingest.AnnotationsIngestThread. \
+            _create_metrics(
             agent_num, self.test_config)
 
-        self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
+        self.assertEqual(annotations,
                          [[0, 0], [0, 1], [1, 0], [1, 1]])
 
         thread = annotationsingest.AnnotationsIngestThread(
@@ -485,9 +486,9 @@ class InitProcessTest(TestCaseBase):
 
     def test_init_process_annotationsingest_agent_one(self):
         agent_num = 1
-        annotationsingest.AnnotationsIngestThread.create_metrics(
+        annots = annotationsingest.AnnotationsIngestThread._create_metrics(
             agent_num, self.test_config)
-        self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
+        self.assertEqual(annots,
                          [[2, 0], [2, 1]])
 
     def tearDown(self):
@@ -586,7 +587,7 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_annotations_payload(self):
         agent_num = 1
-        annotationsingest.AnnotationsIngestThread.create_metrics(
+        annots = annotationsingest.AnnotationsIngestThread._create_metrics(
             agent_num, self.test_config)
         thread = annotationsingest.AnnotationsIngestThread(
             0, agent_num, MockReq(), self.test_config)
