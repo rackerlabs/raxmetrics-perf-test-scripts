@@ -92,7 +92,7 @@ grinder_props = {
     'grinder.bf.query_concurrency': '10',
     'grinder.bf.max_multiplot_metrics': '10',
     'grinder.bf.search_queries_per_interval': '2',
-    'grinder.bf.enum_search_queries_per_interval': '1',
+    'grinder.bf.enum_search_query_weight': '1',
     'grinder.bf.multiplot_query_weight': '2',
     'grinder.bf.singleplot_query_weight': '2',
     'grinder.bf.enum_single_plot_query_weight': '1',
@@ -344,7 +344,7 @@ class InitProcessTest(TestCaseBase):
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
-                            'enum_search_queries_per_interval': 9,
+                            'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
@@ -363,7 +363,7 @@ class InitProcessTest(TestCaseBase):
                 'search_queries_per_interval'] / self.num_query_nodes))
         self.enum_search_queries_agent0 = int(math.ceil(
             self.test_config[
-                'enum_search_queries_per_interval'] / self.num_query_nodes))
+                'enum_search_query_weight'] / self.num_query_nodes))
         self.enum_single_plot_queries_agent0 = int(math.ceil(
             self.test_config[
                 'enum_single_plot_query_weight'] /
@@ -385,7 +385,7 @@ class InitProcessTest(TestCaseBase):
             self.test_config['search_queries_per_interval'] - \
             self.search_queries_agent0
         self.enum_search_queries_agent1 = \
-            self.test_config['enum_search_queries_per_interval'] - \
+            self.test_config['enum_search_query_weight'] - \
             self.enum_search_queries_agent0
         self.enum_single_plot_queries_agent1 = \
             self.test_config['enum_single_plot_query_weight'] - \
@@ -525,7 +525,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
-                            'enum_search_queries_per_interval': 9,
+                            'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
@@ -633,7 +633,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
-                            'enum_search_queries_per_interval': 9,
+                            'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
@@ -707,7 +707,7 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
-                            'enum_search_queries_per_interval': 9,
+                            'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,
@@ -783,7 +783,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'singleplot_query_weight': 11,
                             'multiplot_query_weight': 10,
                             'search_queries_per_interval': 9,
-                            'enum_search_queries_per_interval': 9,
+                            'enum_search_query_weight': 9,
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
                             'annotations_queries_per_interval': 8,

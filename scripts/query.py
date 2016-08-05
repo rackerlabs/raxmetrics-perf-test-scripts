@@ -158,7 +158,7 @@ class AnnotationsQuery(AbstractQuery):
 
 
 class EnumSearchQuery(AbstractQuery):
-    query_interval_name = 'enum_search_queries_per_interval'
+    query_interval_name = 'enum_search_query_weight'
 
     def generate_metrics_regex(self):
         metric_name = 'enum_grinder_' + generate_metric_name(

@@ -26,6 +26,6 @@ grinder.bf.search_queries_per_interval=10
 grinder.bf.multiplot_query_weight=2
 grinder.bf.singleplot_query_weight=30
 grinder.bf.annotations_queries_per_interval=10
-grinder.bf.enum_search_queries_per_interval=10
+grinder.bf.enum_search_query_weight=10
 grinder.bf.enum_single_plot_query_weight=10
 grinder.bf.enum_multiplot_query_weight=10
