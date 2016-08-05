@@ -397,27 +397,6 @@ class InitProcessTest(TestCaseBase):
             self.test_config['enum_multiplot_query_weight'] - \
             self.enum_multi_plot_queries_agent0
 
-    def test_init_process_annotationsingest_agent_zero(self):
-
-        # confirm that the correct batches of ingest metrics are created for
-        # worker 0
-        agent_num = 0
-        # confirm annotationsingest
-        annotations = annotationsingest.AnnotationsIngestThread. \
-            _create_metrics(
-            agent_num, self.test_config)
-
-        self.assertEqual(annotations,
-                         [[0, 0], [0, 1], [1, 0], [1, 1]])
-
-        thread = annotationsingest.AnnotationsIngestThread(
-            0, agent_num, MockReq(), self.test_config)
-        self.assertEqual(thread.slice, [[0, 0], [0, 1]])
-
-        thread = annotationsingest.AnnotationsIngestThread(
-            1, agent_num, MockReq(), self.test_config)
-        self.assertEqual(thread.slice, [[1, 0], [1, 1]])
-
     def test_init_process_enumingest_agent_zero(self):
         agent_num = 0
         # confirm enum metrics ingest
@@ -656,27 +635,19 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
         thread.slice = [[2, 0]]
         thread.position = 0
         thread.finish_time = 10000
+        tenant_id = 2
+        metric_id = 4
         valid_payload = {
-            "what": "annotation org.example.metric.0",
+            "what": "annotation org.example.metric.%s" % metric_id,
             "when": 1000, "tags": "tag", "data": "data"}
 
-        url, payload = thread.make_request(pp, thread.time())
+        url, payload = thread.make_request(pp, thread.time(), tenant_id,
+                                           metric_id)
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
             'http://metrics-ingest.example.org/v2.0/2/events')
         self.assertEqual(eval(payload), valid_payload)
-
-        # confirm request increments position if not at end of report interval
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 10000)
-        thread.position = 2
-        thread.make_request(pp, thread.time())
-
-        # confirm request resets position at end of report interval
-        self.assertEqual(sleep_time, 9000)
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 16000)
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
