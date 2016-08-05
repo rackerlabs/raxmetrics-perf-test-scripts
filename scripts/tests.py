@@ -108,7 +108,7 @@ class TestCaseBase(unittest.TestCase):
 
     def assertIsInstance(self, obj, cls, msg=None):
         return self.assertTrue(isinstance(obj, cls), msg)
-
+    pass
 
 class ThreadManagerTest(TestCaseBase):
     def setUp(self):
@@ -318,50 +318,57 @@ class InitProcessTest(TestCaseBase):
 
     def test_init_process_query_agent_zero_thread_zero(self):
         agent_num = 0
-        qq = query.SinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(0, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.SinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(0, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
 
     def test_init_process_query_agent_zero_thread_three(self):
         agent_num = 0
-        qq = query.MultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(3, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.MultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(3, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
 
     def test_init_process_query_agent_zero_thread_six(self):
         agent_num = 0
-        qq = query.SearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(6, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.SearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(6, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SearchQuery)
 
     def test_init_process_query_agent_zero_thread_nine(self):
         agent_num = 0
-        qq = query.EnumSearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(9, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.EnumSearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(9, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
 
     def test_init_process_query_agent_zero_thread_twelve(self):
         agent_num = 0
-        qq = query.EnumSinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(12, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.EnumSinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(12, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
 
     def test_init_process_query_agent_zero_thread_fourteen(self):
         agent_num = 0
-        qq = query.AnnotationsQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(14, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.AnnotationsQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(14, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.AnnotationsQuery)
 
     def test_init_process_query_agent_zero_thread_sixteen(self):
         agent_num = 0
-        qq = query.EnumMultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(16, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.EnumMultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(16, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumMultiPlotQuery)
 
@@ -394,50 +401,57 @@ class InitProcessTest(TestCaseBase):
 
     def test_init_process_query_agent_one_thread_zero(self):
         agent_num = 1
-        qq = query.SinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(0, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.SinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(0, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SinglePlotQuery)
 
     def test_init_process_query_agent_one_thread_four(self):
         agent_num = 1
-        qq = query.MultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(4, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.MultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(4, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.MultiPlotQuery)
 
     def test_init_process_query_agent_one_thread_six(self):
         agent_num = 1
-        qq = query.SearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(6, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.SearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(6, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.SearchQuery)
 
     def test_init_process_query_agent_one_thread_eight(self):
         agent_num = 1
-        qq = query.EnumSearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(8, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.EnumSearchQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(8, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSearchQuery)
 
     def test_init_process_query_agent_one_thread_ten(self):
         agent_num = 1
-        qq = query.EnumSinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(10, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.EnumSinglePlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(10, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumSinglePlotQuery)
 
     def test_init_process_query_agent_one_thread_twelve(self):
         agent_num = 1
-        qq = query.AnnotationsQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(12, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.AnnotationsQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(12, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.AnnotationsQuery)
 
     def test_init_process_query_agent_one_thread_sixteen(self):
         agent_num = 1
-        qq = query.EnumMultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, MockReq())
-        thread = query.QueryThread(16, agent_num, requests_by_type, qq, self.test_config)
+        req = MockReq()
+        qq = query.EnumMultiPlotQuery(0, agent_num, query.QueryThread.num_threads(self.test_config), self.test_config, req)
+        thread = query.QueryThread(16, agent_num, self.test_config, req, qq)
         self.assertEqual(1, len(thread.slice))
         self.assertIsInstance(thread.slice[0], query.EnumMultiPlotQuery)
 
@@ -810,13 +824,12 @@ class MakeQueryRequestsTest(TestCaseBase):
                 return expected_result
             query_interval_name = 'DummyQueryType_per_interval'
         self.config['DummyQueryType_per_interval'] = 3
-        self.requests_by_type[DummyQueryType] = MockReq()
+        req = MockReq()
+        self.requests_by_type[DummyQueryType] = req
         random.randint = lambda x, y: 40
         req = requests_by_type[query.SinglePlotQuery]
-        qq = DummyQueryType(0, self.agent_num, self.num_threads, self.config, MockReq())
-        self.thread = query.QueryThread(0, self.agent_num,
-                                        self.requests_by_type, qq,
-                                        self.config)
+        qq = DummyQueryType(0, self.agent_num, self.num_threads, self.config, req)
+        self.thread = query.QueryThread(0, self.agent_num, self.config, req, qq)
 
         # when
         result = self.thread.make_request(pp, self.thread.time())

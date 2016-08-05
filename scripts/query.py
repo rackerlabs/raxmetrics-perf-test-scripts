@@ -225,10 +225,8 @@ class QueryThread(AbstractThread):
     def num_threads(cls, config):
         return config['query_concurrency']
 
-    def __init__(self, thread_num, agent_num, requests_by_query_type,
-                 query, config):
+    def __init__(self, thread_num, agent_num, config, request, query):
         AbstractThread.__init__(self, thread_num, agent_num, config)
-        self.requests_by_query_type = requests_by_query_type
         self.query_instance = query
         self.slice = [self.query_instance]
 
@@ -238,7 +236,6 @@ class QueryThread(AbstractThread):
             self.sleep(1000000)
             return None
         query = self.query_instance
-        request = self.requests_by_query_type[type(query)]
         result = query._make_request(
             logger, int(self.time()))
         return result
