@@ -92,7 +92,6 @@ class EnumIngestThread(AbstractThread):
     def make_request(self, logger, time):
         if len(self.slice) == 0:
             logger("Warning: no work for current thread")
-            self.sleep(1000000)
             return None
         self.check_position(logger, len(self.slice))
         batch = self.get_next_item()
