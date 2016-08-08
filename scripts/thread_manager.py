@@ -64,15 +64,15 @@ class ThreadManager(object):
         thread_types = [
             (IngestThread, self.config['ingest_weight']),
             (EnumIngestThread, self.config['enum_ingest_weight']),
+            (AnnotationsIngestThread, self.config['annotations_weight']),
             (SinglePlotQuery, self.config['singleplot_query_weight']),
             (MultiPlotQuery, self.config['multiplot_query_weight']),
             (SearchQuery, self.config['search_query_weight']),
             (EnumSearchQuery, self.config['enum_search_query_weight']),
             (EnumSinglePlotQuery,
                 self.config['enum_single_plot_query_weight']),
-            (AnnotationsQuery, self.config['annotations_query_weight']),
             (EnumMultiPlotQuery, self.config['enum_multiplot_query_weight']),
-            (AnnotationsIngestThread, self.config['annotations_weight'])
+            (AnnotationsQuery, self.config['annotations_query_weight']),
         ]
 
         total_weight = 0
