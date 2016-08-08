@@ -9,44 +9,6 @@ from abstract_thread import generate_metrics_tenants
 
 
 class EnumIngestThread(AbstractThread):
-    # The list of metric numbers for all threads in this worker
-    metrics = []
-
-    @staticmethod
-    def _create_metrics(agent_number, config):
-        """ Generate all the metrics for this worker
-
-        The metrics are a list of batches.  Each batch is a list of metrics
-        processed by a single metrics ingest request.
-        """
-        metrics = generate_metrics_tenants(
-            config['enum_num_tenants'],
-            config['enum_metrics_per_tenant'],
-            agent_number,
-            config['num_nodes'],
-            EnumIngestThread.generate_metrics_for_tenant)
-
-        return EnumIngestThread.divide_metrics_into_batches(
-            metrics,
-            config['batch_size'])
-
-    @classmethod
-    def num_threads(cls, config):
-        return config['enum_ingest_weight']
-
-    @staticmethod
-    def generate_metrics_for_tenant(tenant_id, metrics_per_tenant):
-        l = []
-        for x in range(metrics_per_tenant):
-            l.append([tenant_id, x])
-        return l
-
-    @staticmethod
-    def divide_metrics_into_batches(metrics, batch_size):
-        b = []
-        for i in range(0, len(metrics), batch_size):
-            b.append(metrics[i:i + batch_size])
-        return b
 
     # TODO: Add enum prefix to config
     @staticmethod

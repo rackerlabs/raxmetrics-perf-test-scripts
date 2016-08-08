@@ -397,18 +397,6 @@ class InitProcessTest(TestCaseBase):
             self.test_config['enum_multiplot_query_weight'] - \
             self.enum_multi_plot_queries_agent0
 
-    def test_init_process_enumingest_agent_zero(self):
-        agent_num = 0
-        # confirm enum metrics ingest
-        metrics = ingestenum.EnumIngestThread._create_metrics(agent_num,
-                                                              self.test_config)
-
-        self.assertEqual(metrics,
-                         [
-                             [[0, 0], [0, 1], [1, 0]],
-                             [[1, 1]]
-                         ])
-
     def tearDown(self):
         random.shuffle = self.real_shuffle
         random.randint = self.real_randint
@@ -478,8 +466,6 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_enum_payload(self):
         agent_num = 1
-        metrics = ingestenum.EnumIngestThread._create_metrics(agent_num,
-                                                              self.test_config)
         thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
                                              self.test_config)
         payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))

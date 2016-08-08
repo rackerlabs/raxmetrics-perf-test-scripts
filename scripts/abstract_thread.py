@@ -36,9 +36,6 @@ default_config = {
 
 class AbstractThread(object):
     # superclass for the various thread types
-    @classmethod
-    def num_threads(cls):
-        raise Exception("Can't create abstract thread")
 
     def make_request(self, logger, time):
         raise Exception("Can't create abstract thread")
@@ -59,24 +56,6 @@ class AbstractThread(object):
 
         # finish_time is the end time of the interval
         self.finish_time = self.time() + self.config['report_interval']
-
-    def get_next_item(self):
-        payload = self.slice[self.position]
-        self.position += 1
-        return payload
-
-    def check_position(self, logger, max_position):
-        """Sleep if finished all work for report interval"""
-        if self.position >= max_position:
-            self.position = 0
-            sleep_time = self.finish_time - self.time()
-            self.finish_time += self.config['report_interval']
-            if sleep_time < 0:
-                # return error
-                logger("finish time error")
-            else:
-                logger("pausing for %d" % sleep_time)
-                self.sleep(sleep_time)
 
     @classmethod
     def time(cls):
