@@ -55,12 +55,6 @@ class EnumIngestThread(AbstractThread):
 
     def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, request, config)
-        # Initialize the "slice" of the metrics to be sent by this thread
-        self.metrics = self._create_metrics(agent_num, config)
-        start, end = generate_job_range(len(self.metrics),
-                                        self.num_threads(self.config),
-                                        thread_num)
-        self.slice = self.metrics[start:end]
 
     def generate_enum_suffix(self):
         return "_" + str(random.randint(0, self.config['enum_num_values']))
@@ -74,20 +68,23 @@ class EnumIngestThread(AbstractThread):
                                metric_id) + self.generate_enum_suffix()}]
                 }
 
-    def generate_payload(self, time, batch):
-        payload = map(lambda x: self.generate_enum_metric(time, *x), batch)
+    def generate_payload(self, time, tenant_metric_id_pairs):
+        payload = [self.generate_enum_metric(time, pair[0], pair[1])
+                   for pair in tenant_metric_id_pairs]
         return json.dumps(payload)
 
     def ingest_url(self):
         return "%s/v2.0/tenantId/ingest/aggregated/multi" % self.config[
             'url']
 
-    def make_request(self, logger, time):
-        if len(self.slice) == 0:
-            logger("Warning: no work for current thread")
-            return None
-        self.check_position(logger, len(self.slice))
-        batch = self.get_next_item()
-        payload = self.generate_payload(int(self.time()), batch)
+    def make_request(self, logger, time, tenant_metric_id_pairs=None):
+        if tenant_metric_id_pairs is None:
+            tenant_metric_id_pairs = []
+            for i in xrange(self.config['batch_size']):
+                tenant_id = random.randint(1, self.config['enum_num_tenants'])
+                metric_id = random.randint(1, self.config['enum_metrics_per_tenant'])
+                pair = [tenant_id, metric_id]
+                tenant_metric_id_pairs.append(pair)
+        payload = self.generate_payload(time, tenant_metric_id_pairs)
         result = self.request.POST(self.ingest_url(), payload)
         return result

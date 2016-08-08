@@ -409,14 +409,6 @@ class InitProcessTest(TestCaseBase):
                              [[1, 1]]
                          ])
 
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
-                                             self.test_config)
-        self.assertEqual(thread.slice, [[[0, 0], [0, 1], [1, 0]]])
-
-        thread = ingestenum.EnumIngestThread(1, agent_num, MockReq(),
-                                             self.test_config)
-        self.assertEqual(thread.slice, [[[1, 1]]])
-
     def tearDown(self):
         random.shuffle = self.real_shuffle
         random.randint = self.real_randint
@@ -735,22 +727,13 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
             }
         ]
 
-        url, payload = thread.make_request(pp, thread.time())
+        url, payload = thread.make_request(
+            pp, thread.time(), tenant_metric_id_pairs=[[2, 0], [2, 1]])
         # confirm request generates proper URL and payload
         self.assertEqual(url,
                          'http://metrics-ingest.example.org/v2.0/tenantId/' +
                          'ingest/aggregated/multi')
         self.assertEqual(eval(payload), valid_payload)
-
-        # confirm request increments position if not at end of report interval
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 10000)
-        thread.position = 2
-        thread.make_request(pp, thread.time())
-        # confirm request resets position at end of report interval
-        self.assertEqual(sleep_time, 9000)
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 16000)
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
