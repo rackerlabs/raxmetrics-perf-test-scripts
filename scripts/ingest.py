@@ -23,7 +23,6 @@ class IngestThread(AbstractThread):
 
     def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, request, config)
-        # Initialize the "slice" of the metrics to be sent by this thread
 
     def generate_unit(self, tenant_id):
         unit_number = tenant_id % 6

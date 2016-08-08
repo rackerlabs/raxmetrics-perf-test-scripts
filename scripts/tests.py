@@ -550,9 +550,6 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
         agent_num = 0
         thread = annotationsingest.AnnotationsIngestThread(
             0, agent_num, MockReq(), self.test_config)
-        thread.slice = [[2, 0]]
-        thread.position = 0
-        thread.finish_time = 10000
         tenant_id = 2
         metric_id = 4
         valid_payload = {
@@ -615,9 +612,6 @@ class MakeIngestRequestsTest(TestCaseBase):
         global sleep_time
         agent_num = 0
         thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
-        thread.slice = [[[2, 0], [2, 1]]]
-        thread.position = 0
-        thread.finish_time = 10000
         valid_payload = [
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
@@ -637,8 +631,6 @@ class MakeIngestRequestsTest(TestCaseBase):
             url,
             'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
-
-        self.assertEqual(thread.finish_time, 10000)
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
@@ -689,9 +681,6 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
         agent_num = 0
         thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
                                              self.test_config)
-        thread.slice = [[[2, 0], [2, 1]]]
-        thread.position = 0
-        thread.finish_time = 10000
         valid_payload = [
             {
                 'tenantId': '2',
