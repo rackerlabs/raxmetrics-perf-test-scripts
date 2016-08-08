@@ -56,7 +56,7 @@ class IngestThread(AbstractThread):
     def make_request(self, logger, time, tenant_metric_id_pairs=None):
         if tenant_metric_id_pairs is None:
             tenant_metric_id_pairs = []
-            for i in xrange(self.config['batch_size']):
+            for i in xrange(self.config['ingest_batch_size']):
                 tenant_id = random.randint(1, self.config['num_tenants'])
                 metric_id = random.randint(1, self.config['metrics_per_tenant'])
                 pair = [tenant_id, metric_id]
