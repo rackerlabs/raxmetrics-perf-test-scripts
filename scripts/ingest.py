@@ -47,8 +47,9 @@ class IngestThread(AbstractThread):
                 'ttlInSeconds': (2 * 24 * 60 * 60),
                 'collectionTime': collection_time}
 
-    def generate_payload(self, time, batch):
-        payload = [self.generate_metric(time, x[0], x[1]) for x in batch]
+    def generate_payload(self, time, tenant_metric_id_pairs):
+        payload = [self.generate_metric(time, x[0], x[1]) for x in
+                   tenant_metric_id_pairs]
         return json.dumps(payload)
 
     def ingest_url(self):
