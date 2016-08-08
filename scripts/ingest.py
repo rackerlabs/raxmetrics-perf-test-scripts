@@ -22,43 +22,6 @@ class IngestThread(AbstractThread):
         5: 'decades'
     }
 
-    # The list of metric numbers for all threads in this worker
-    metrics = []
-
-    @staticmethod
-    def _create_metrics(agent_number, config):
-        """ Generate all the metrics for this worker
-
-        The metrics are a list of batches.  Each batch is a list of metrics
-        processed by a single metrics ingest request.
-        """
-        metrics = generate_metrics_tenants(
-            config['num_tenants'],
-            config['metrics_per_tenant'],
-            agent_number, config['num_nodes'],
-            IngestThread.generate_metrics_for_tenant)
-
-        return IngestThread.divide_metrics_into_batches(
-            metrics, config['batch_size'])
-
-    @classmethod
-    def num_threads(cls, config):
-        return config['ingest_weight']
-
-    @staticmethod
-    def generate_metrics_for_tenant(tenant_id, metrics_per_tenant):
-        l = []
-        for x in range(metrics_per_tenant):
-            l.append([tenant_id, x])
-        return l
-
-    @staticmethod
-    def divide_metrics_into_batches(metrics, batch_size):
-        b = []
-        for i in range(0, len(metrics), batch_size):
-            b.append(metrics[i:i + batch_size])
-        return b
-
     def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, request, config)
         # Initialize the "slice" of the metrics to be sent by this thread

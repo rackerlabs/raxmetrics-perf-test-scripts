@@ -461,8 +461,6 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_payload(self):
         agent_num = 1
-        metrics = ingest.IngestThread._create_metrics(agent_num,
-                                                      self.test_config)
         thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         payload = json.loads(
             thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
