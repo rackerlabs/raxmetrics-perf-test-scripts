@@ -74,29 +74,40 @@ grinder_props = {
     'grinder.threads': '45',
     'grinder.useConsole': 'false',
     'grinder.logDirectory': 'resources/logs',
-    'grinder.bf.name_fmt': 'org.example.metric.%d',
-    'grinder.bf.report_interval': '10000',
-    'grinder.bf.annotations_num_tenants': '4',
-    'grinder.bf.num_tenants': '4',
-    'grinder.bf.enum_num_tenants': '4',
-    'grinder.bf.metrics_per_tenant': '15',
-    'grinder.bf.enum_metrics_per_tenant': '5',
-    'grinder.bf.batch_size': '5',
-    'grinder.bf.ingest_weight': '15',
-    'grinder.bf.enum_ingest_weight': '15',
-    'grinder.bf.annotations_per_tenant': '5',
-    'grinder.bf.annotations_weight': '5',
-    'grinder.bf.num_nodes': '1',
+
     'grinder.bf.url': 'http://metrics-ingest.example.org',
     'grinder.bf.query_url': 'http://metrics.example.org',
-    'grinder.bf.query_concurrency': '10',
+
+    'grinder.bf.name_fmt': 'org.example.metric.%d',
+    'grinder.bf.report_interval': '10000',
+    'grinder.bf.batch_size': '5',
+    'grinder.bf.num_nodes': '1',
     'grinder.bf.max_multiplot_metrics': '10',
-    'grinder.bf.search_query_weight': '2',
-    'grinder.bf.enum_search_query_weight': '1',
-    'grinder.bf.multiplot_query_weight': '2',
+
+    'grinder.bf.ingest_weight': '15',
+    'grinder.bf.num_tenants': '4',
+    'grinder.bf.metrics_per_tenant': '15',
+
+    'grinder.bf.enum_ingest_weight': '15',
+    'grinder.bf.enum_num_tenants': '4',
+    'grinder.bf.enum_metrics_per_tenant': '5',
+
+    'grinder.bf.annotations_weight': '5',
+    'grinder.bf.annotations_num_tenants': '4',
+    'grinder.bf.annotations_per_tenant': '5',
+
     'grinder.bf.singleplot_query_weight': '2',
+
+    'grinder.bf.multiplot_query_weight': '2',
+
+    'grinder.bf.search_query_weight': '2',
+
+    'grinder.bf.enum_search_query_weight': '1',
+
     'grinder.bf.enum_single_plot_query_weight': '1',
-    'grinder.bf.enum_multiplot_query_weight': '2',
+
+    'grinder.bf.enum_multiplot_query_weight': '1',
+
     'grinder.bf.annotations_query_weight': '1',
 }
 
@@ -247,63 +258,63 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_30(self):
         th = self.tm.setup_thread(30, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
     def test_thread_type_assignment_31(self):
         th = self.tm.setup_thread(31, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
     def test_thread_type_assignment_32(self):
         th = self.tm.setup_thread(32, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
     def test_thread_type_assignment_33(self):
         th = self.tm.setup_thread(33, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
     def test_thread_type_assignment_34(self):
         th = self.tm.setup_thread(34, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
     def test_thread_type_assignment_35(self):
         th = self.tm.setup_thread(35, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SinglePlotQuery)
 
     def test_thread_type_assignment_36(self):
         th = self.tm.setup_thread(36, 0)
-        self.assertEqual(type(th), query.EnumSearchQuery)
+        self.assertEqual(type(th), query.SinglePlotQuery)
 
     def test_thread_type_assignment_37(self):
         th = self.tm.setup_thread(37, 0)
-        self.assertEqual(type(th), query.EnumSinglePlotQuery)
+        self.assertEqual(type(th), query.MultiPlotQuery)
 
     def test_thread_type_assignment_38(self):
         th = self.tm.setup_thread(38, 0)
-        self.assertEqual(type(th), query.AnnotationsQuery)
+        self.assertEqual(type(th), query.MultiPlotQuery)
 
     def test_thread_type_assignment_39(self):
         th = self.tm.setup_thread(39, 0)
-        self.assertEqual(type(th), query.EnumMultiPlotQuery)
+        self.assertEqual(type(th), query.SearchQuery)
 
     def test_thread_type_assignment_40(self):
         th = self.tm.setup_thread(40, 0)
-        self.assertEqual(type(th), query.EnumMultiPlotQuery)
+        self.assertEqual(type(th), query.SearchQuery)
 
     def test_thread_type_assignment_41(self):
         th = self.tm.setup_thread(41, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), query.EnumSearchQuery)
 
     def test_thread_type_assignment_42(self):
         th = self.tm.setup_thread(42, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), query.EnumSinglePlotQuery)
 
     def test_thread_type_assignment_43(self):
         th = self.tm.setup_thread(43, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), query.EnumMultiPlotQuery)
 
     def test_thread_type_assignment_44(self):
         th = self.tm.setup_thread(44, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), query.AnnotationsQuery)
 
     def test_setup_thread_invalid_thread_type(self):
         self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
