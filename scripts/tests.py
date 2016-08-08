@@ -417,55 +417,6 @@ class InitProcessTest(TestCaseBase):
                                              self.test_config)
         self.assertEqual(thread.slice, [[[1, 1]]])
 
-    def test_init_process_ingest_agent_zero(self):
-
-        agent_num = 0
-
-        # confirm metrics ingest
-        metrics = ingest.IngestThread._create_metrics(agent_num,
-                                                      self.test_config)
-
-        self.assertEqual(metrics,
-                         [[[0, 0], [0, 1], [0, 2]],
-                          [[0, 3], [0, 4], [0, 5]],
-                          [[0, 6], [1, 0], [1, 1]],
-                          [[1, 2], [1, 3], [1, 4]],
-                          [[1, 5], [1, 6]]])
-
-        # confirm that the correct batch slices are created for individual
-        # threads
-        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
-        self.assertEqual(thread.slice,
-                         [[[0, 0], [0, 1], [0, 2]],
-                          [[0, 3], [0, 4], [0, 5]],
-                          [[0, 6], [1, 0], [1, 1]]])
-        thread = ingest.IngestThread(1, agent_num, MockReq(), self.test_config)
-        self.assertEqual(thread.slice,
-                         [[[1, 2], [1, 3], [1, 4]],
-                          [[1, 5], [1, 6]]])
-
-    def test_init_process_ingest_agent_one(self):
-
-        agent_num = 1
-
-        # confirm that the correct batches of ingest metrics are created for
-        # worker 1
-        metrics = ingest.IngestThread._create_metrics(agent_num,
-                                                      self.test_config)
-
-        self.assertEqual(metrics,
-                         [[[2, 0], [2, 1], [2, 2]],
-                          [[2, 3], [2, 4], [2, 5]],
-                          [[2, 6]]])
-
-        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
-        self.assertEqual(thread.slice,
-                         [[[2, 0], [2, 1], [2, 2]],
-                          [[2, 3], [2, 4], [2, 5]]])
-        thread = ingest.IngestThread(1, agent_num, MockReq(), self.test_config)
-        self.assertEqual(thread.slice,
-                         [[[2, 6]]])
-
     def tearDown(self):
         random.shuffle = self.real_shuffle
         random.randint = self.real_randint
@@ -699,22 +650,19 @@ class MakeIngestRequestsTest(TestCaseBase):
              "metricValue": 0, "unit": "days",
              "metricName": "org.example.metric.1"}]
 
-        url, payload = thread.make_request(pp, thread.time())
+        tenant_metric_id_pairs = [
+            [2, 0],
+            [2, 1]
+        ]
+        url, payload = thread.make_request(pp, thread.time(),
+                                           tenant_metric_id_pairs)
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
             'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
 
-        # confirm request increments position if not at end of report interval
-        self.assertEqual(thread.position, 1)
         self.assertEqual(thread.finish_time, 10000)
-        thread.position = 2
-        thread.make_request(pp, thread.time())
-        # confirm request resets position at end of report interval
-        self.assertEqual(sleep_time, 9000)
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 16000)
 
     def tearDown(self):
         random.shuffle = self.real_shuffle

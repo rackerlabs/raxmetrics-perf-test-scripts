@@ -62,11 +62,6 @@ class IngestThread(AbstractThread):
     def __init__(self, thread_num, agent_num, request, config):
         AbstractThread.__init__(self, thread_num, agent_num, request, config)
         # Initialize the "slice" of the metrics to be sent by this thread
-        self.metrics = self._create_metrics(agent_num, config)
-        start, end = generate_job_range(len(self.metrics),
-                                        self.num_threads(self.config),
-                                        thread_num)
-        self.slice = self.metrics[start:end]
 
     def generate_unit(self, tenant_id):
         unit_number = tenant_id % 6
@@ -90,18 +85,20 @@ class IngestThread(AbstractThread):
                 'collectionTime': collection_time}
 
     def generate_payload(self, time, batch):
-        payload = map(lambda x: self.generate_metric(time, *x), batch)
+        payload = [self.generate_metric(time, x[0], x[1]) for x in batch]
         return json.dumps(payload)
 
     def ingest_url(self):
         return "%s/v2.0/tenantId/ingest/multi" % self.config['url']
 
-    def make_request(self, logger, time):
-        if len(self.slice) == 0:
-            logger("Warning: no work for current thread")
-            return None
-        self.check_position(logger, len(self.slice))
-        batch = self.get_next_item()
-        payload = self.generate_payload(int(self.time()), batch)
+    def make_request(self, logger, time, tenant_metric_id_pairs=None):
+        if tenant_metric_id_pairs is None:
+            tenant_metric_id_pairs = []
+            for i in xrange(self.config['batch_size']):
+                tenant_id = random.randint(1, self.config['num_tenants'])
+                metric_id = random.randint(1, self.config['metrics_per_tenant'])
+                pair = [tenant_id, metric_id]
+                tenant_metric_id_pairs.append(pair)
+        payload = self.generate_payload(time, tenant_metric_id_pairs)
         result = self.request.POST(self.ingest_url(), payload)
         return result
