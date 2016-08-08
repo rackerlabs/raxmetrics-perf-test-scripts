@@ -5,8 +5,7 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, generate_job_range
-from abstract_thread import generate_metric_name, shuffled
+from abstract_thread import AbstractThread, generate_metric_name
 
 
 class AnnotationsIngestThread(AbstractThread):

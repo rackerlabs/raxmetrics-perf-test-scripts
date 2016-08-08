@@ -4,8 +4,7 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, generate_job_range
-from abstract_thread import generate_metrics_tenants, generate_metric_name
+from abstract_thread import AbstractThread, generate_metric_name
 
 
 RAND_MAX = 982374239
