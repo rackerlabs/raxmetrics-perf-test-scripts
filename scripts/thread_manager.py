@@ -21,7 +21,6 @@ class ThreadManager(object):
         # number of threads to start
         self.tot_threads = 0
 
-        # Parse the properties file and update default_config dictionary
         self.config = default_config.copy()
         self.config.update(clean_configs(config))
         if 'grinder.threads' in self.config:
@@ -37,11 +36,18 @@ class ThreadManager(object):
         test various parts of blueflood.  The code is structured so that
         the thread type is determined by the thread num.  The grinder
         properties file determines how many of each type to create based
-        on the "ingest_weight" and "query_concurrency" options.
+        on the "*_weight" options.
 
-        So for example, if "ingest_weight" is set to 4, and
-        "query_concurrency" is set to 2, thread numbers 0-3 will be ingest
-        threads and thread numbers 4-5 will be query threads.
+        So for example, if "grinder.threads" is set to 8, "ingest_weight" is
+        set to 4, "singleplot_query_weight" is set to 4, and all other
+        "*_weight" properties are set to 0, threads numbered 0-3 will be
+        IngestThread's, and threads numbered 4-7 will be SinglePlotQuery's.
+        The weight numbers are proportional, so they don't have to add up
+        exactly. If "grinder.threads" is set to 8, "ingest_weight" is set to
+        15, "singleplot_query_weight" is set to 5, and all other "*_weight"
+        properties are set to 0, then threads 0-5 will be IngestThread's, and
+        threads 6 and 7 will be SinglePlotQuery's
+        (15 + 5 = 20, 15 -> 75%, 5 -> 25%).
 
         """
         thread_type = None

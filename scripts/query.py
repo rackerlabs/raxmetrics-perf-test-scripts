@@ -40,7 +40,6 @@ class SinglePlotQuery(AbstractQuery):
             tenant_id, metric_name, frm,
             to, resolution)
         result = self.request.GET(url)
-        #    logger(result.getText())
         return result
 
 
@@ -69,7 +68,6 @@ class MultiPlotQuery(AbstractQuery):
             tenant_id, frm,
             to, resolution)
         result = self.request.POST(url, payload)
-        #    logger(result.getText())
         return result
 
 
@@ -92,7 +90,6 @@ class SearchQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, metric_regex)
         result = self.request.GET(url)
-        #    logger(result.getText())
         return result
 
 
@@ -152,7 +149,6 @@ class EnumSinglePlotQuery(AbstractQuery):
             tenant_id, metric_name, frm,
             to, resolution)
         result = self.request.GET(url)
-        #    logger(result.getText())
         return result
 
 
@@ -181,5 +177,4 @@ class EnumMultiPlotQuery(AbstractQuery):
             tenant_id, frm,
             to, resolution)
         result = self.request.POST(url, payload)
-        #    logger(result.getText())
         return result
