@@ -57,8 +57,8 @@ class IngestThread(AbstractThread):
         if tenant_metric_id_pairs is None:
             tenant_metric_id_pairs = []
             for i in xrange(self.config['ingest_batch_size']):
-                tenant_id = random.randint(1, self.config['num_tenants'])
-                metric_id = random.randint(1, self.config['metrics_per_tenant'])
+                tenant_id = random.randint(1, self.config['ingest_num_tenants'])
+                metric_id = random.randint(1, self.config['ingest_metrics_per_tenant'])
                 pair = [tenant_id, metric_id]
                 tenant_metric_id_pairs.append(pair)
         payload = self.generate_payload(time, tenant_metric_id_pairs)

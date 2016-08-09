@@ -15,8 +15,8 @@ grinder.bf.num_nodes=2
 grinder.bf.report_interval=60000
 
 grinder.bf.ingest_weight=25
-grinder.bf.num_tenants=17000
-grinder.bf.metrics_per_tenant=210
+grinder.bf.ingest_num_tenants=17000
+grinder.bf.ingest_metrics_per_tenant=210
 grinder.bf.ingest_batch_size=1500
 
 
