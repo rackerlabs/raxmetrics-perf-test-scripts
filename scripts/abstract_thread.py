@@ -4,35 +4,46 @@ import random
 import time
 
 default_config = {
-    'name_fmt': "org.example.metric.%d",
-    'report_interval': (1000 * 10),
-    'annotations_num_tenants': 5,
-    'num_tenants': 4,
-    'enum_num_tenants': 4,
-    'metrics_per_tenant': 15,
-    'enum_metrics_per_tenant': 10,
-    'annotations_per_tenant': 10,
-    'ingest_batch_size': 5,
-    'enum_batch_size': 5,
-    'ingest_weight': 15,
-    'enum_ingest_weight': 15,
-    'num_nodes': 1,
     'url': "http://localhost:19000",
     'query_url': "http://localhost:20000",
-    'query_concurrency': 10,
-    'annotations_weight': 5,
+
+    'name_fmt': "org.example.metric.%d",
+    'report_interval': (1000 * 10),
+    'num_nodes': 1,
     'max_multiplot_metrics': 10,
-    'search_query_weight': 10,
-    'enum_search_query_weight': 10,
-    'enum_single_plot_query_weight': 10,
-    'multiplot_query_weight': 10,
-    'enum_multiplot_query_weight': 10,
-    'enum_num_values': 10,
-    'singleplot_query_weight': 10,
-    'annotations_query_weight': 8,
+
+
+    'ingest_weight': 15,
+    'ingest_num_tenants': 4,
+    'ingest_metrics_per_tenant': 15,
+    'ingest_batch_size': 5,
     # ingest_delay_millis is comma separated list of delays used during
     # ingestion
-    'ingest_delay_millis': ""}
+    'ingest_delay_millis': "",
+
+    'enum_ingest_weight': 15,
+    'enum_num_tenants': 4,
+    'enum_metrics_per_tenant': 10,
+    'enum_batch_size': 5,
+    'enum_num_values': 10,
+
+    'annotations_weight': 5,
+    'annotations_num_tenants': 5,
+    'annotations_per_tenant': 10,
+
+    'singleplot_query_weight': 10,
+
+    'multiplot_query_weight': 10,
+
+    'search_query_weight': 10,
+
+    'enum_search_query_weight': 10,
+
+    'enum_single_plot_query_weight': 10,
+
+    'enum_multiplot_query_weight': 10,
+
+    'annotations_query_weight': 8}
 
 
 class AbstractThread(object):
