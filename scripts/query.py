@@ -27,10 +27,10 @@ class SinglePlotQuery(AbstractQuery):
     def make_request(self, logger, time, tenant_id=None,
                      metric_name=None):
         if tenant_id is None:
-            tenant_id = random.randint(0, self.config['num_tenants'])
+            tenant_id = random.randint(0, self.config['ingest_num_tenants'])
         if metric_name is None:
             metric_name = generate_metric_name(
-                random.randint(0, self.config['metrics_per_tenant']),
+                random.randint(0, self.config['ingest_metrics_per_tenant']),
                 self.config)
         to = time
         frm = time - self.one_day
@@ -50,7 +50,7 @@ class MultiPlotQuery(AbstractQuery):
     def generate_multiplot_payload(self):
         metrics_count = min(self.config['max_multiplot_metrics'],
                             random.randint(0, self.config[
-                                'metrics_per_tenant']))
+                                'ingest_metrics_per_tenant']))
         metrics_list = [
             generate_metric_name(i, self.config) for i in range(metrics_count)
         ]
@@ -58,7 +58,7 @@ class MultiPlotQuery(AbstractQuery):
 
     def make_request(self, logger, time, tenant_id=None, payload=None):
         if tenant_id is None:
-            tenant_id = random.randint(0, self.config['num_tenants'])
+            tenant_id = random.randint(0, self.config['ingest_num_tenants'])
         if payload is None:
             payload = self.generate_multiplot_payload()
         to = time
@@ -78,13 +78,14 @@ class SearchQuery(AbstractQuery):
 
     def generate_metrics_regex(self):
         metric_name = generate_metric_name(
-            random.randint(0, self.config['metrics_per_tenant']), self.config)
+            random.randint(0, self.config['ingest_metrics_per_tenant']),
+            self.config)
         return ".".join(metric_name.split('.')[0:-1]) + ".*"
 
     def make_request(self, logger, time, tenant_id=None,
                      metric_regex=None):
         if tenant_id is None:
-            tenant_id = random.randint(0, self.config['num_tenants'])
+            tenant_id = random.randint(0, self.config['ingest_num_tenants'])
         if metric_regex is None:
             metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%d/metrics/search?query=%s" % (
