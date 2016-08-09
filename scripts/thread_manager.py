@@ -9,7 +9,7 @@ from ingestenum import EnumIngestThread
 from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery
 from query import EnumMultiPlotQuery
-from config import clean_configs
+from config import clean_configs, convert
 
 
 class ThreadManager(object):
@@ -23,26 +23,11 @@ class ThreadManager(object):
 
         # Parse the properties file and update default_config dictionary
         self.config = default_config.copy()
-        for k, v in clean_configs(config).iteritems():
-            if str(v).startswith(".."):
-                continue
-            if k == "grinder.threads":
-                self.tot_threads = self.convert(v)
-            k = k.replace("grinder.bf.", "")
-            self.config[k] = self.convert(v)
+        self.config.update(clean_configs(config))
+        if 'grinder.threads' in self.config:
+            self.tot_threads = convert(self.config['grinder.threads'])
 
         self.requests_by_type = requests_by_type
-
-    def convert(self, s):
-        try:
-            return int(s)
-        except:
-            pass
-        if isinstance(s, basestring):
-            if len(s) > 0 and s[0] in ("'", '"'):
-                return ast.literal_eval(s)
-            return s
-        return str(s)
 
     def setup_thread(self, thread_num, agent_num):
         """Figure out which type thread to create based on thread_num and
