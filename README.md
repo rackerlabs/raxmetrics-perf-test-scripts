@@ -41,8 +41,6 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]query_url` - The HTTP Url for query-based traffic. Default is `http://localhost:20000`.
 * `[grinder.bf.]max_multiplot_metrics` - Default is `10`.
 * `[grinder.bf.]name_fmt` - Default is `org.example.metric.%d`.
-* `[grinder.bf.]num_nodes` - Not currently used. Default is `1`.
-* `[grinder.bf.]report_interval` - Not currently used. Default is `10000`.
 
 * `[grinder.bf.]ingest_weight` - Default is `15`.
 * `[grinder.bf.]ingest_num_tenants` - Ingestion threads randomly generate a numerical tenant id in the range of `[0,ingest_num_tenants)`. Change this property to control how many different tenant id's are used when sending standard metrics to the service. Default is `4`.

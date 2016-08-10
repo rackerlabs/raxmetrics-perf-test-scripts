@@ -8,8 +8,6 @@ default_config = {
     'query_url': "http://localhost:20000",
 
     'name_fmt': "org.example.metric.%d",
-    'report_interval': (1000 * 10),
-    'num_nodes': 1,
     'max_multiplot_metrics': 10,
 
 

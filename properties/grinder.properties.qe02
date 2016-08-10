@@ -11,8 +11,6 @@ grinder.bf.query_url="http://grinder-qe02.metrics.api.rackspacecloud.com"
 
 grinder.bf.max_multiplot_metrics=10
 grinder.bf.name_fmt="int.qe02.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d"
-grinder.bf.num_nodes=1
-grinder.bf.report_interval=60000
 
 grinder.bf.ingest_weight=25
 grinder.bf.ingest_num_tenants=750

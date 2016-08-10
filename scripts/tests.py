@@ -79,8 +79,6 @@ grinder_props = {
     'grinder.bf.query_url': 'http://metrics.example.org',
 
     'grinder.bf.name_fmt': 'org.example.metric.%d',
-    'grinder.bf.report_interval': '10000',
-    'grinder.bf.num_nodes': '1',
     'grinder.bf.max_multiplot_metrics': '10',
 
     'grinder.bf.ingest_weight': '15',
@@ -341,8 +339,7 @@ class InitProcessTest(TestCaseBase):
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(clean_configs(grinder_props))
         self.test_config.update(
-                           {'report_interval': (1000 * 6),
-                            'num_tenants': 3,
+                           {'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
                             'metrics_per_tenant': 7,
@@ -361,10 +358,9 @@ class InitProcessTest(TestCaseBase):
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
                             'annotations_query_weight': 8,
-                            'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2})
+                            'name_fmt': "org.example.metric.%d"})
 
-        self.num_query_nodes = self.test_config['num_nodes']
+        self.num_query_nodes = 2
         self.single_plot_queries_agent0 = int(math.ceil(
             self.test_config['singleplot_query_weight'] /
             self.num_query_nodes))
@@ -430,8 +426,7 @@ class GeneratePayloadTest(TestCaseBase):
 
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(
-                           {'report_interval': (1000 * 6),
-                            'num_tenants': 3,
+                           {'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
                             'metrics_per_tenant': 7,
@@ -450,8 +445,7 @@ class GeneratePayloadTest(TestCaseBase):
                             'enum_single_plot_query_weight': 10,
                             'enum_multiplot_query_weight': 10,
                             'annotations_query_weight': 8,
-                            'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2})
+                            'name_fmt': "org.example.metric.%d"})
 
     def test_generate_payload(self):
         agent_num = 1
@@ -535,8 +529,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
 
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(
-                           {'report_interval': (1000 * 6),
-                            'num_tenants': 3,
+                           {'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
                             'metrics_per_tenant': 7,
@@ -556,7 +549,6 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
                             'enum_multiplot_query_weight': 10,
                             'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2,
                             'query_url': 'http://metrics.example.org',
                             'url': 'http://metrics-ingest.example.org'})
 
@@ -599,8 +591,7 @@ class MakeIngestRequestsTest(TestCaseBase):
 
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(
-                           {'report_interval': (1000 * 6),
-                            'num_tenants': 3,
+                           {'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
                             'metrics_per_tenant': 7,
@@ -620,7 +611,6 @@ class MakeIngestRequestsTest(TestCaseBase):
                             'enum_multiplot_query_weight': 10,
                             'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2,
                             'query_url': 'http://metrics.example.org',
                             'url': 'http://metrics-ingest.example.org'})
 
@@ -668,8 +658,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
 
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(
-                           {'report_interval': (1000 * 6),
-                            'num_tenants': 3,
+                           {'num_tenants': 3,
                             'enum_num_tenants': 4,
                             'annotations_num_tenants': 3,
                             'metrics_per_tenant': 7,
@@ -689,7 +678,6 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                             'enum_multiplot_query_weight': 10,
                             'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d",
-                            'num_nodes': 2,
                             'query_url': 'http://metrics.example.org',
                             'url': 'http://metrics-ingest.example.org'})
 

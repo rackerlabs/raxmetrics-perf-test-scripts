@@ -11,8 +11,6 @@ grinder.bf.query_url="http://localhost:4001"
 
 grinder.bf.max_multiplot_metrics=10
 grinder.bf.name_fmt="org.example.metric.%d"
-grinder.bf.num_nodes=1
-grinder.bf.report_interval=10000
 
 grinder.bf.ingest_weight=15
 grinder.bf.ingest_num_tenants=4
