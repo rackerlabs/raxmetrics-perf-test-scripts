@@ -360,52 +360,6 @@ class InitProcessTest(TestCaseBase):
                             'annotations_query_weight': 8,
                             'name_fmt': "org.example.metric.%d"})
 
-        self.num_query_nodes = 2
-        self.single_plot_queries_agent0 = int(math.ceil(
-            self.test_config['singleplot_query_weight'] /
-            self.num_query_nodes))
-        self.multi_plot_queries_agent0 = int(math.ceil(
-            self.test_config['multiplot_query_weight'] /
-            self.num_query_nodes))
-        self.search_queries_agent0 = int(math.ceil(
-            self.test_config[
-                'search_query_weight'] / self.num_query_nodes))
-        self.enum_search_queries_agent0 = int(math.ceil(
-            self.test_config[
-                'enum_search_query_weight'] / self.num_query_nodes))
-        self.enum_single_plot_queries_agent0 = int(math.ceil(
-            self.test_config[
-                'enum_single_plot_query_weight'] /
-            self.num_query_nodes))
-        self.enum_multi_plot_queries_agent0 = int(math.ceil(
-            self.test_config[
-                'enum_multiplot_query_weight'] / self.num_query_nodes))
-        self.annotation_queries_agent0 = int(math.ceil(
-            self.test_config[
-                'annotations_query_weight'] / self.num_query_nodes))
-
-        self.single_plot_queries_agent1 = \
-            self.test_config['singleplot_query_weight'] - \
-            self.single_plot_queries_agent0
-        self.multi_plot_queries_agent1 = \
-            self.test_config['multiplot_query_weight'] - \
-            self.multi_plot_queries_agent0
-        self.search_queries_agent1 = \
-            self.test_config['search_query_weight'] - \
-            self.search_queries_agent0
-        self.enum_search_queries_agent1 = \
-            self.test_config['enum_search_query_weight'] - \
-            self.enum_search_queries_agent0
-        self.enum_single_plot_queries_agent1 = \
-            self.test_config['enum_single_plot_query_weight'] - \
-            self.enum_single_plot_queries_agent0
-        self.annotation_queries_agent1 = \
-            self.test_config['annotations_query_weight'] - \
-            self.annotation_queries_agent0
-        self.enum_multi_plot_queries_agent1 = \
-            self.test_config['enum_multiplot_query_weight'] - \
-            self.enum_multi_plot_queries_agent0
-
     def tearDown(self):
         random.shuffle = self.real_shuffle
         random.randint = self.real_randint
