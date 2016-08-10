@@ -338,27 +338,37 @@ class InitProcessTest(TestCaseBase):
 
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(clean_configs(grinder_props))
-        self.test_config.update(
-                           {'num_tenants': 3,
-                            'enum_num_tenants': 4,
-                            'annotations_num_tenants': 3,
-                            'metrics_per_tenant': 7,
-                            'enum_metrics_per_tenant': 2,
-                            'annotations_per_tenant': 2,
-                            'ingest_batch_size': 3,
-                            'enum_batch_size': 3,
-                            'ingest_weight': 2,
-                            'enum_ingest_weight': 2,
-                            'query_concurrency': 20,
-                            'annotations_weight': 2,
-                            'singleplot_query_weight': 11,
-                            'multiplot_query_weight': 10,
-                            'search_query_weight': 9,
-                            'enum_search_query_weight': 9,
-                            'enum_single_plot_query_weight': 10,
-                            'enum_multiplot_query_weight': 10,
-                            'annotations_query_weight': 8,
-                            'name_fmt': "org.example.metric.%d"})
+        self.test_config.update({
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 2,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 9,
+
+            'enum_single_plot_query_weight': 10,
+
+            'enum_multiplot_query_weight': 10,
+
+            'annotations_query_weight': 8,
+        })
 
     def tearDown(self):
         random.shuffle = self.real_shuffle
@@ -379,27 +389,37 @@ class GeneratePayloadTest(TestCaseBase):
         abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
-        self.test_config.update(
-                           {'num_tenants': 3,
-                            'enum_num_tenants': 4,
-                            'annotations_num_tenants': 3,
-                            'metrics_per_tenant': 7,
-                            'enum_metrics_per_tenant': 2,
-                            'annotations_per_tenant': 2,
-                            'ingest_batch_size': 3,
-                            'enum_batch_size': 3,
-                            'ingest_weight': 2,
-                            'enum_ingest_weight': 2,
-                            'query_concurrency': 20,
-                            'annotations_weight': 2,
-                            'singleplot_query_weight': 11,
-                            'multiplot_query_weight': 10,
-                            'search_query_weight': 9,
-                            'enum_search_query_weight': 9,
-                            'enum_single_plot_query_weight': 10,
-                            'enum_multiplot_query_weight': 10,
-                            'annotations_query_weight': 8,
-                            'name_fmt': "org.example.metric.%d"})
+        self.test_config.update({
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 2,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 9,
+
+            'enum_single_plot_query_weight': 10,
+
+            'enum_multiplot_query_weight': 10,
+
+            'annotations_query_weight': 8,
+        })
 
     def test_generate_payload(self):
         agent_num = 1
@@ -482,29 +502,40 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
         abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
-        self.test_config.update(
-                           {'num_tenants': 3,
-                            'enum_num_tenants': 4,
-                            'annotations_num_tenants': 3,
-                            'metrics_per_tenant': 7,
-                            'enum_metrics_per_tenant': 2,
-                            'annotations_per_tenant': 2,
-                            'ingest_batch_size': 3,
-                            'enum_batch_size': 3,
-                            'ingest_weight': 2,
-                            'enum_ingest_weight': 2,
-                            'query_concurrency': 20,
-                            'annotations_weight': 2,
-                            'singleplot_query_weight': 11,
-                            'multiplot_query_weight': 10,
-                            'search_query_weight': 9,
-                            'enum_search_query_weight': 9,
-                            'enum_single_plot_query_weight': 10,
-                            'enum_multiplot_query_weight': 10,
-                            'annotations_query_weight': 8,
-                            'name_fmt': "org.example.metric.%d",
-                            'query_url': 'http://metrics.example.org',
-                            'url': 'http://metrics-ingest.example.org'})
+        self.test_config.update({
+            'url': 'http://metrics-ingest.example.org',
+            'query_url': 'http://metrics.example.org',
+
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 2,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 9,
+
+            'enum_single_plot_query_weight': 10,
+
+            'enum_multiplot_query_weight': 10,
+
+            'annotations_query_weight': 8,
+        })
 
     def test_annotationsingest_make_request(self):
         global sleep_time
@@ -544,29 +575,40 @@ class MakeIngestRequestsTest(TestCaseBase):
         abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
-        self.test_config.update(
-                           {'num_tenants': 3,
-                            'enum_num_tenants': 4,
-                            'annotations_num_tenants': 3,
-                            'metrics_per_tenant': 7,
-                            'enum_metrics_per_tenant': 2,
-                            'annotations_per_tenant': 2,
-                            'ingest_batch_size': 3,
-                            'enum_batch_size': 3,
-                            'ingest_weight': 2,
-                            'enum_ingest_weight': 2,
-                            'query_concurrency': 20,
-                            'annotations_weight': 2,
-                            'singleplot_query_weight': 11,
-                            'multiplot_query_weight': 10,
-                            'search_query_weight': 9,
-                            'enum_search_query_weight': 9,
-                            'enum_single_plot_query_weight': 10,
-                            'enum_multiplot_query_weight': 10,
-                            'annotations_query_weight': 8,
-                            'name_fmt': "org.example.metric.%d",
-                            'query_url': 'http://metrics.example.org',
-                            'url': 'http://metrics-ingest.example.org'})
+        self.test_config.update({
+            'url': 'http://metrics-ingest.example.org',
+            'query_url': 'http://metrics.example.org',
+
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 2,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 9,
+
+            'enum_single_plot_query_weight': 10,
+
+            'enum_multiplot_query_weight': 10,
+
+            'annotations_query_weight': 8,
+        })
 
     def test_ingest_make_request(self):
         global sleep_time
@@ -611,29 +653,40 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
         abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
-        self.test_config.update(
-                           {'num_tenants': 3,
-                            'enum_num_tenants': 4,
-                            'annotations_num_tenants': 3,
-                            'metrics_per_tenant': 7,
-                            'enum_metrics_per_tenant': 2,
-                            'annotations_per_tenant': 2,
-                            'ingest_batch_size': 3,
-                            'enum_batch_size': 3,
-                            'ingest_weight': 2,
-                            'enum_ingest_weight': 2,
-                            'query_concurrency': 20,
-                            'annotations_weight': 2,
-                            'singleplot_query_weight': 11,
-                            'multiplot_query_weight': 10,
-                            'search_query_weight': 9,
-                            'enum_search_query_weight': 9,
-                            'enum_single_plot_query_weight': 10,
-                            'enum_multiplot_query_weight': 10,
-                            'annotations_query_weight': 8,
-                            'name_fmt': "org.example.metric.%d",
-                            'query_url': 'http://metrics.example.org',
-                            'url': 'http://metrics-ingest.example.org'})
+        self.test_config.update({
+            'url': 'http://metrics-ingest.example.org',
+            'query_url': 'http://metrics.example.org',
+
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 2,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 9,
+
+            'enum_single_plot_query_weight': 10,
+
+            'enum_multiplot_query_weight': 10,
+
+            'annotations_query_weight': 8,
+        })
 
     def test_ingest_enum_make_request(self):
         global sleep_time
