@@ -20,32 +20,32 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_suffix(self):
         return "_" + str(random.randint(0, self.config['enum_num_values']))
 
-    def generate_enum_metric(self, time, tenant_id, metric_id):
+    def generate_enum_metric(self, time, tenant_id, metric_id, value):
         return {'tenantId': str(tenant_id),
                 'timestamp': time,
                 'enums': [{'name': self.generate_enum_metric_name(metric_id,
                                                                   self.config),
-                           'value': 'e_g_' + str(
-                               metric_id) + self.generate_enum_suffix()}]
+                           'value': value}]
                 }
 
-    def generate_payload(self, time, tenant_metric_id_pairs):
-        payload = [self.generate_enum_metric(time, pair[0], pair[1])
-                   for pair in tenant_metric_id_pairs]
+    def generate_payload(self, time, tenant_metric_id_values):
+        payload = [self.generate_enum_metric(time, tmv[0], tmv[1], tmv[2])
+                   for tmv in tenant_metric_id_values]
         return json.dumps(payload)
 
     def ingest_url(self):
         return "%s/v2.0/tenantId/ingest/aggregated/multi" % self.config[
             'url']
 
-    def make_request(self, logger, time, tenant_metric_id_pairs=None):
-        if tenant_metric_id_pairs is None:
-            tenant_metric_id_pairs = []
+    def make_request(self, logger, time, tenant_metric_id_values=None):
+        if tenant_metric_id_values is None:
+            tenant_metric_id_values = []
             for i in xrange(self.config['enum_batch_size']):
                 tenant_id = random.randint(1, self.config['enum_num_tenants'])
                 metric_id = random.randint(1, self.config['enum_metrics_per_tenant'])
-                pair = [tenant_id, metric_id]
-                tenant_metric_id_pairs.append(pair)
-        payload = self.generate_payload(time, tenant_metric_id_pairs)
+                value = 'e_g_' + str(metric_id) + self.generate_enum_suffix()
+                tmv = [tenant_id, metric_id, value]
+                tenant_metric_id_values.append(tmv)
+        payload = self.generate_payload(time, tenant_metric_id_values)
         result = self.request.POST(self.ingest_url(), payload)
         return result

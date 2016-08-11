@@ -28,7 +28,7 @@ class IngestThread(AbstractThread):
         unit_number = tenant_id % 6
         return self.units_map[unit_number]
 
-    def generate_metric(self, time, tenant_id, metric_id):
+    def generate_metric(self, time, tenant_id, metric_id, value):
         ingest_delay_millis = self.config['ingest_delay_millis']
 
         collection_time = time
@@ -41,26 +41,27 @@ class IngestThread(AbstractThread):
         return {'tenantId': str(tenant_id),
                 'metricName': generate_metric_name(metric_id, self.config),
                 'unit': self.generate_unit(tenant_id),
-                'metricValue': random.randint(0, RAND_MAX),
+                'metricValue': value,
                 'ttlInSeconds': (2 * 24 * 60 * 60),
                 'collectionTime': collection_time}
 
-    def generate_payload(self, time, tenant_metric_id_pairs):
-        payload = [self.generate_metric(time, x[0], x[1]) for x in
-                   tenant_metric_id_pairs]
+    def generate_payload(self, time, tenant_metric_id_values):
+        payload = [self.generate_metric(time, x[0], x[1], x[2]) for x in
+                   tenant_metric_id_values]
         return json.dumps(payload)
 
     def ingest_url(self):
         return "%s/v2.0/tenantId/ingest/multi" % self.config['url']
 
-    def make_request(self, logger, time, tenant_metric_id_pairs=None):
-        if tenant_metric_id_pairs is None:
-            tenant_metric_id_pairs = []
+    def make_request(self, logger, time, tenant_metric_id_values=None):
+        if tenant_metric_id_values is None:
+            tenant_metric_id_values = []
             for i in xrange(self.config['ingest_batch_size']):
                 tenant_id = random.randint(1, self.config['ingest_num_tenants'])
                 metric_id = random.randint(1, self.config['ingest_metrics_per_tenant'])
-                pair = [tenant_id, metric_id]
-                tenant_metric_id_pairs.append(pair)
-        payload = self.generate_payload(time, tenant_metric_id_pairs)
+                value = random.randint(0, RAND_MAX)
+                tmv = [tenant_id, metric_id, value]
+                tenant_metric_id_values.append(tmv)
+        payload = self.generate_payload(time, tenant_metric_id_values)
         result = self.request.POST(self.ingest_url(), payload)
         return result

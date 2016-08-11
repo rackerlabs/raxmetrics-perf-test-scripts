@@ -132,7 +132,6 @@ class ThreadManagerTest(TestCaseBase):
             'grinder.bf.enum_search_query_weight': 1,
             'grinder.bf.enum_single_plot_query_weight': 1,
             'grinder.bf.enum_multiplot_query_weight': 1,
-
         })
         self.tm = tm.ThreadManager(config, requests_by_type)
         random.shuffle = lambda x: None
@@ -433,7 +432,7 @@ class GeneratePayloadTest(TestCaseBase):
         agent_num = 1
         thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         payload = json.loads(
-            thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
+            thread.generate_payload(0, [[2, 3, 0], [2, 4, 0], [2, 5, 0]]))
         valid_payload = [{u'collectionTime': 0,
                           u'metricName': u'org.example.metric.3',
                           u'metricValue': 0,
@@ -458,7 +457,8 @@ class GeneratePayloadTest(TestCaseBase):
         agent_num = 1
         thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
                                              self.test_config)
-        payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
+        payload = json.loads(
+            thread.generate_payload(1, [[2, 1, 'e_g_1_0'], [2, 2, 'e_g_2_0']]))
         valid_payload = [{
             u'timestamp': 1,
             u'tenantId': u'2',
@@ -556,7 +556,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             "what": "annotation org.example.metric.%s" % metric_id,
             "when": 1000, "tags": "tag", "data": "data"}
 
-        url, payload = thread.make_request(pp, thread.time(), tenant_id,
+        url, payload = thread.make_request(pp, 1000, tenant_id,
                                            metric_id)
         # confirm request generates proper URL and payload
         self.assertEqual(
@@ -630,12 +630,12 @@ class MakeIngestRequestsTest(TestCaseBase):
              "metricValue": 0, "unit": "days",
              "metricName": "org.example.metric.1"}]
 
-        tenant_metric_id_pairs = [
-            [2, 0],
-            [2, 1]
+        tenant_metric_id_values = [
+            [2, 0, 0],
+            [2, 1, 0]
         ]
-        url, payload = thread.make_request(pp, thread.time(),
-                                           tenant_metric_id_pairs)
+        url, payload = thread.make_request(pp, 1000,
+                                           tenant_metric_id_values)
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
@@ -723,7 +723,8 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
         ]
 
         url, payload = thread.make_request(
-            pp, thread.time(), tenant_metric_id_pairs=[[2, 0], [2, 1]])
+            pp, 1000,
+            tenant_metric_id_values=[[2, 0, 'e_g_0_0'], [2, 1, 'e_g_1_0']])
         # confirm request generates proper URL and payload
         self.assertEqual(url,
                          'http://metrics-ingest.example.org/v2.0/tenantId/' +
