@@ -126,7 +126,15 @@ class ThreadManagerTest(TestCaseBase):
         self.real_randint = random.randint
         self.real_time = abstract_thread.AbstractThread.time
         self.real_sleep = abstract_thread.AbstractThread.sleep
-        self.tm = tm.ThreadManager(grinder_props, requests_by_type)
+        config = grinder_props.copy()
+        config.update({
+            'grinder.bf.enum_ingest_weight': 15,
+            'grinder.bf.enum_search_query_weight': 1,
+            'grinder.bf.enum_single_plot_query_weight': 1,
+            'grinder.bf.enum_multiplot_query_weight': 1,
+
+        })
+        self.tm = tm.ThreadManager(config, requests_by_type)
         random.shuffle = lambda x: None
         random.randint = lambda x, y: 0
         abstract_thread.AbstractThread.time = lambda x: 1000
