@@ -86,7 +86,7 @@ grinder_props = {
     'grinder.bf.metrics_per_tenant': '15',
     'grinder.bf.ingest_batch_size': '5',
 
-    'grinder.bf.enum_ingest_weight': '15',
+    'grinder.bf.enum_ingest_weight': '0',
     'grinder.bf.enum_num_tenants': '4',
     'grinder.bf.enum_metrics_per_tenant': '5',
     'grinder.bf.enum_batch_size': '5',
@@ -101,11 +101,11 @@ grinder_props = {
 
     'grinder.bf.search_query_weight': '2',
 
-    'grinder.bf.enum_search_query_weight': '1',
+    'grinder.bf.enum_search_query_weight': '0',
 
-    'grinder.bf.enum_single_plot_query_weight': '1',
+    'grinder.bf.enum_single_plot_query_weight': '0',
 
-    'grinder.bf.enum_multiplot_query_weight': '1',
+    'grinder.bf.enum_multiplot_query_weight': '0',
 
     'grinder.bf.annotations_query_weight': '1',
 }
@@ -346,7 +346,7 @@ class InitProcessTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 2,
+            'enum_ingest_weight': 0,
             'enum_num_tenants': 4,
             'enum_metrics_per_tenant': 2,
             'enum_batch_size': 3,
@@ -361,11 +361,11 @@ class InitProcessTest(TestCaseBase):
 
             'search_query_weight': 9,
 
-            'enum_search_query_weight': 9,
+            'enum_search_query_weight': 0,
 
-            'enum_single_plot_query_weight': 10,
+            'enum_single_plot_query_weight': 0,
 
-            'enum_multiplot_query_weight': 10,
+            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -397,7 +397,7 @@ class GeneratePayloadTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 2,
+            'enum_ingest_weight': 0,
             'enum_num_tenants': 4,
             'enum_metrics_per_tenant': 2,
             'enum_batch_size': 3,
@@ -412,11 +412,11 @@ class GeneratePayloadTest(TestCaseBase):
 
             'search_query_weight': 9,
 
-            'enum_search_query_weight': 9,
+            'enum_search_query_weight': 0,
 
-            'enum_single_plot_query_weight': 10,
+            'enum_single_plot_query_weight': 0,
 
-            'enum_multiplot_query_weight': 10,
+            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -513,7 +513,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 2,
+            'enum_ingest_weight': 0,
             'enum_num_tenants': 4,
             'enum_metrics_per_tenant': 2,
             'enum_batch_size': 3,
@@ -528,11 +528,11 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
 
             'search_query_weight': 9,
 
-            'enum_search_query_weight': 9,
+            'enum_search_query_weight': 0,
 
-            'enum_single_plot_query_weight': 10,
+            'enum_single_plot_query_weight': 0,
 
-            'enum_multiplot_query_weight': 10,
+            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -586,7 +586,7 @@ class MakeIngestRequestsTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 2,
+            'enum_ingest_weight': 0,
             'enum_num_tenants': 4,
             'enum_metrics_per_tenant': 2,
             'enum_batch_size': 3,
@@ -601,11 +601,11 @@ class MakeIngestRequestsTest(TestCaseBase):
 
             'search_query_weight': 9,
 
-            'enum_search_query_weight': 9,
+            'enum_search_query_weight': 0,
 
-            'enum_single_plot_query_weight': 10,
+            'enum_single_plot_query_weight': 0,
 
-            'enum_multiplot_query_weight': 10,
+            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -664,7 +664,7 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 2,
+            'enum_ingest_weight': 0,
             'enum_num_tenants': 4,
             'enum_metrics_per_tenant': 2,
             'enum_batch_size': 3,
@@ -679,11 +679,11 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
 
             'search_query_weight': 9,
 
-            'enum_search_query_weight': 9,
+            'enum_search_query_weight': 0,
 
-            'enum_single_plot_query_weight': 10,
+            'enum_single_plot_query_weight': 0,
 
-            'enum_multiplot_query_weight': 10,
+            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })

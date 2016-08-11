@@ -19,7 +19,7 @@ default_config = {
     # ingestion
     'ingest_delay_millis': "",
 
-    'enum_ingest_weight': 15,
+    'enum_ingest_weight': 0,
     'enum_num_tenants': 4,
     'enum_metrics_per_tenant': 10,
     'enum_batch_size': 5,
@@ -35,11 +35,11 @@ default_config = {
 
     'search_query_weight': 10,
 
-    'enum_search_query_weight': 10,
+    'enum_search_query_weight': 0,
 
-    'enum_single_plot_query_weight': 10,
+    'enum_single_plot_query_weight': 0,
 
-    'enum_multiplot_query_weight': 10,
+    'enum_multiplot_query_weight': 0,
 
     'annotations_query_weight': 8}
 

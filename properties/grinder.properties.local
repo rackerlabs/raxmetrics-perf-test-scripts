@@ -18,7 +18,7 @@ grinder.bf.ingest_metrics_per_tenant=15
 grinder.bf.ingest_batch_size=5
 
 
-grinder.bf.enum_ingest_weight=15
+grinder.bf.enum_ingest_weight=0
 grinder.bf.enum_num_tenants=4
 grinder.bf.enum_metrics_per_tenant=5
 grinder.bf.enum_batch_size=5
@@ -33,10 +33,10 @@ grinder.bf.multiplot_query_weight=10
 
 grinder.bf.search_query_weight=10
 
-grinder.bf.enum_search_query_weight=10
+grinder.bf.enum_search_query_weight=0
 
-grinder.bf.enum_single_plot_query_weight=10
+grinder.bf.enum_single_plot_query_weight=0
 
-grinder.bf.enum_multiplot_query_weight=10
+grinder.bf.enum_multiplot_query_weight=0
 
 grinder.bf.annotations_query_weight=10
