@@ -72,11 +72,10 @@ class ThreadManager(object):
 
         index = int(float(total_weight) * thread_num / float(self.tot_threads))
 
-        for x in thread_types:
-            if index < x[1]:
-                thread_type = x[0]
+        for thread_type, weight in thread_types:
+            if index < weight:
                 break
-            index -= x[1]
+            index -= weight
 
         if thread_type is None:
             raise Exception("Invalid Thread Type")
