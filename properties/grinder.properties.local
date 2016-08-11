@@ -6,8 +6,8 @@ grinder.useConsole=true
 grinder.consoleHost = 127.0.0.1
 grinder.logDirectory=resources/logs
 
-grinder.bf.url="http://localhost:4000"
-grinder.bf.query_url="http://localhost:4001"
+grinder.bf.url="http://localhost:19000"
+grinder.bf.query_url="http://localhost:20000"
 
 grinder.bf.max_multiplot_metrics=10
 grinder.bf.name_fmt="org.example.metric.%d"
