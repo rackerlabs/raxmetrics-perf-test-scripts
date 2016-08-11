@@ -122,10 +122,6 @@ class TestCaseBase(unittest.TestCase):
 
 class ThreadManagerTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = abstract_thread.AbstractThread.time
-        self.real_sleep = abstract_thread.AbstractThread.sleep
         config = grinder_props.copy()
         config.update({
             'grinder.bf.enum_ingest_weight': 15,
@@ -134,10 +130,6 @@ class ThreadManagerTest(TestCaseBase):
             'grinder.bf.enum_multiplot_query_weight': 1,
         })
         self.tm = tm.ThreadManager(config, requests_by_type)
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        abstract_thread.AbstractThread.time = lambda x: 1000
-        abstract_thread.AbstractThread.sleep = mock_sleep
 
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(clean_configs(grinder_props))
@@ -325,24 +317,8 @@ class ThreadManagerTest(TestCaseBase):
     def test_setup_thread_invalid_thread_type(self):
         self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
 
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        abstract_thread.AbstractThread.time = self.real_time
-        abstract_thread.AbstractThread.sleep = self.real_sleep
-
-
 class InitProcessTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = abstract_thread.AbstractThread.time
-        self.real_sleep = abstract_thread.AbstractThread.sleep
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        abstract_thread.AbstractThread.time = lambda x: 1000
-        abstract_thread.AbstractThread.sleep = mock_sleep
-
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(clean_configs(grinder_props))
         self.test_config.update({
@@ -377,24 +353,9 @@ class InitProcessTest(TestCaseBase):
             'annotations_query_weight': 8,
         })
 
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        abstract_thread.AbstractThread.time = self.real_time
-        abstract_thread.AbstractThread.sleep = self.real_sleep
-
 
 class GeneratePayloadTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = abstract_thread.AbstractThread.time
-        self.real_sleep = abstract_thread.AbstractThread.sleep
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        abstract_thread.AbstractThread.time = lambda x: 1000
-        abstract_thread.AbstractThread.sleep = mock_sleep
-
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update({
             'name_fmt': "org.example.metric.%d",
@@ -491,24 +452,9 @@ class GeneratePayloadTest(TestCaseBase):
             'data': 'data'}
         self.assertEqual(payload, valid_payload)
 
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        abstract_thread.AbstractThread.time = self.real_time
-        abstract_thread.AbstractThread.sleep = self.real_sleep
-
 
 class MakeAnnotationsIngestRequestsTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = abstract_thread.AbstractThread.time
-        self.real_sleep = abstract_thread.AbstractThread.sleep
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        abstract_thread.AbstractThread.time = lambda x: 1000
-        abstract_thread.AbstractThread.sleep = mock_sleep
-
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update({
             'url': 'http://metrics-ingest.example.org',
@@ -564,24 +510,9 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             'http://metrics-ingest.example.org/v2.0/2/events')
         self.assertEqual(eval(payload), valid_payload)
 
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        abstract_thread.AbstractThread.time = self.real_time
-        abstract_thread.AbstractThread.sleep = self.real_sleep
-
 
 class MakeIngestRequestsTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = abstract_thread.AbstractThread.time
-        self.real_sleep = abstract_thread.AbstractThread.sleep
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        abstract_thread.AbstractThread.time = lambda x: 1000
-        abstract_thread.AbstractThread.sleep = mock_sleep
-
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update({
             'url': 'http://metrics-ingest.example.org',
@@ -642,24 +573,9 @@ class MakeIngestRequestsTest(TestCaseBase):
             'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
 
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        abstract_thread.AbstractThread.time = self.real_time
-        abstract_thread.AbstractThread.sleep = self.real_sleep
-
 
 class MakeIngestEnumRequestsTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = abstract_thread.AbstractThread.time
-        self.real_sleep = abstract_thread.AbstractThread.sleep
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        abstract_thread.AbstractThread.time = lambda x: 1000
-        abstract_thread.AbstractThread.sleep = mock_sleep
-
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update({
             'url': 'http://metrics-ingest.example.org',
@@ -730,12 +646,6 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
                          'http://metrics-ingest.example.org/v2.0/tenantId/' +
                          'ingest/aggregated/multi')
         self.assertEqual(eval(payload), valid_payload)
-
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        abstract_thread.AbstractThread.time = self.real_time
-        abstract_thread.AbstractThread.sleep = self.real_sleep
 
 
 class MakeQueryRequestsTest(TestCaseBase):
