@@ -655,7 +655,6 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.requests_by_type = requests_by_type.copy()
 
     def test_query_make_SinglePlotQuery_request(self):
-        random.randint = lambda x, y: 40
         req = requests_by_type[query.SinglePlotQuery]
         qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
         result = qq.make_request(None, 1000, 0,
