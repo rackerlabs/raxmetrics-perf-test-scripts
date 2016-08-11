@@ -394,24 +394,24 @@ class GeneratePayloadTest(TestCaseBase):
         thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         payload = json.loads(
             thread.generate_payload(0, [[2, 3, 0], [2, 4, 0], [2, 5, 0]]))
-        valid_payload = [{u'collectionTime': 0,
-                          u'metricName': u'org.example.metric.3',
-                          u'metricValue': 0,
-                          u'tenantId': u'2',
-                          u'ttlInSeconds': 172800,
-                          u'unit': u'days'},
-                         {u'collectionTime': 0,
-                          u'metricName': u'org.example.metric.4',
-                          u'metricValue': 0,
-                          u'tenantId': u'2',
-                          u'ttlInSeconds': 172800,
-                          u'unit': u'days'},
-                         {u'collectionTime': 0,
-                          u'metricName': u'org.example.metric.5',
-                          u'metricValue': 0,
-                          u'tenantId': u'2',
-                          u'ttlInSeconds': 172800,
-                          u'unit': u'days'}]
+        valid_payload = [{'collectionTime': 0,
+                          'metricName': 'org.example.metric.3',
+                          'metricValue': 0,
+                          'tenantId': '2',
+                          'ttlInSeconds': 172800,
+                          'unit': 'days'},
+                         {'collectionTime': 0,
+                          'metricName': 'org.example.metric.4',
+                          'metricValue': 0,
+                          'tenantId': '2',
+                          'ttlInSeconds': 172800,
+                          'unit': 'days'},
+                         {'collectionTime': 0,
+                          'metricName': 'org.example.metric.5',
+                          'metricValue': 0,
+                          'tenantId': '2',
+                          'ttlInSeconds': 172800,
+                          'unit': 'days'}]
         self.assertEqual(payload, valid_payload)
 
     def test_generate_enum_payload(self):
@@ -421,19 +421,19 @@ class GeneratePayloadTest(TestCaseBase):
         payload = json.loads(
             thread.generate_payload(1, [[2, 1, 'e_g_1_0'], [2, 2, 'e_g_2_0']]))
         valid_payload = [{
-            u'timestamp': 1,
-            u'tenantId': u'2',
-            u'enums': [{
-                u'value': u'e_g_1_0',
-                u'name': ingestenum.EnumIngestThread.
+            'timestamp': 1,
+            'tenantId': '2',
+            'enums': [{
+                'value': 'e_g_1_0',
+                'name': ingestenum.EnumIngestThread.
                          generate_enum_metric_name(1, self.test_config)
             }]},
             {
-                u'timestamp': 1,
-                u'tenantId': u'2',
-                u'enums': [{
-                    u'value': u'e_g_2_0',
-                    u'name': ingestenum.EnumIngestThread.
+                'timestamp': 1,
+                'tenantId': '2',
+                'enums': [{
+                    'value': 'e_g_2_0',
+                    'name': ingestenum.EnumIngestThread.
                              generate_enum_metric_name(2, self.test_config)
                 }]
             }
