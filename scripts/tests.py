@@ -782,6 +782,7 @@ suite.addTest(loader.loadTestsFromTestCase(MakeAnnotationsIngestRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeIngestRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeIngestEnumRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeQueryRequestsTest))
+suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
 unittest.TextTestRunner().run(suite)
 
 
