@@ -48,11 +48,11 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]ingest_batch_size` - Ingestion threads will generate this many metrics in a single payload (HTTP request body). Default is `5`.
 * `[grinder.bf.]ingest_delay_millis` - Configures delayed metrics. Default is `""`, which doesn't produced any delayed metrics.
 
-* `[grinder.bf.]enum_weight` - Default is `15`.
+* `[grinder.bf.]enum_weight` - Default is `0`. NOTE: Enums are deprecated and will be removed in the future.
 * `[grinder.bf.]enum_num_tenants` - Exactly like `ingest_num_tenants`, except that this property controls the number of tenant id's for the `EnumIngestThread` class. This property is provided so that ingest and enum ingest threads can be configured independently. Default is `4.`
 * `[grinder.bf.]enum_metrics_per_tenant` - Exactly like `ingest_metrics_per_tenant`, except that this property controls the number of metric name suffixes for the `EnumIngestThread` class. This property is provided so that ingest and enum ingest threads can be configured independently. Default is `10`.
 * `[grinder.bf.]enum_batch_size` - Exactly like `ingest_batch_size`, except that this property controls the number of data points per http request for the `EnumIngestThread` class. This property is provided so that ingest and enum ingest threads can be configured independently. Default is `5`.
-* `[grinder.bf.]enum_num_values` - The number of different values for the enum. Default is `10`.\
+* `[grinder.bf.]enum_num_values` - The number of different values for the enum. Default is `10`.
 
 * `[grinder.bf.]annotations_weight` - Default is `5`.
 * `[grinder.bf.]annotations_num_tenants` - Exactly like `ingest_num_tenants`, except that this property controls the number of tenant id's for the `AnnotationsIngestThread` class. This property is provided so that ingest and annotation ingest threads can be configured independently. Default is `5`.
@@ -64,11 +64,11 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 
 * `[grinder.bf.]search_query_weight` - Default is `10`.
 
-* `[grinder.bf.]enum_search_query_weight` - Default is `10`.
+* `[grinder.bf.]enum_search_query_weight` - Default is `0`. NOTE: Enums are deprecated and will be removed in the future.
 
-* `[grinder.bf.]enum_single_plot_query_weight` - Default is `10`.
+* `[grinder.bf.]enum_single_plot_query_weight` - Default is `0`. NOTE: Enums are deprecated and will be removed in the future.
 
-* `[grinder.bf.]enum_multiplot_query_weight` - Default is `10`.
+* `[grinder.bf.]enum_multiplot_query_weight` - Default is `0`. NOTE: Enums are deprecated and will be removed in the future.
 
 * `[grinder.bf.]annotations_query_weight` - Default is `8`.
 
