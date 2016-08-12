@@ -750,27 +750,42 @@ class MakeQueryRequestsTest(TestCaseBase):
 class ThrottlingGroupTest(unittest.TestCase):
     def test_throttling(self):
         # given
-        tg = ThrottlingGroup('test', 2)
-        t = time.time()
-        t_plus_1 = t + 60
+        times = iter(xrange(10)).next
+        last_time_returned = [None]
+        def time_source():
+            # this time source returns an incrementing sequence of numbers
+            # starting from zero
+            t = times()
+            last_time_returned[0] = t
+            return t
+        sleeps = []
+        def sleep_source(arg):
+            # this sleep source just logs what arguments were passed to it, and
+            # doesn't actually sleep
+            sleeps.append(arg)
+        tg = ThrottlingGroup('test', 2, time_source=time_source,
+                             sleep_source=sleep_source)
 
-        # when
+        # when we count the first request
         tg.count_request()
 
-        # then
-        self.assertLess(time.time(), t_plus_1)
+        # then it increments the count and doesn't sleep
+        self.assertEquals(1, tg.count)
+        self.assertEquals([], sleeps)
 
-        # when
+        # when we count the second request
         tg.count_request()
 
-        # then
-        self.assertLess(time.time(), t_plus_1)
+        # then it increments the count and doesn't sleep
+        self.assertEquals(2, tg.count)
+        self.assertEquals([], sleeps)
 
-        # when
+        # when we count a request over the limit
         tg.count_request()
 
-        # then
-        self.assertGreaterEqual(time.time(), t_plus_1)
+        # then it sleeps and then resets the count to one
+        self.assertEquals(1, tg.count)
+        self.assertEquals([60 - 2], sleeps)
 
 
 suite = unittest.TestSuite()
