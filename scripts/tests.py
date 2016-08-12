@@ -787,6 +787,38 @@ class ThrottlingGroupTest(unittest.TestCase):
         self.assertEquals(1, tg.count)
         self.assertEquals([60 - 2], sleeps)
 
+    def test_count_reset_after_minute_transpires(self):
+        # given
+        times = iter([0, 61]).next
+        last_time_returned = [None]
+        def time_source():
+            # this time source returns a fixed sequence of numbers
+            t = times()
+            last_time_returned[0] = t
+            return t
+        sleeps = []
+        def sleep_source(arg):
+            # this sleep source just logs what arguments were passed to it, and
+            # doesn't actually sleep
+            sleeps.append(arg)
+        tg = ThrottlingGroup('test', 2, time_source=time_source,
+                             sleep_source=sleep_source)
+
+        # when we count the first request
+        tg.count_request()
+
+        # then it increments the count and doesn't sleep
+        self.assertEquals(1, tg.count)
+        self.assertEquals([], sleeps)
+
+        # when we count the second request
+        tg.count_request()
+
+        # then it resets the count to one and doesn't sleep
+        self.assertEquals(1, tg.count)
+        self.assertEquals([], sleeps)
+
+
 
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()

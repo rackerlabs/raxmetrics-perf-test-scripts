@@ -36,8 +36,6 @@ class ThrottlingGroup(object):
                 self.start_time = current_time
             elif self.count < self.max_requests_per_minute:
                 self.count += 1
-                if self.start_time < 0:
-                    self.start_time = current_time
             else:
                 seconds_to_wait = self.start_time + 60 - current_time
                 if seconds_to_wait > 0:
