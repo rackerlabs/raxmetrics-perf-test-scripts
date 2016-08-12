@@ -14,6 +14,7 @@ import annotationsingest
 import abstract_thread
 import thread_manager as tm
 from config import clean_configs
+from throttling_group import ThrottlingGroup
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -744,6 +745,32 @@ class MakeQueryRequestsTest(TestCaseBase):
                          "from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(req.post_payload, payload_sent)
         self.assertEquals((req.post_url, req.post_payload), result)
+
+
+class ThrottlingGroupTest(unittest.TestCase):
+    def test_throttling(self):
+        # given
+        tg = ThrottlingGroup('test', 2)
+        t = time.time()
+        t_plus_1 = t + 60
+
+        # when
+        tg.count_request()
+
+        # then
+        self.assertLess(time.time(), t_plus_1)
+
+        # when
+        tg.count_request()
+
+        # then
+        self.assertLess(time.time(), t_plus_1)
+
+        # when
+        tg.count_request()
+
+        # then
+        self.assertGreaterEqual(time.time(), t_plus_1)
 
 
 suite = unittest.TestSuite()
