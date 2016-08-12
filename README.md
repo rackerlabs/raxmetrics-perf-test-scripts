@@ -13,7 +13,7 @@ The BF grinder code creates different types of threads to handle the different k
 to be generated.  Currently the thread types are:
 
 * IngestThread - create requests for the  "/ingest/multi" endpoint
-* Query - does single/multi plot and search requests
+* EnumIngestThread - sends enum metrics to the "ingest/aggregated/multi" endpoint. NOTE: Enums are deprecated and will be removed in the future.
 * AnnotationsIngestThread - ingests to the "events" endpoint
 * Various query threads:
   * SinglePlotQuery - send GET requests to `<tenant>/views/<metric>` with `from`, `to`, and `resolution` params
