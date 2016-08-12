@@ -12,9 +12,9 @@ The BF grinder system is designed to take a single properties file that lists th
 The BF grinder code creates different types of threads to handle the different kinds of requests
 to be generated.  Currently the thread types are:
 
-* Ingest - create requests for the  "/ingest/multi" endpoint
+* IngestThread - create requests for the  "/ingest/multi" endpoint
 * Query - does single/multi plot and search requests
-* AnnotationsIngest - ingests to the "events" endpoint
+* AnnotationsIngestThread - ingests to the "events" endpoint
 * Various query threads:
   * SinglePlotQuery - send GET requests to `<tenant>/views/<metric>` with `from`, `to`, and `resolution` params
   * MultiPlotQuery - send POST requests to `<tenant>/views` with `from`, `to`, and `resolution` params
