@@ -43,7 +43,8 @@ class EnumIngestThread(AbstractThread):
             tenant_metric_id_values = []
             for i in xrange(self.config['enum_batch_size']):
                 tenant_id = random.randint(1, self.config['enum_num_tenants'])
-                metric_id = random.randint(1, self.config['enum_metrics_per_tenant'])
+                metric_id = random.randint(
+                    1, self.config['enum_metrics_per_tenant'])
                 value = 'e_g_' + str(metric_id) + self.generate_enum_suffix()
                 tmv = [tenant_id, metric_id, value]
                 tenant_metric_id_values.append(tmv)

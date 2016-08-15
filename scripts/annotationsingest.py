@@ -29,9 +29,11 @@ class AnnotationsIngestThread(AbstractThread):
 
     def make_request(self, logger, time, tenant_id=None, metric_id=None):
         if tenant_id is None:
-            tenant_id = random.randint(1, self.config['annotations_num_tenants'])
+            tenant_id = random.randint(
+                1, self.config['annotations_num_tenants'])
         if metric_id is None:
-            metric_id = random.randint(1, self.config['annotations_per_tenant'])
+            metric_id = random.randint(
+                1, self.config['annotations_per_tenant'])
         payload = self.generate_payload(time, metric_id)
 
         self.count_request()

@@ -58,8 +58,10 @@ class IngestThread(AbstractThread):
         if tenant_metric_id_values is None:
             tenant_metric_id_values = []
             for i in xrange(self.config['ingest_batch_size']):
-                tenant_id = random.randint(1, self.config['ingest_num_tenants'])
-                metric_id = random.randint(1, self.config['ingest_metrics_per_tenant'])
+                tenant_id = random.randint(
+                    1, self.config['ingest_num_tenants'])
+                metric_id = random.randint(
+                    1, self.config['ingest_metrics_per_tenant'])
                 value = random.randint(0, RAND_MAX)
                 tmv = [tenant_id, metric_id, value]
                 tenant_metric_id_values.append(tmv)

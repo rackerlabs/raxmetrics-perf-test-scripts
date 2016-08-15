@@ -318,6 +318,7 @@ class ThreadManagerTest(TestCaseBase):
     def test_setup_thread_invalid_thread_type(self):
         self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
 
+
 class InitProcessTest(TestCaseBase):
     def setUp(self):
         self.test_config = abstract_thread.default_config.copy()
@@ -658,8 +659,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_SinglePlotQuery_request(self):
         req = requests_by_type[query.SinglePlotQuery]
         qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 0,
-                                  'org.example.metric.metric123')
+        result = qq.make_request(None, 1000, 0, 'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
                          "org.example.metric.metric123?from=-86399000&" +
@@ -669,8 +669,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_SearchQuery_request(self):
         req = requests_by_type[query.SearchQuery]
         qq = query.SearchQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 10,
-                                  'org.example.metric.*')
+        result = qq.make_request(None, 1000, 10, 'org.example.metric.*')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?" +
                          "query=org.example.metric.*")
@@ -722,7 +721,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         req = requests_by_type[query.EnumSinglePlotQuery]
         qq = query.EnumSinglePlotQuery(0, self.agent_num, req, self.config)
         result = qq.make_request(None, 1000, 50,
-                                  'enum_grinder_org.example.metric.metric456')
+                                 'enum_grinder_org.example.metric.metric456')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/50/views/" +
                          "enum_grinder_org.example.metric.metric456?" +
@@ -752,17 +751,21 @@ class ThrottlingGroupTest(unittest.TestCase):
         # given
         times = iter(xrange(10)).next
         last_time_returned = [None]
+
         def time_source():
             # this time source returns an incrementing sequence of numbers
             # starting from zero
             t = times()
             last_time_returned[0] = t
             return t
+
         sleeps = []
+
         def sleep_source(arg):
             # this sleep source just logs what arguments were passed to it, and
             # doesn't actually sleep
             sleeps.append(arg)
+
         tg = ThrottlingGroup('test', 2, time_source=time_source,
                              sleep_source=sleep_source)
 
@@ -791,16 +794,20 @@ class ThrottlingGroupTest(unittest.TestCase):
         # given
         times = iter([0, 61]).next
         last_time_returned = [None]
+
         def time_source():
             # this time source returns a fixed sequence of numbers
             t = times()
             last_time_returned[0] = t
             return t
+
         sleeps = []
+
         def sleep_source(arg):
             # this sleep source just logs what arguments were passed to it, and
             # doesn't actually sleep
             sleeps.append(arg)
+
         tg = ThrottlingGroup('test', 2, time_source=time_source,
                              sleep_source=sleep_source)
 
@@ -841,17 +848,21 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         })
         times = iter(xrange(10)).next
         last_time_returned = [None]
+
         def time_source():
             # this time source returns an incrementing sequence of numbers
             # starting from zero
             t = times()
             last_time_returned[0] = t
             return t
+
         sleeps = []
+
         def sleep_source(arg):
             # this sleep source just logs what arguments were passed to it, and
             # doesn't actually sleep
             sleeps.append(arg)
+
         tgroup = ThrottlingGroup('test', 6, time_source, sleep_source)
 
         th1 = ingest.IngestThread(0, 0, MockReq(), self.test_config, tgroup)
