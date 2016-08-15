@@ -28,7 +28,7 @@ class ThreadManager(object):
 
         self.requests_by_type = requests_by_type
 
-    def setup_thread(self, thread_num, agent_num):
+    def setup_thread(self, thread_num, agent_num, tgroups):
         """Figure out which type thread to create based on thread_num and
         return it
 
@@ -53,26 +53,33 @@ class ThreadManager(object):
         thread_type = None
 
         thread_types = [
-            (IngestThread, self.config['ingest_weight']),
-            (EnumIngestThread, self.config['enum_ingest_weight']),
-            (AnnotationsIngestThread, self.config['annotations_weight']),
-            (SinglePlotQuery, self.config['singleplot_query_weight']),
-            (MultiPlotQuery, self.config['multiplot_query_weight']),
-            (SearchQuery, self.config['search_query_weight']),
-            (EnumSearchQuery, self.config['enum_search_query_weight']),
+            (IngestThread, self.config['ingest_weight'],
+                self.config.get('ingest_throttling_group', None)),
+            (EnumIngestThread, self.config['enum_ingest_weight'], None),
+            (AnnotationsIngestThread, self.config['annotations_weight'],
+                self.config.get('annotations_throttling_group', None)),
+            (SinglePlotQuery, self.config['singleplot_query_weight'],
+                self.config.get('singleplot_query_throttling_group', None)),
+            (MultiPlotQuery, self.config['multiplot_query_weight'],
+                self.config.get('multiplot_query_throttling_group', None)),
+            (SearchQuery, self.config['search_query_weight'],
+                self.config.get('search_query_throttling_group', None)),
+            (EnumSearchQuery, self.config['enum_search_query_weight'], None),
             (EnumSinglePlotQuery,
-                self.config['enum_single_plot_query_weight']),
-            (EnumMultiPlotQuery, self.config['enum_multiplot_query_weight']),
-            (AnnotationsQuery, self.config['annotations_query_weight']),
+                self.config['enum_single_plot_query_weight'], None),
+            (EnumMultiPlotQuery, self.config['enum_multiplot_query_weight'],
+                None),
+            (AnnotationsQuery, self.config['annotations_query_weight'],
+                self.config.get('annotations_query_throttling_group', None)),
         ]
 
         total_weight = 0
-        for x in thread_types:
-            total_weight += x[1]
+        for type, weight, tgname in thread_types:
+            total_weight += weight
 
         index = int(float(total_weight) * thread_num / float(self.tot_threads))
 
-        for thread_type, weight in thread_types:
+        for thread_type, weight, tgname in thread_types:
             if index < weight:
                 break
             index -= weight
@@ -82,6 +89,9 @@ class ThreadManager(object):
 
         if thread_type in self.requests_by_type:
             req = self.requests_by_type[thread_type]
-            return thread_type(thread_num, agent_num, req, self.config)
+            tgroup = None
+            if tgname and tgname in tgroups:
+                tgroup = tgroups[tgname]
+            return thread_type(thread_num, agent_num, req, self.config, tgroup)
         else:
             raise TypeError("Unknown thread type: %s" % str(thread_type))
