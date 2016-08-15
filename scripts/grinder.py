@@ -29,23 +29,24 @@ def create_request_obj(test_num, test_name):
     return request
 
 
+requests_by_type = {
+    IngestThread: create_request_obj(1, "Ingest test"),
+    EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
+    AnnotationsIngestThread:
+        create_request_obj(2, "Annotations Ingest test"),
+    SinglePlotQuery: create_request_obj(3, "SinglePlotQuery"),
+    MultiPlotQuery: create_request_obj(4, "MultiPlotQuery"),
+    SearchQuery: create_request_obj(5, "SearchQuery"),
+    EnumSearchQuery: create_request_obj(8, "EnumSearchQuery"),
+    EnumSinglePlotQuery: create_request_obj(9, "EnumSinglePlotQuery"),
+    EnumMultiPlotQuery: create_request_obj(10, "EnumMultiPlotQuery"),
+    AnnotationsQuery: create_request_obj(6, "AnnotationsQuery"),
+}
+
 class TestRunner:
     def __init__(self):
         config = abstract_thread.default_config.copy()
         config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
-        requests_by_type = {
-            IngestThread: create_request_obj(1, "Ingest test"),
-            EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
-            AnnotationsIngestThread:
-                create_request_obj(2, "Annotations Ingest test"),
-            SinglePlotQuery: create_request_obj(3, "SinglePlotQuery"),
-            MultiPlotQuery: create_request_obj(4, "MultiPlotQuery"),
-            SearchQuery: create_request_obj(5, "SearchQuery"),
-            EnumSearchQuery: create_request_obj(8, "EnumSearchQuery"),
-            EnumSinglePlotQuery: create_request_obj(9, "EnumSinglePlotQuery"),
-            EnumMultiPlotQuery: create_request_obj(10, "EnumMultiPlotQuery"),
-            AnnotationsQuery: create_request_obj(6, "AnnotationsQuery"),
-        }
         thread_manager = tm.ThreadManager(config, requests_by_type)
         agent_number = grinder.getAgentNumber()
         self.thread = thread_manager.setup_thread(
