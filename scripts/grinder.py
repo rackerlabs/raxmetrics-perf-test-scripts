@@ -18,8 +18,18 @@ import abstract_thread
 
 # The code inside the TestRunner class is gets executed by each worker thread
 # Outside the class is executed before any of the workers begin
-
-
+#
+# Module-level code gets run exactly once by the main thread.
+#
+# TestRunner.__init__ gets run once for each worker thread, and is run by that
+# worker thread
+#
+# TestRunner.__call__ gets run `grinder.runs` times by each worker thread, for
+# a total of `grinder.runs` * `grinder.threads` times.
+#
+# Each worker thread gets its own TestRunner instance, and re-uses that
+# instance for all runs
+#
 
 
 def create_request_obj(test_num, test_name):
