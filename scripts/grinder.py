@@ -53,11 +53,13 @@ requests_by_type = {
     AnnotationsQuery: create_request_obj(6, "AnnotationsQuery"),
 }
 
+config = abstract_thread.default_config.copy()
+config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
+thread_manager = tm.ThreadManager(config, requests_by_type)
+
+
 class TestRunner:
     def __init__(self):
-        config = abstract_thread.default_config.copy()
-        config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
-        thread_manager = tm.ThreadManager(config, requests_by_type)
         agent_number = grinder.getAgentNumber()
         self.thread = thread_manager.setup_thread(
             grinder.getThreadNumber(), agent_number)
