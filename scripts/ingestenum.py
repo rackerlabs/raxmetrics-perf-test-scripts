@@ -14,8 +14,9 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_metric_name(metric_id, config):
         return "enum_grinder_" + config['name_fmt'] % metric_id
 
-    def __init__(self, thread_num, agent_num, request, config):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config)
+    def __init__(self, thread_num, agent_num, request, config, trgoup=None):
+        AbstractThread.__init__(self, thread_num, agent_num, request, config,
+                                trgoup)
 
     def generate_enum_suffix(self):
         return "_" + str(random.randint(0, self.config['enum_num_values']))
@@ -47,5 +48,6 @@ class EnumIngestThread(AbstractThread):
                 tmv = [tenant_id, metric_id, value]
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
+        self.count_request()
         result = self.request.POST(self.ingest_url(), payload)
         return result

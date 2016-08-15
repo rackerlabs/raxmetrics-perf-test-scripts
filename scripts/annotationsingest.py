@@ -9,8 +9,9 @@ from abstract_thread import AbstractThread, generate_metric_name
 
 
 class AnnotationsIngestThread(AbstractThread):
-    def __init__(self, thread_num, agent_num, request, config):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config)
+    def __init__(self, thread_num, agent_num, request, config, trgoup=None):
+        AbstractThread.__init__(self, thread_num, agent_num, request, config,
+                                trgoup)
 
     def generate_annotation(self, time, metric_id):
         metric_name = generate_metric_name(metric_id, self.config)
@@ -33,5 +34,6 @@ class AnnotationsIngestThread(AbstractThread):
             metric_id = random.randint(1, self.config['annotations_per_tenant'])
         payload = self.generate_payload(time, metric_id)
 
+        self.count_request()
         result = self.request.POST(self.ingest_url(tenant_id), payload)
         return result

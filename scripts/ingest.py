@@ -21,8 +21,9 @@ class IngestThread(AbstractThread):
         5: 'decades'
     }
 
-    def __init__(self, thread_num, agent_num, request, config):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config)
+    def __init__(self, thread_num, agent_num, request, config, tgroup=None):
+        AbstractThread.__init__(self, thread_num, agent_num, request, config,
+                                tgroup)
 
     def generate_unit(self, tenant_id):
         unit_number = tenant_id % 6
@@ -63,5 +64,6 @@ class IngestThread(AbstractThread):
                 tmv = [tenant_id, metric_id, value]
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
+        self.count_request()
         result = self.request.POST(self.ingest_url(), payload)
         return result
