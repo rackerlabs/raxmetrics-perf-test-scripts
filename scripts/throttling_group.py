@@ -6,6 +6,15 @@ import time
 
 
 class ThrottlingGroup(object):
+
+    """Throttling groups allow you to limit the number of requests made by
+     threads. Separate threads can share a single ThrottlingGroup object, so
+     that they all count towards the limit. If a request puts a given
+     throttling group over its limit, then the thread that is trying to send
+     the request will sleep until the 1-minute interval has completed. All
+     other threads that attempt to send a request during that time will block.
+    """
+
     def __init__(self, name, max_requests_per_minute, time_source=None,
                  sleep_source=None):
 
