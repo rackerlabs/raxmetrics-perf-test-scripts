@@ -20,13 +20,11 @@ import abstract_thread
 # Outside the class is executed before any of the workers begin
 
 
-__grinder_tests_by_request_object = {}
 
 
 def create_request_obj(test_num, test_name):
     test = Test(test_num, test_name)
     request = HTTPRequest()
-    __grinder_tests_by_request_object[request] = test
     test.record(request)
     return request
 
