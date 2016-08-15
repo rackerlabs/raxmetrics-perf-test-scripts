@@ -1,61 +1,19 @@
-# It is difficult to invoke the Python coverage tool externally with Jython, so
-# it is being invoked internally here:
+
 from __future__ import division
-import net.grinder.script.Grinder
 
-# package_path = net.grinder.script.Grinder.grinder.getProperties().getProperty(
-#     "grinder.package_path")
 import sys
-
-grinder_props = {
-    'grinder.script': '../scripts/tests.py',
-    'grinder.package_path': '/Library/Python/2.7/site-packages',
-    'grinder.runs': '1',
-    'grinder.threads': '45',
-    'grinder.useConsole': 'false',
-    'grinder.logDirectory': 'resources/logs',
-    'grinder.bf.name_fmt': 't4.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d',
-    'grinder.bf.report_interval': '10000',
-    'grinder.bf.annotations_num_tenants': '4',
-    'grinder.bf.num_tenants': '4',
-    'grinder.bf.enum_num_tenants': '4',
-    'grinder.bf.metrics_per_tenant': '15',
-    'grinder.bf.enum_metrics_per_tenant': '5',
-    'grinder.bf.batch_size': '5',
-    'grinder.bf.ingest_concurrency': '15',
-    'grinder.bf.enum_ingest_concurrency': '15',
-    'grinder.bf.annotations_per_tenant': '5',
-    'grinder.bf.annotations_concurrency': '5',
-    'grinder.bf.num_nodes': '1',
-    'grinder.bf.url': 'http://qe01.metrics-ingest.api.rackspacecloud.com',
-    'grinder.bf.query_url': 'http://qe01.metrics.api.rackspacecloud.com',
-    'grinder.bf.query_concurrency': '10',
-    'grinder.bf.max_multiplot_metrics': '10',
-    'grinder.bf.search_queries_per_interval': '10',
-    'grinder.bf.enum_search_queries_per_interval': '10',
-    'grinder.bf.multiplot_per_interval': '10',
-    'grinder.bf.singleplot_per_interval': '10',
-    'grinder.bf.enum_single_plot_queries_per_interval': '10',
-    'grinder.bf.enum_multiplot_per_interval': '10',
-    'grinder.bf.annotations_queries_per_interval': '8',
-}
-
-# sys.path.append(package_path)
-# from coverage import coverage
-#
-# cov = coverage()
-# cov.start()
-
 import time
-import utils
+import unittest
+import random
+import math
+
 import ingest
 import ingestenum
 import query
 import annotationsingest
-import unittest
-import random
-import math
-import grinder
+import abstract_thread
+import thread_manager as tm
+from config import clean_configs
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -76,478 +34,728 @@ def mock_sleep(cls, x):
 
 
 class MockReq():
+    def __init__(self):
+        self.post_url = None
+        self.post_payload = None
+        self.get_url = None
+
     def POST(self, url, payload):
         global post_url, post_payload
         post_url = url
         post_payload = payload
+        self.post_url = url
+        self.post_payload = payload
         return url, payload
 
     def GET(self, url):
         global get_url
         get_url = url
+        self.get_url = url
         return url
 
+requests_by_type = {
+    ingest.IngestThread:                        MockReq(),
+    ingestenum.EnumIngestThread:                MockReq(),
+    annotationsingest.AnnotationsIngestThread:  MockReq(),
+    query.SinglePlotQuery:                      MockReq(),
+    query.MultiPlotQuery:                       MockReq(),
+    query.SearchQuery:                          MockReq(),
+    query.EnumSearchQuery:                      MockReq(),
+    query.EnumSinglePlotQuery:                  MockReq(),
+    query.EnumMultiPlotQuery:                   MockReq(),
+    query.AnnotationsQuery:                     MockReq(),
+}
 
-class BluefloodTests(unittest.TestCase):
+
+grinder_props = {
+    'grinder.script': '../scripts/tests.py',
+    'grinder.package_path': '/Library/Python/2.7/site-packages',
+    'grinder.runs': '1',
+    'grinder.threads': '45',
+    'grinder.useConsole': 'false',
+    'grinder.logDirectory': 'resources/logs',
+
+    'grinder.bf.url': 'http://metrics-ingest.example.org',
+    'grinder.bf.query_url': 'http://metrics.example.org',
+
+    'grinder.bf.name_fmt': 'org.example.metric.%d',
+    'grinder.bf.max_multiplot_metrics': '10',
+
+    'grinder.bf.ingest_weight': '15',
+    'grinder.bf.num_tenants': '4',
+    'grinder.bf.metrics_per_tenant': '15',
+    'grinder.bf.ingest_batch_size': '5',
+
+    'grinder.bf.enum_ingest_weight': '0',
+    'grinder.bf.enum_num_tenants': '4',
+    'grinder.bf.enum_metrics_per_tenant': '5',
+    'grinder.bf.enum_batch_size': '5',
+
+    'grinder.bf.annotations_weight': '5',
+    'grinder.bf.annotations_num_tenants': '4',
+    'grinder.bf.annotations_per_tenant': '5',
+
+    'grinder.bf.singleplot_query_weight': '2',
+
+    'grinder.bf.multiplot_query_weight': '2',
+
+    'grinder.bf.search_query_weight': '2',
+
+    'grinder.bf.enum_search_query_weight': '0',
+
+    'grinder.bf.enum_single_plot_query_weight': '0',
+
+    'grinder.bf.enum_multiplot_query_weight': '0',
+
+    'grinder.bf.annotations_query_weight': '1',
+}
+
+
+class TestCaseBase(unittest.TestCase):
+    def assertIs(self, expr1, expr2, msg=None):
+        return self.assertTrue(expr1 is expr2, msg)
+
+    def assertIsInstance(self, obj, cls, msg=None):
+        return self.assertTrue(isinstance(obj, cls), msg)
+    pass
+
+
+class ThreadManagerTest(TestCaseBase):
     def setUp(self):
-        self.real_shuffle = random.shuffle
-        self.real_randint = random.randint
-        self.real_time = utils.AbstractThread.time
-        self.real_sleep = utils.AbstractThread.sleep
-        self.tm = utils.ThreadManager(grinder_props)
-        req = MockReq()
-        ingest.IngestThread.request = req
-        ingestenum.EnumIngestThread.request = req
-        annotationsingest.AnnotationsIngestThread.request = req
-        for x in query.QueryThread.query_types:
-            x.query_request = req
-        random.shuffle = lambda x: None
-        random.randint = lambda x, y: 0
-        utils.AbstractThread.time = lambda x: 1000
-        utils.AbstractThread.sleep = mock_sleep
+        config = grinder_props.copy()
+        config.update({
+            'grinder.bf.enum_ingest_weight': 15,
+            'grinder.bf.enum_search_query_weight': 1,
+            'grinder.bf.enum_single_plot_query_weight': 1,
+            'grinder.bf.enum_multiplot_query_weight': 1,
+        })
+        self.tm = tm.ThreadManager(config, requests_by_type)
 
-        test_config = {'report_interval': (1000 * 6),
-                       'num_tenants': 3,
-                       'enum_num_tenants': 4,
-                       'annotations_num_tenants': 3,
-                       'metrics_per_tenant': 7,
-                       'enum_metrics_per_tenant': 2,
-                       'annotations_per_tenant': 2,
-                       'batch_size': 3,
-                       'ingest_concurrency': 2,
-                       'enum_ingest_concurrency': 2,
-                       'query_concurrency': 20,
-                       'annotations_concurrency': 2,
-                       'singleplot_per_interval': 11,
-                       'multiplot_per_interval': 10,
-                       'search_queries_per_interval': 9,
-                       'enum_search_queries_per_interval': 9,
-                       'enum_single_plot_queries_per_interval': 10,
-                       'enum_multiplot_per_interval': 10,
-                       'annotations_queries_per_interval': 8,
-                       'name_fmt': "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.%d",
-                       'num_nodes': 2}
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(clean_configs(grinder_props))
 
-        ingest.default_config.update(test_config)
+    def test_thread_type_assignment_0(self):
+        th = self.tm.setup_thread(0, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-    def test_init_process(self):
-        # confirm that threadnum 0 is an ingest thread
-        t1 = self.tm.setup_thread(0)
-        self.assertEqual(type(t1), ingest.IngestThread)
+    def test_thread_type_assignment_1(self):
+        th = self.tm.setup_thread(1, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm that the threadnum after all ingest threads is
-        # EnumIngestThread
-        t1 = self.tm.setup_thread(
-            ingestenum.default_config['enum_ingest_concurrency'])
-        self.assertEqual(type(t1), ingestenum.EnumIngestThread)
+    def test_thread_type_assignment_2(self):
+        th = self.tm.setup_thread(2, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm that the threadnum after all ingest threads is a query thread
-        t1 = self.tm.setup_thread(ingest.default_config['ingest_concurrency'] +
-                                  ingestenum.default_config[
-                                      'enum_ingest_concurrency'])
-        self.assertEqual(type(t1), query.QueryThread)
+    def test_thread_type_assignment_3(self):
+        th = self.tm.setup_thread(3, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm that the threadnum after all ingest+query threads is an
-        # annotations query thread
-        t1 = self.tm.setup_thread(ingest.default_config['ingest_concurrency'] +
-                                  ingestenum.default_config[
-                                      'enum_ingest_concurrency'] +
-                                  ingest.default_config['query_concurrency'])
-        self.assertEqual(type(t1), annotationsingest.AnnotationsIngestThread)
+    def test_thread_type_assignment_4(self):
+        th = self.tm.setup_thread(4, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm that a threadnum after all valid thread types raises an
-        # exception
-        tot_threads = (
-            ingest.default_config['ingest_concurrency'] +
-            ingest.default_config['enum_ingest_concurrency'] +
-            ingest.default_config['query_concurrency'] +
-            ingest.default_config['annotations_concurrency'])
-        self.assertRaises(Exception, self.tm.setup_thread, tot_threads)
+    def test_thread_type_assignment_5(self):
+        th = self.tm.setup_thread(5, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm that the correct batches of ingest metrics are created for
-        # worker 0
-        self.tm.create_all_metrics(0)
+    def test_thread_type_assignment_6(self):
+        th = self.tm.setup_thread(6, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm annotationsingest
-        self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
-                         [[0, 0], [0, 1], [1, 0], [1, 1]])
+    def test_thread_type_assignment_7(self):
+        th = self.tm.setup_thread(7, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        thread = annotationsingest.AnnotationsIngestThread(0)
-        self.assertEqual(thread.slice, [[0, 0], [0, 1]])
+    def test_thread_type_assignment_8(self):
+        th = self.tm.setup_thread(8, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        thread = annotationsingest.AnnotationsIngestThread(1)
-        self.assertEqual(thread.slice, [[1, 0], [1, 1]])
+    def test_thread_type_assignment_9(self):
+        th = self.tm.setup_thread(9, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm enum metrics ingest
-        self.assertEqual(ingestenum.EnumIngestThread.metrics,
-                         [
-                             [[0, 0], [0, 1], [1, 0]],
-                             [[1, 1]]
-                         ])
+    def test_thread_type_assignment_10(self):
+        th = self.tm.setup_thread(10, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        thread = ingestenum.EnumIngestThread(0)
-        self.assertEqual(thread.slice, [[[0, 0], [0, 1], [1, 0]]])
+    def test_thread_type_assignment_11(self):
+        th = self.tm.setup_thread(11, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        thread = ingestenum.EnumIngestThread(1)
-        self.assertEqual(thread.slice, [[[1, 1]]])
+    def test_thread_type_assignment_12(self):
+        th = self.tm.setup_thread(12, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm metrics ingest
-        self.assertEqual(ingest.IngestThread.metrics,
-                         [[[0, 0], [0, 1], [0, 2]],
-                          [[0, 3], [0, 4], [0, 5]],
-                          [[0, 6], [1, 0], [1, 1]],
-                          [[1, 2], [1, 3], [1, 4]],
-                          [[1, 5], [1, 6]]])
+    def test_thread_type_assignment_13(self):
+        th = self.tm.setup_thread(13, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm that the correct batch slices are created for individual
-        # threads
-        thread = ingest.IngestThread(0)
-        self.assertEqual(thread.slice,
-                         [[[0, 0], [0, 1], [0, 2]],
-                          [[0, 3], [0, 4], [0, 5]],
-                          [[0, 6], [1, 0], [1, 1]]])
-        thread = ingest.IngestThread(1)
-        self.assertEqual(thread.slice,
-                         [[[1, 2], [1, 3], [1, 4]],
-                          [[1, 5], [1, 6]]])
+    def test_thread_type_assignment_14(self):
+        th = self.tm.setup_thread(14, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
 
-        # confirm that the number of queries is correctly distributed across
-        #  each thread in this worker process
+    def test_thread_type_assignment_15(self):
+        th = self.tm.setup_thread(15, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        num_query_nodes = query.default_config['num_nodes']
-        single_plot_queries_agent0 = int(math.ceil(
-            query.default_config['singleplot_per_interval'] / num_query_nodes))
-        multi_plot_queries_agent0 = int(math.ceil(
-            query.default_config['multiplot_per_interval'] / num_query_nodes))
-        search_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'search_queries_per_interval'] / num_query_nodes))
-        enum_search_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'enum_search_queries_per_interval'] / num_query_nodes))
-        enum_single_plot_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'enum_single_plot_queries_per_interval'] / num_query_nodes))
-        enum_multi_plot_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'enum_multiplot_per_interval'] / num_query_nodes))
-        annotation_queries_agent0 = int(math.ceil(
-            query.default_config[
-                'annotations_queries_per_interval'] / num_query_nodes))
+    def test_thread_type_assignment_16(self):
+        th = self.tm.setup_thread(16, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        self.assertEqual(
-            query.QueryThread.queries,
-            ([query.SinglePlotQuery] * single_plot_queries_agent0 +
-             [query.MultiPlotQuery] * multi_plot_queries_agent0 +
-             [query.SearchQuery] * search_queries_agent0 +
-             [query.EnumSearchQuery] * enum_search_queries_agent0 +
-             [query.EnumSinglePlotQuery] * enum_single_plot_queries_agent0 +
-             [query.AnnotationsQuery] * annotation_queries_agent0) +
-            [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent0)
+    def test_thread_type_assignment_17(self):
+        th = self.tm.setup_thread(17, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(0)
-        self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
+    def test_thread_type_assignment_18(self):
+        th = self.tm.setup_thread(18, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(3)
-        self.assertEqual(thread.slice, [query.MultiPlotQuery] * 2)
+    def test_thread_type_assignment_19(self):
+        th = self.tm.setup_thread(19, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(6)
-        self.assertEqual(thread.slice, [query.SearchQuery] * 2)
+    def test_thread_type_assignment_20(self):
+        th = self.tm.setup_thread(20, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(9)
-        self.assertEqual(thread.slice, [query.EnumSearchQuery] * 2)
+    def test_thread_type_assignment_21(self):
+        th = self.tm.setup_thread(21, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(12)
-        self.assertEqual(thread.slice, [query.EnumSinglePlotQuery] * 2)
+    def test_thread_type_assignment_22(self):
+        th = self.tm.setup_thread(22, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(14)
-        self.assertEqual(thread.slice, [query.AnnotationsQuery] * 2)
+    def test_thread_type_assignment_23(self):
+        th = self.tm.setup_thread(23, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(16)
-        self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
+    def test_thread_type_assignment_24(self):
+        th = self.tm.setup_thread(24, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        # confirm that the correct batches of ingest metrics are created for
-        # worker 1
-        self.tm.create_all_metrics(1)
-        self.assertEqual(ingest.IngestThread.metrics,
-                         [[[2, 0], [2, 1], [2, 2]],
-                          [[2, 3], [2, 4], [2, 5]],
-                          [[2, 6]]])
+    def test_thread_type_assignment_25(self):
+        th = self.tm.setup_thread(25, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        self.assertEqual(annotationsingest.AnnotationsIngestThread.annotations,
-                         [[2, 0], [2, 1]])
+    def test_thread_type_assignment_26(self):
+        th = self.tm.setup_thread(26, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = ingest.IngestThread(0)
-        self.assertEqual(thread.slice,
-                         [[[2, 0], [2, 1], [2, 2]],
-                          [[2, 3], [2, 4], [2, 5]]])
-        thread = ingest.IngestThread(1)
-        self.assertEqual(thread.slice,
-                         [[[2, 6]]])
+    def test_thread_type_assignment_27(self):
+        th = self.tm.setup_thread(27, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        # confirm that the correct batches of queries are created for worker 1
-        single_plot_queries_agent1 = \
-            query.default_config['singleplot_per_interval'] - \
-            single_plot_queries_agent0
-        multi_plot_queries_agent1 = \
-            query.default_config['multiplot_per_interval'] - \
-            multi_plot_queries_agent0
-        search_queries_agent1 = \
-            query.default_config['search_queries_per_interval'] - \
-            search_queries_agent0
-        enum_search_queries_agent1 = \
-            query.default_config['enum_search_queries_per_interval'] - \
-            enum_search_queries_agent0
-        enum_single_plot_queries_agent1 = \
-            query.default_config['enum_single_plot_queries_per_interval'] - \
-            enum_single_plot_queries_agent0
-        annotation_queries_agent1 = \
-            query.default_config['annotations_queries_per_interval'] - \
-            annotation_queries_agent0
-        enum_multi_plot_queries_agent1 = \
-            query.default_config['enum_multiplot_per_interval'] - \
-            enum_multi_plot_queries_agent0
+    def test_thread_type_assignment_28(self):
+        th = self.tm.setup_thread(28, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        self.assertEqual(
-            query.QueryThread.queries,
-            ([query.SinglePlotQuery] * single_plot_queries_agent1 +
-             [query.MultiPlotQuery] * multi_plot_queries_agent1 +
-             [query.SearchQuery] * search_queries_agent1 +
-             [query.EnumSearchQuery] * enum_search_queries_agent1 +
-             [query.EnumSinglePlotQuery] * enum_single_plot_queries_agent1 +
-             [query.AnnotationsQuery] * annotation_queries_agent1) +
-            [query.EnumMultiPlotQuery] * enum_multi_plot_queries_agent1)
+    def test_thread_type_assignment_29(self):
+        th = self.tm.setup_thread(29, 0)
+        self.assertEqual(type(th), ingestenum.EnumIngestThread)
 
-        thread = query.QueryThread(0)
-        self.assertEqual(thread.slice, [query.SinglePlotQuery] * 2)
+    def test_thread_type_assignment_30(self):
+        th = self.tm.setup_thread(30, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
-        thread = query.QueryThread(4)
-        self.assertEqual(thread.slice, [query.MultiPlotQuery] * 2)
+    def test_thread_type_assignment_31(self):
+        th = self.tm.setup_thread(31, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
-        thread = query.QueryThread(6)
-        self.assertEqual(thread.slice, [query.SearchQuery] * 2)
+    def test_thread_type_assignment_32(self):
+        th = self.tm.setup_thread(32, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
-        thread = query.QueryThread(8)
-        self.assertEqual(thread.slice, [query.EnumSearchQuery] * 2)
+    def test_thread_type_assignment_33(self):
+        th = self.tm.setup_thread(33, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
-        thread = query.QueryThread(10)
-        self.assertEqual(thread.slice, [query.EnumSinglePlotQuery] * 2)
+    def test_thread_type_assignment_34(self):
+        th = self.tm.setup_thread(34, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
 
-        thread = query.QueryThread(12)
-        self.assertEqual(thread.slice, [query.AnnotationsQuery] * 1)
+    def test_thread_type_assignment_35(self):
+        th = self.tm.setup_thread(35, 0)
+        self.assertEqual(type(th), query.SinglePlotQuery)
 
-        thread = query.QueryThread(16)
-        self.assertEqual(thread.slice, [query.EnumMultiPlotQuery] * 1)
+    def test_thread_type_assignment_36(self):
+        th = self.tm.setup_thread(36, 0)
+        self.assertEqual(type(th), query.SinglePlotQuery)
+
+    def test_thread_type_assignment_37(self):
+        th = self.tm.setup_thread(37, 0)
+        self.assertEqual(type(th), query.MultiPlotQuery)
+
+    def test_thread_type_assignment_38(self):
+        th = self.tm.setup_thread(38, 0)
+        self.assertEqual(type(th), query.MultiPlotQuery)
+
+    def test_thread_type_assignment_39(self):
+        th = self.tm.setup_thread(39, 0)
+        self.assertEqual(type(th), query.SearchQuery)
+
+    def test_thread_type_assignment_40(self):
+        th = self.tm.setup_thread(40, 0)
+        self.assertEqual(type(th), query.SearchQuery)
+
+    def test_thread_type_assignment_41(self):
+        th = self.tm.setup_thread(41, 0)
+        self.assertEqual(type(th), query.EnumSearchQuery)
+
+    def test_thread_type_assignment_42(self):
+        th = self.tm.setup_thread(42, 0)
+        self.assertEqual(type(th), query.EnumSinglePlotQuery)
+
+    def test_thread_type_assignment_43(self):
+        th = self.tm.setup_thread(43, 0)
+        self.assertEqual(type(th), query.EnumMultiPlotQuery)
+
+    def test_thread_type_assignment_44(self):
+        th = self.tm.setup_thread(44, 0)
+        self.assertEqual(type(th), query.AnnotationsQuery)
+
+    def test_setup_thread_invalid_thread_type(self):
+        self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
+
+class InitProcessTest(TestCaseBase):
+    def setUp(self):
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update(clean_configs(grinder_props))
+        self.test_config.update({
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 0,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 0,
+
+            'enum_single_plot_query_weight': 0,
+
+            'enum_multiplot_query_weight': 0,
+
+            'annotations_query_weight': 8,
+        })
+
+
+class GeneratePayloadTest(TestCaseBase):
+    def setUp(self):
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update({
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 0,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 0,
+
+            'enum_single_plot_query_weight': 0,
+
+            'enum_multiplot_query_weight': 0,
+
+            'annotations_query_weight': 8,
+        })
 
     def test_generate_payload(self):
-        self.tm.create_all_metrics(1)
-        thread = ingest.IngestThread(0)
+        agent_num = 1
+        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         payload = json.loads(
-            thread.generate_payload(0, [[2, 3], [2, 4], [2, 5]]))
-        valid_payload = [{u'collectionTime': 0,
-                          u'metricName': u'int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3',
-                          u'metricValue': 0,
-                          u'tenantId': u'2',
-                          u'ttlInSeconds': 172800,
-                          u'unit': u'days'},
-                         {u'collectionTime': 0,
-                          u'metricName': u'int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.4',
-                          u'metricValue': 0,
-                          u'tenantId': u'2',
-                          u'ttlInSeconds': 172800,
-                          u'unit': u'days'},
-                         {u'collectionTime': 0,
-                          u'metricName': u'int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.5',
-                          u'metricValue': 0,
-                          u'tenantId': u'2',
-                          u'ttlInSeconds': 172800,
-                          u'unit': u'days'}]
+            thread.generate_payload(0, [[2, 3, 0], [2, 4, 0], [2, 5, 0]]))
+        valid_payload = [{'collectionTime': 0,
+                          'metricName': 'org.example.metric.3',
+                          'metricValue': 0,
+                          'tenantId': '2',
+                          'ttlInSeconds': 172800,
+                          'unit': 'days'},
+                         {'collectionTime': 0,
+                          'metricName': 'org.example.metric.4',
+                          'metricValue': 0,
+                          'tenantId': '2',
+                          'ttlInSeconds': 172800,
+                          'unit': 'days'},
+                         {'collectionTime': 0,
+                          'metricName': 'org.example.metric.5',
+                          'metricValue': 0,
+                          'tenantId': '2',
+                          'ttlInSeconds': 172800,
+                          'unit': 'days'}]
         self.assertEqual(payload, valid_payload)
 
     def test_generate_enum_payload(self):
-        self.tm.create_all_metrics(1)
-        thread = ingestenum.EnumIngestThread(0)
-        payload = json.loads(thread.generate_payload(1, [[2, 1], [2, 2]]))
-        valid_payload = [{u'timestamp': 1,
-                          u'tenantId': u'2',
-                          u'enums': [{u'value': u'e_g_1_0',
-                                      u'name': utils.generate_enum_metric_name(
-                                          1)}]},
-                         {u'timestamp': 1,
-                          u'tenantId': u'2',
-                          u'enums': [{u'value': u'e_g_2_0',
-                                      u'name': utils.generate_enum_metric_name(
-                                          2)}]}
-                         ]
+        agent_num = 1
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
+                                             self.test_config)
+        payload = json.loads(
+            thread.generate_payload(1, [[2, 1, 'e_g_1_0'], [2, 2, 'e_g_2_0']]))
+        valid_payload = [{
+            'timestamp': 1,
+            'tenantId': '2',
+            'enums': [{
+                'value': 'e_g_1_0',
+                'name': ingestenum.EnumIngestThread.
+                         generate_enum_metric_name(1, self.test_config)
+            }]},
+            {
+                'timestamp': 1,
+                'tenantId': '2',
+                'enums': [{
+                    'value': 'e_g_2_0',
+                    'name': ingestenum.EnumIngestThread.
+                             generate_enum_metric_name(2, self.test_config)
+                }]
+            }
+        ]
         self.assertEqual(payload, valid_payload)
 
     def test_generate_annotations_payload(self):
-        self.tm.create_all_metrics(1)
-        thread = annotationsingest.AnnotationsIngestThread(0)
+        agent_num = 1
+        thread = annotationsingest.AnnotationsIngestThread(
+            0, agent_num, MockReq(), self.test_config)
         payload = json.loads(thread.generate_payload(0, 3))
         valid_payload = {
-            'what': 'annotation int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3',
+            'what': 'annotation org.example.metric.3',
             'when': 0,
             'tags': 'tag',
             'data': 'data'}
         self.assertEqual(payload, valid_payload)
 
+
+class MakeAnnotationsIngestRequestsTest(TestCaseBase):
+    def setUp(self):
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update({
+            'url': 'http://metrics-ingest.example.org',
+            'query_url': 'http://metrics.example.org',
+
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 0,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 0,
+
+            'enum_single_plot_query_weight': 0,
+
+            'enum_multiplot_query_weight': 0,
+
+            'annotations_query_weight': 8,
+        })
+
     def test_annotationsingest_make_request(self):
         global sleep_time
-        thread = annotationsingest.AnnotationsIngestThread(0)
-        thread.slice = [[2, 0]]
-        thread.position = 0
-        thread.finish_time = 10000
+        agent_num = 0
+        thread = annotationsingest.AnnotationsIngestThread(
+            0, agent_num, MockReq(), self.test_config)
+        tenant_id = 2
+        metric_id = 4
         valid_payload = {
-            "what": "annotation int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0",
+            "what": "annotation org.example.metric.%s" % metric_id,
             "when": 1000, "tags": "tag", "data": "data"}
 
-        url, payload = thread.make_request(pp)
+        url, payload = thread.make_request(pp, 1000, tenant_id,
+                                           metric_id)
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
-            'http://qe01.metrics-ingest.api.rackspacecloud.com/v2.0/2/events')
+            'http://metrics-ingest.example.org/v2.0/2/events')
         self.assertEqual(eval(payload), valid_payload)
 
-        # confirm request increments position if not at end of report interval
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 10000)
-        thread.position = 2
-        thread.make_request(pp)
 
-        # confirm request resets position at end of report interval
-        self.assertEqual(sleep_time, 9000)
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 16000)
+class MakeIngestRequestsTest(TestCaseBase):
+    def setUp(self):
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update({
+            'url': 'http://metrics-ingest.example.org',
+            'query_url': 'http://metrics.example.org',
+
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 0,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 0,
+
+            'enum_single_plot_query_weight': 0,
+
+            'enum_multiplot_query_weight': 0,
+
+            'annotations_query_weight': 8,
+        })
 
     def test_ingest_make_request(self):
         global sleep_time
-        thread = ingest.IngestThread(0)
-        thread.slice = [[[2, 0], [2, 1]]]
-        thread.position = 0
-        thread.finish_time = 10000
+        agent_num = 0
+        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
         valid_payload = [
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
-             "metricName": "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0"},
+             "metricName": "org.example.metric.0"},
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
-             "metricName": "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.1"}]
+             "metricName": "org.example.metric.1"}]
 
-        url, payload = thread.make_request(pp)
+        tenant_metric_id_values = [
+            [2, 0, 0],
+            [2, 1, 0]
+        ]
+        url, payload = thread.make_request(pp, 1000,
+                                           tenant_metric_id_values)
         # confirm request generates proper URL and payload
-        self.assertEqual(url,
-                         'http://qe01.metrics-ingest.api.rackspacecloud.com/v2.0/tenantId/ingest/multi')
+        self.assertEqual(
+            url,
+            'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
 
-        # confirm request increments position if not at end of report interval
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 10000)
-        thread.position = 2
-        thread.make_request(pp)
-        # confirm request resets position at end of report interval
-        self.assertEqual(sleep_time, 9000)
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 16000)
+
+class MakeIngestEnumRequestsTest(TestCaseBase):
+    def setUp(self):
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update({
+            'url': 'http://metrics-ingest.example.org',
+            'query_url': 'http://metrics.example.org',
+
+            'name_fmt': "org.example.metric.%d",
+
+            'ingest_weight': 2,
+            'ingest_num_tenants': 3,
+            'ingest_metrics_per_tenant': 7,
+            'ingest_batch_size': 3,
+
+            'enum_ingest_weight': 0,
+            'enum_num_tenants': 4,
+            'enum_metrics_per_tenant': 2,
+            'enum_batch_size': 3,
+
+            'annotations_weight': 2,
+            'annotations_num_tenants': 3,
+            'annotations_per_tenant': 2,
+
+            'singleplot_query_weight': 11,
+
+            'multiplot_query_weight': 10,
+
+            'search_query_weight': 9,
+
+            'enum_search_query_weight': 0,
+
+            'enum_single_plot_query_weight': 0,
+
+            'enum_multiplot_query_weight': 0,
+
+            'annotations_query_weight': 8,
+        })
 
     def test_ingest_enum_make_request(self):
         global sleep_time
-        thread = ingestenum.EnumIngestThread(0)
-        thread.slice = [[[2, 0], [2, 1]]]
-        thread.position = 0
-        thread.finish_time = 10000
-        valid_payload = [{'tenantId': '2', 'timestamp': 1000, 'enums': [
-            {'value': 'e_g_0_0', 'name': utils.generate_enum_metric_name(0)}]},
-                         {'tenantId': '2', 'timestamp': 1000, 'enums': [
-                             {'value': 'e_g_1_0',
-                              'name': utils.generate_enum_metric_name(1)}]}]
+        agent_num = 0
+        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
+                                             self.test_config)
+        valid_payload = [
+            {
+                'tenantId': '2',
+                'timestamp': 1000,
+                'enums': [{
+                    'value': 'e_g_0_0',
+                    'name': ingestenum.EnumIngestThread.
+                            generate_enum_metric_name(0, self.test_config)
+                }]
+            },
+            {
+                'tenantId': '2',
+                'timestamp': 1000,
+                'enums': [{
+                    'value': 'e_g_1_0',
+                    'name': ingestenum.EnumIngestThread.
+                            generate_enum_metric_name(1, self.test_config)
+                }]
+            }
+        ]
 
-        url, payload = thread.make_request(pp)
+        url, payload = thread.make_request(
+            pp, 1000,
+            tenant_metric_id_values=[[2, 0, 'e_g_0_0'], [2, 1, 'e_g_1_0']])
         # confirm request generates proper URL and payload
         self.assertEqual(url,
-                         'http://qe01.metrics-ingest.api.rackspacecloud.com/v2.0/tenantId/ingest/aggregated/multi')
+                         'http://metrics-ingest.example.org/v2.0/tenantId/' +
+                         'ingest/aggregated/multi')
         self.assertEqual(eval(payload), valid_payload)
 
-        # confirm request increments position if not at end of report interval
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 10000)
-        thread.position = 2
-        thread.make_request(pp)
-        # confirm request resets position at end of report interval
-        self.assertEqual(sleep_time, 9000)
-        self.assertEqual(thread.position, 1)
-        self.assertEqual(thread.finish_time, 16000)
 
-    def test_query_make_request(self):
-        thread = query.QueryThread(0)
-        thread.slice = [query.SinglePlotQuery, query.SearchQuery,
-                        query.MultiPlotQuery, query.AnnotationsQuery,
-                        query.EnumSearchQuery, query.EnumSinglePlotQuery,
-                        query.EnumMultiPlotQuery]
-        thread.position = 0
-        thread.make_request(pp)
-        self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/0/views/int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0?from=-86399000&to=1000&resolution=FULL")
+class MakeQueryRequestsTest(TestCaseBase):
+    def setUp(self):
+        self.agent_num = 0
+        self.config = clean_configs(grinder_props)
+        self.requests_by_type = requests_by_type.copy()
 
-        random.randint = lambda x, y: 10
-        thread.make_request(pp)
-        self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/10/metrics/search?query=int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.*")
+    def test_query_make_SinglePlotQuery_request(self):
+        req = requests_by_type[query.SinglePlotQuery]
+        qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
+        result = qq.make_request(None, 1000, 0,
+                                  'org.example.metric.metric123')
+        self.assertEqual(req.get_url,
+                         "http://metrics.example.org/v2.0/0/views/" +
+                         "org.example.metric.metric123?from=-86399000&" +
+                         "to=1000&resolution=FULL")
+        self.assertEquals(req.get_url, result)
 
-        random.randint = lambda x, y: 20
-        thread.make_request(pp)
-        self.assertEqual(post_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/20/views?from=-86399000&to=1000&resolution=FULL")
-        self.assertEqual(eval(post_payload), [
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.1",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.2",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.4",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.5",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.6",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.7",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.8",
-            "int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.9"])
+    def test_query_make_SearchQuery_request(self):
+        req = requests_by_type[query.SearchQuery]
+        qq = query.SearchQuery(0, self.agent_num, req, self.config)
+        result = qq.make_request(None, 1000, 10,
+                                  'org.example.metric.*')
+        self.assertEqual(req.get_url,
+                         "http://metrics.example.org/v2.0/10/metrics/search?" +
+                         "query=org.example.metric.*")
+        self.assertEquals(req.get_url, result)
 
-        random.randint = lambda x, y: 30
-        thread.make_request(pp)
-        self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/30/events/getEvents?from=-86399000&until=1000")
+    def test_query_make_MultiPlotQuery_request(self):
+        req = requests_by_type[query.MultiPlotQuery]
+        qq = query.MultiPlotQuery(0, self.agent_num, req, self.config)
+        payload_sent = json.dumps([
+            "org.example.metric.0",
+            "org.example.metric.1",
+            "org.example.metric.2",
+            "org.example.metric.3",
+            "org.example.metric.4",
+            "org.example.metric.5",
+            "org.example.metric.6",
+            "org.example.metric.7",
+            "org.example.metric.8",
+            "org.example.metric.9"
+        ])
+        result = qq.make_request(None, 1000, 20,
+                                 payload_sent)
+        self.assertEqual(req.post_url,
+                         "http://metrics.example.org/v2.0/20/views?" +
+                         "from=-86399000&to=1000&resolution=FULL")
+        self.assertEqual(req.post_payload, payload_sent)
+        self.assertEquals((req.post_url, req.post_payload), result)
 
-        random.randint = lambda x, y: 40
-        thread.make_request(pp)
-        self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/40/metrics/search?query=enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.*&include_enum_values=true")
+    def test_query_make_AnnotationsQuery_request(self):
+        req = requests_by_type[query.AnnotationsQuery]
+        qq = query.AnnotationsQuery(0, self.agent_num, req, self.config)
+        result = qq.make_request(None, 1000, 30)
+        self.assertEqual(req.get_url,
+                         "http://metrics.example.org/v2.0/30/events/" +
+                         "getEvents?from=-86399000&until=1000")
+        self.assertEquals(req.get_url, result)
 
-        random.randint = lambda x, y: 50
-        thread.make_request(pp)
-        self.assertEqual(get_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/50/views/enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.50?from=-86399000&to=1000&resolution=FULL")
+    def test_query_make_EnumSearchQuery_request(self):
+        req = requests_by_type[query.EnumSearchQuery]
+        qq = query.EnumSearchQuery(0, self.agent_num, req, self.config)
+        result = qq.make_request(None, 1000, 40)
+        self.assertEqual(req.get_url,
+                         "http://metrics.example.org/v2.0/40/metrics/search?" +
+                         "query=enum_grinder_org.example.metric.*&" +
+                         "include_enum_values=true")
+        self.assertEquals(req.get_url, result)
 
-        random.randint = lambda x, y: 4
-        thread.make_request(pp)
-        self.assertEqual(post_url,
-                         "http://qe01.metrics.api.rackspacecloud.com/v2.0/4/views?from=-86399000&to=1000&resolution=FULL")
-        self.assertEqual(eval(post_payload), [
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.0",
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.1",
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.2",
-            "enum_grinder_int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met.3"])
+    def test_query_make_EnumSinglePlotQuery_request(self):
+        req = requests_by_type[query.EnumSinglePlotQuery]
+        qq = query.EnumSinglePlotQuery(0, self.agent_num, req, self.config)
+        result = qq.make_request(None, 1000, 50,
+                                  'enum_grinder_org.example.metric.metric456')
+        self.assertEqual(req.get_url,
+                         "http://metrics.example.org/v2.0/50/views/" +
+                         "enum_grinder_org.example.metric.metric456?" +
+                         "from=-86399000&to=1000&resolution=FULL")
+        self.assertEquals(req.get_url, result)
 
-    def tearDown(self):
-        random.shuffle = self.real_shuffle
-        random.randint = self.real_randint
-        utils.AbstractThread.time = self.real_time
-        utils.AbstractThread.sleep = self.real_sleep
+    def test_query_make_EnumMultiPlotQuery_request(self):
+        req = requests_by_type[query.EnumMultiPlotQuery]
+        qq = query.EnumMultiPlotQuery(0, self.agent_num, req, self.config)
+        payload_sent = json.dumps([
+            "enum_grinder_org.example.metric.0",
+            "enum_grinder_org.example.metric.1",
+            "enum_grinder_org.example.metric.2",
+            "enum_grinder_org.example.metric.3"
+        ])
+        result = qq.make_request(None, 1000, 4,
+                                 payload_sent)
+        self.assertEqual(req.post_url,
+                         "http://metrics.example.org/v2.0/4/views?" +
+                         "from=-86399000&to=1000&resolution=FULL")
+        self.assertEqual(req.post_payload, payload_sent)
+        self.assertEquals((req.post_url, req.post_payload), result)
 
 
-# if __name__ == '__main__':
-unittest.TextTestRunner().run(
-    unittest.TestLoader().loadTestsFromTestCase(BluefloodTests))
-
-# cov.stop()
-# cov.save()
+suite = unittest.TestSuite()
+loader = unittest.TestLoader()
+suite.addTest(loader.loadTestsFromTestCase(ThreadManagerTest))
+suite.addTest(loader.loadTestsFromTestCase(InitProcessTest))
+suite.addTest(loader.loadTestsFromTestCase(GeneratePayloadTest))
+suite.addTest(loader.loadTestsFromTestCase(MakeAnnotationsIngestRequestsTest))
+suite.addTest(loader.loadTestsFromTestCase(MakeIngestRequestsTest))
+suite.addTest(loader.loadTestsFromTestCase(MakeIngestEnumRequestsTest))
+suite.addTest(loader.loadTestsFromTestCase(MakeQueryRequestsTest))
+unittest.TextTestRunner().run(suite)
 
 
 class TestRunner:

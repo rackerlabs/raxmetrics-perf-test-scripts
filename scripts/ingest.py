@@ -4,63 +4,32 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from utils import *
-from net.grinder.script import Test
-from net.grinder.plugin.http import HTTPRequest
+from abstract_thread import AbstractThread, generate_metric_name
+
+
+RAND_MAX = 982374239
 
 
 class IngestThread(AbstractThread):
-    # The list of metric numbers for all threads in this worker
-    metrics = []
 
-    # Grinder test reporting infrastructure
-    test1 = Test(1, "Ingest test")
-    request = HTTPRequest()
-    test1.record(request)
+    units_map = {
+        0: 'minutes',
+        1: 'hours',
+        2: 'days',
+        3: 'months',
+        4: 'years',
+        5: 'decades'
+    }
 
-    @classmethod
-    def create_metrics(cls, agent_number):
-        """ Generate all the metrics for this worker
+    def __init__(self, thread_num, agent_num, request, config):
+        AbstractThread.__init__(self, thread_num, agent_num, request, config)
 
-        The metrics are a list of batches.  Each batch is a list of metrics
-        processed by a single metrics ingest request.
-        """
-        metrics = generate_metrics_tenants(
-            default_config['num_tenants'],
-            default_config['metrics_per_tenant'],
-            agent_number, default_config['num_nodes'],
-            cls.generate_metrics_for_tenant)
+    def generate_unit(self, tenant_id):
+        unit_number = tenant_id % 6
+        return self.units_map[unit_number]
 
-        cls.metrics = cls.divide_metrics_into_batches(metrics, default_config[
-            'batch_size'])
-
-    @classmethod
-    def num_threads(cls):
-        return default_config['ingest_concurrency']
-
-    @classmethod
-    def generate_metrics_for_tenant(cls, tenant_id, metrics_per_tenant):
-        l = []
-        for x in range(metrics_per_tenant):
-            l.append([tenant_id, x])
-        return l
-
-    @classmethod
-    def divide_metrics_into_batches(cls, metrics, batch_size):
-        b = []
-        for i in range(0, len(metrics), batch_size):
-            b.append(metrics[i:i + batch_size])
-        return b
-
-    def __init__(self, thread_num):
-        AbstractThread.__init__(self, thread_num)
-        # Initialize the "slice" of the metrics to be sent by this thread
-        start, end = generate_job_range(len(self.metrics),
-                                        self.num_threads(), thread_num)
-        self.slice = self.metrics[start:end]
-
-    def generate_metric(self, time, tenant_id, metric_id):
-        ingest_delay_millis = default_config['ingest_delay_millis']
+    def generate_metric(self, time, tenant_id, metric_id, value):
+        ingest_delay_millis = self.config['ingest_delay_millis']
 
         collection_time = time
         # all even tenants have possible delayed metrics
@@ -70,30 +39,29 @@ class IngestThread(AbstractThread):
             collection_time = random.choice(collection_times)
 
         return {'tenantId': str(tenant_id),
-                'metricName': generate_metric_name(metric_id),
+                'metricName': generate_metric_name(metric_id, self.config),
                 'unit': self.generate_unit(tenant_id),
-                'metricValue': random.randint(0, RAND_MAX),
+                'metricValue': value,
                 'ttlInSeconds': (2 * 24 * 60 * 60),
                 'collectionTime': collection_time}
 
-    def generate_payload(self, time, batch):
-        payload = map(lambda x: self.generate_metric(time, *x), batch)
+    def generate_payload(self, time, tenant_metric_id_values):
+        payload = [self.generate_metric(time, x[0], x[1], x[2]) for x in
+                   tenant_metric_id_values]
         return json.dumps(payload)
 
     def ingest_url(self):
-        return "%s/v2.0/tenantId/ingest/multi" % default_config['url']
+        return "%s/v2.0/tenantId/ingest/multi" % self.config['url']
 
-    def make_request(self, logger):
-        if len(self.slice) == 0:
-            logger("Warning: no work for current thread")
-            self.sleep(1000000)
-            return None
-        self.check_position(logger, len(self.slice))
-        payload = self.generate_payload(int(self.time()),
-                                        self.slice[self.position])
-        self.position += 1
+    def make_request(self, logger, time, tenant_metric_id_values=None):
+        if tenant_metric_id_values is None:
+            tenant_metric_id_values = []
+            for i in xrange(self.config['ingest_batch_size']):
+                tenant_id = random.randint(1, self.config['ingest_num_tenants'])
+                metric_id = random.randint(1, self.config['ingest_metrics_per_tenant'])
+                value = random.randint(0, RAND_MAX)
+                tmv = [tenant_id, metric_id, value]
+                tenant_metric_id_values.append(tmv)
+        payload = self.generate_payload(time, tenant_metric_id_values)
         result = self.request.POST(self.ingest_url(), payload)
         return result
-
-
-ThreadManager.add_type(IngestThread)
