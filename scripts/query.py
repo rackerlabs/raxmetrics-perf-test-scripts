@@ -13,9 +13,9 @@ class AbstractQuery(AbstractThread):
 
     query_interval_name = None
 
-    def __init__(self, thread_num, agent_number, request, config, trgoup=None):
+    def __init__(self, thread_num, agent_number, request, config, tgroup=None):
         AbstractThread.__init__(self, thread_num, agent_number, request,
-                                config, trgoup)
+                                config, tgroup)
         self.thread_num = thread_num
         self.config = config
         self.request = request

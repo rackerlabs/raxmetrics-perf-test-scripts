@@ -9,9 +9,9 @@ from abstract_thread import AbstractThread, generate_metric_name
 
 
 class AnnotationsIngestThread(AbstractThread):
-    def __init__(self, thread_num, agent_num, request, config, trgoup=None):
+    def __init__(self, thread_num, agent_num, request, config, tgroup=None):
         AbstractThread.__init__(self, thread_num, agent_num, request, config,
-                                trgoup)
+                                tgroup)
 
     def generate_annotation(self, time, metric_id):
         metric_name = generate_metric_name(metric_id, self.config)
