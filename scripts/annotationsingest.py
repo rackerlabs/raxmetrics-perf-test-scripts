@@ -6,10 +6,12 @@ try:
 except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_metric_name
+from throttling_group import NullThrottlingGroup
 
 
 class AnnotationsIngestThread(AbstractThread):
-    def __init__(self, thread_num, agent_num, request, config, tgroup=None):
+    def __init__(self, thread_num, agent_num, request, config,
+                 tgroup=NullThrottlingGroup()):
         AbstractThread.__init__(self, thread_num, agent_num, request, config,
                                 tgroup)
 

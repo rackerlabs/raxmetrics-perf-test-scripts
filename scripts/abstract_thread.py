@@ -3,6 +3,8 @@
 import random
 import time
 
+from throttling_group import NullThrottlingGroup
+
 default_config = {
     'url': "http://localhost:19000",
     'query_url': "http://localhost:20000",
@@ -50,7 +52,8 @@ class AbstractThread(object):
     def make_request(self, logger, time):
         raise Exception("Can't create abstract thread")
 
-    def __init__(self, thread_num, agent_num, request, config, tgroup=None):
+    def __init__(self, thread_num, agent_num, request, config,
+                 tgroup=NullThrottlingGroup()):
 
         self.thread_num = thread_num
         self.agent_num = agent_num
@@ -62,8 +65,7 @@ class AbstractThread(object):
             self.config.update(config)
 
     def count_request(self):
-        if self.tgroup is not None:
-            self.tgroup.count_request()
+        self.tgroup.count_request()
 
     @classmethod
     def time(cls):

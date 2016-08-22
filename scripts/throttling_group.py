@@ -51,3 +51,8 @@ class ThrottlingGroup(object):
                     self.sleep_source(seconds_to_wait)
                 self.count = 1
                 self.start_time = self.time_source()
+
+
+class NullThrottlingGroup(object):
+    def count_request(self):
+        pass

@@ -5,6 +5,7 @@ try:
 except ImportError:
     import json
 from abstract_thread import AbstractThread
+from throttling_group import NullThrottlingGroup
 
 
 class EnumIngestThread(AbstractThread):
@@ -14,7 +15,8 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_metric_name(metric_id, config):
         return "enum_grinder_" + config['name_fmt'] % metric_id
 
-    def __init__(self, thread_num, agent_num, request, config, tgroup=None):
+    def __init__(self, thread_num, agent_num, request, config,
+                 tgroup=NullThrottlingGroup()):
         AbstractThread.__init__(self, thread_num, agent_num, request, config,
                                 tgroup)
 

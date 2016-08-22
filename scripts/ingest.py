@@ -5,6 +5,7 @@ try:
 except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_metric_name
+from throttling_group import NullThrottlingGroup
 
 
 RAND_MAX = 982374239
@@ -21,7 +22,8 @@ class IngestThread(AbstractThread):
         5: 'decades'
     }
 
-    def __init__(self, thread_num, agent_num, request, config, tgroup=None):
+    def __init__(self, thread_num, agent_num, request, config,
+                 tgroup=NullThrottlingGroup()):
         AbstractThread.__init__(self, thread_num, agent_num, request, config,
                                 tgroup)
 

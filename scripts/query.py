@@ -6,6 +6,7 @@ except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_metric_name
 from ingestenum import EnumIngestThread
+from throttling_group import NullThrottlingGroup
 
 
 class AbstractQuery(AbstractThread):
@@ -13,7 +14,8 @@ class AbstractQuery(AbstractThread):
 
     query_interval_name = None
 
-    def __init__(self, thread_num, agent_number, request, config, tgroup=None):
+    def __init__(self, thread_num, agent_number, request, config,
+                 tgroup=NullThrottlingGroup()):
         AbstractThread.__init__(self, thread_num, agent_number, request,
                                 config, tgroup)
         self.thread_num = thread_num
