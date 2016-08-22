@@ -28,7 +28,7 @@ class ThreadManager(object):
 
         self.requests_by_type = requests_by_type
 
-    def setup_thread(self, thread_num, agent_num, tgroups):
+    def setup_thread(self, thread_num, agent_num, tgroups=None):
         """Figure out which type thread to create based on thread_num and
         return it
 
@@ -90,7 +90,7 @@ class ThreadManager(object):
         if thread_type in self.requests_by_type:
             req = self.requests_by_type[thread_type]
             tgroup = None
-            if tgname and tgname in tgroups:
+            if tgname and trgoups and tgname in tgroups:
                 tgroup = tgroups[tgname]
             return thread_type(thread_num, agent_num, req, self.config, tgroup)
         else:
