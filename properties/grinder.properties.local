@@ -12,9 +12,6 @@ grinder.bf.query_url="http://localhost:20000"
 grinder.bf.max_multiplot_metrics=10
 grinder.bf.name_fmt="org.example.metric.%d"
 
-#grinder.bf.throttling_group.ingest.max_requests_per_minute=100000000
-#grinder.bf.throttling_group.query.max_requests_per_minute=100000000
-
 grinder.bf.ingest_weight=15
 grinder.bf.ingest_num_tenants=4
 grinder.bf.ingest_metrics_per_tenant=15
