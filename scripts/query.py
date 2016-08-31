@@ -6,6 +6,7 @@ except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_metric_name
 from ingestenum import EnumIngestThread
+from throttling_group import NullThrottlingGroup
 
 
 class AbstractQuery(AbstractThread):
@@ -13,9 +14,10 @@ class AbstractQuery(AbstractThread):
 
     query_interval_name = None
 
-    def __init__(self, thread_num, agent_number, request, config):
+    def __init__(self, thread_num, agent_number, request, config,
+                 tgroup=NullThrottlingGroup()):
         AbstractThread.__init__(self, thread_num, agent_number, request,
-                                config)
+                                config, tgroup)
         self.thread_num = thread_num
         self.config = config
         self.request = request
@@ -39,6 +41,7 @@ class SinglePlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, metric_name, frm,
             to, resolution)
+        self.count_request()
         result = self.request.GET(url)
         return result
 
@@ -67,6 +70,7 @@ class MultiPlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, frm,
             to, resolution)
+        self.count_request()
         result = self.request.POST(url, payload)
         return result
 
@@ -89,6 +93,7 @@ class SearchQuery(AbstractQuery):
         url = "%s/v2.0/%d/metrics/search?query=%s" % (
             self.config['query_url'],
             tenant_id, metric_regex)
+        self.count_request()
         result = self.request.GET(url)
         return result
 
@@ -104,6 +109,7 @@ class AnnotationsQuery(AbstractQuery):
         frm = time - self.one_day
         url = "%s/v2.0/%d/events/getEvents?from=%d&until=%d" % (
             self.config['query_url'], tenant_id, frm, to)
+        self.count_request()
         result = self.request.GET(url)
         return result
 
@@ -126,6 +132,7 @@ class EnumSearchQuery(AbstractQuery):
         url = "%s/v2.0/%d/metrics/search?query=%s&include_enum_values=true" % (
             self.config['query_url'],
             tenant_id, metric_regex)
+        self.count_request()
         result = self.request.GET(url)
         return result
 
@@ -148,6 +155,7 @@ class EnumSinglePlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, metric_name, frm,
             to, resolution)
+        self.count_request()
         result = self.request.GET(url)
         return result
 
@@ -176,5 +184,6 @@ class EnumMultiPlotQuery(AbstractQuery):
             self.config['query_url'],
             tenant_id, frm,
             to, resolution)
+        self.count_request()
         result = self.request.POST(url, payload)
         return result

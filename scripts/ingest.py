@@ -5,6 +5,7 @@ try:
 except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_metric_name
+from throttling_group import NullThrottlingGroup
 
 
 RAND_MAX = 982374239
@@ -21,8 +22,10 @@ class IngestThread(AbstractThread):
         5: 'decades'
     }
 
-    def __init__(self, thread_num, agent_num, request, config):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config)
+    def __init__(self, thread_num, agent_num, request, config,
+                 tgroup=NullThrottlingGroup()):
+        AbstractThread.__init__(self, thread_num, agent_num, request, config,
+                                tgroup)
 
     def generate_unit(self, tenant_id):
         unit_number = tenant_id % 6
@@ -57,11 +60,14 @@ class IngestThread(AbstractThread):
         if tenant_metric_id_values is None:
             tenant_metric_id_values = []
             for i in xrange(self.config['ingest_batch_size']):
-                tenant_id = random.randint(1, self.config['ingest_num_tenants'])
-                metric_id = random.randint(1, self.config['ingest_metrics_per_tenant'])
+                tenant_id = random.randint(
+                    1, self.config['ingest_num_tenants'])
+                metric_id = random.randint(
+                    1, self.config['ingest_metrics_per_tenant'])
                 value = random.randint(0, RAND_MAX)
                 tmv = [tenant_id, metric_id, value]
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
+        self.count_request()
         result = self.request.POST(self.ingest_url(), payload)
         return result

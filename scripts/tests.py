@@ -14,6 +14,7 @@ import annotationsingest
 import abstract_thread
 import thread_manager as tm
 from config import clean_configs
+from throttling_group import ThrottlingGroup
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -316,6 +317,7 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_setup_thread_invalid_thread_type(self):
         self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
+
 
 class InitProcessTest(TestCaseBase):
     def setUp(self):
@@ -657,8 +659,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_SinglePlotQuery_request(self):
         req = requests_by_type[query.SinglePlotQuery]
         qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 0,
-                                  'org.example.metric.metric123')
+        result = qq.make_request(None, 1000, 0, 'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
                          "org.example.metric.metric123?from=-86399000&" +
@@ -668,8 +669,7 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_SearchQuery_request(self):
         req = requests_by_type[query.SearchQuery]
         qq = query.SearchQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 10,
-                                  'org.example.metric.*')
+        result = qq.make_request(None, 1000, 10, 'org.example.metric.*')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?" +
                          "query=org.example.metric.*")
@@ -721,7 +721,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         req = requests_by_type[query.EnumSinglePlotQuery]
         qq = query.EnumSinglePlotQuery(0, self.agent_num, req, self.config)
         result = qq.make_request(None, 1000, 50,
-                                  'enum_grinder_org.example.metric.metric456')
+                                 'enum_grinder_org.example.metric.metric456')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/50/views/" +
                          "enum_grinder_org.example.metric.metric456?" +
@@ -746,6 +746,151 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertEquals((req.post_url, req.post_payload), result)
 
 
+class ThrottlingGroupTest(unittest.TestCase):
+    def test_throttling(self):
+        # given
+        times = iter(xrange(10)).next
+        last_time_returned = [None]
+
+        def time_source():
+            # this time source returns an incrementing sequence of numbers
+            # starting from zero
+            t = times()
+            last_time_returned[0] = t
+            return t
+
+        sleeps = []
+
+        def sleep_source(arg):
+            # this sleep source just logs what arguments were passed to it, and
+            # doesn't actually sleep
+            sleeps.append(arg)
+
+        tg = ThrottlingGroup('test', 2, time_source=time_source,
+                             sleep_source=sleep_source)
+
+        # when we count the first request
+        tg.count_request()
+
+        # then it increments the count and doesn't sleep
+        self.assertEquals(1, tg.count)
+        self.assertEquals([], sleeps)
+
+        # when we count the second request
+        tg.count_request()
+
+        # then it increments the count and doesn't sleep
+        self.assertEquals(2, tg.count)
+        self.assertEquals([], sleeps)
+
+        # when we count a request over the limit
+        tg.count_request()
+
+        # then it sleeps and then resets the count to one
+        self.assertEquals(1, tg.count)
+        self.assertEquals([60 - 2], sleeps)
+
+    def test_count_reset_after_minute_transpires(self):
+        # given
+        times = iter([0, 61]).next
+        last_time_returned = [None]
+
+        def time_source():
+            # this time source returns a fixed sequence of numbers
+            t = times()
+            last_time_returned[0] = t
+            return t
+
+        sleeps = []
+
+        def sleep_source(arg):
+            # this sleep source just logs what arguments were passed to it, and
+            # doesn't actually sleep
+            sleeps.append(arg)
+
+        tg = ThrottlingGroup('test', 2, time_source=time_source,
+                             sleep_source=sleep_source)
+
+        # when we count the first request
+        tg.count_request()
+
+        # then it increments the count and doesn't sleep
+        self.assertEquals(1, tg.count)
+        self.assertEquals([], sleeps)
+
+        # when we count the second request
+        tg.count_request()
+
+        # then it resets the count to one and doesn't sleep
+        self.assertEquals(1, tg.count)
+        self.assertEquals([], sleeps)
+
+
+class ThreadsWithThrottlingGroupTest(unittest.TestCase):
+    def test_multiple_threads_share_throttling_group(self):
+        # given
+        self.test_config = abstract_thread.default_config.copy()
+        self.test_config.update({
+            'url': 'http://metrics-ingest.example.org',
+            'query_url': 'http://metrics.example.org',
+            'name_fmt': "org.example.metric.%d",
+            'ingest_weight': 1,
+            'ingest_num_tenants': 1,
+            'ingest_metrics_per_tenant': 1,
+            'ingest_batch_size': 1,
+            'annotations_weight': 1,
+            'annotations_num_tenants': 1,
+            'annotations_per_tenant': 1,
+            'singleplot_query_weight': 1,
+            'multiplot_query_weight': 1,
+            'search_query_weight': 1,
+            'annotations_query_weight': 1,
+        })
+        times = iter(xrange(10)).next
+        last_time_returned = [None]
+
+        def time_source():
+            # this time source returns an incrementing sequence of numbers
+            # starting from zero
+            t = times()
+            last_time_returned[0] = t
+            return t
+
+        sleeps = []
+
+        def sleep_source(arg):
+            # this sleep source just logs what arguments were passed to it, and
+            # doesn't actually sleep
+            sleeps.append(arg)
+
+        tgroup = ThrottlingGroup('test', 6, time_source, sleep_source)
+
+        th1 = ingest.IngestThread(0, 0, MockReq(), self.test_config, tgroup)
+        th2 = annotationsingest.AnnotationsIngestThread(
+            1, 0, MockReq(), self.test_config, tgroup)
+        th3 = query.SinglePlotQuery(2, 0, MockReq(), self.test_config, tgroup)
+        th4 = query.MultiPlotQuery(3, 0, MockReq(), self.test_config, tgroup)
+        th5 = query.SearchQuery(4, 0, MockReq(), self.test_config, tgroup)
+        th6 = query.AnnotationsQuery(5, 0, MockReq(), self.test_config, tgroup)
+
+        # when
+        th1.make_request(pp, 1000)
+        th2.make_request(pp, 1000)
+        th3.make_request(pp, 1000)
+        th4.make_request(pp, 1000)
+        th5.make_request(pp, 1000)
+        th6.make_request(pp, 1000)
+
+        # then
+        self.assertEquals([], sleeps)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEquals([60 - 6], sleeps)
+
+
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()
 suite.addTest(loader.loadTestsFromTestCase(ThreadManagerTest))
@@ -755,6 +900,8 @@ suite.addTest(loader.loadTestsFromTestCase(MakeAnnotationsIngestRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeIngestRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeIngestEnumRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeQueryRequestsTest))
+suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
+suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
 unittest.TextTestRunner().run(suite)
 
 

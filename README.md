@@ -42,11 +42,14 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]max_multiplot_metrics` - Default is `10`.
 * `[grinder.bf.]name_fmt` - Default is `org.example.metric.%d`.
 
+* `[grinder.bf.]throttling_group.<name>.max_requests_per_minute` - Create a throttling group with the given `name`. The value of the property is taken as the throttling group's `max_requests_per_minute` parameter. By default, no throttling groups are created if no properties are specified.
+
 * `[grinder.bf.]ingest_weight` - Default is `15`.
 * `[grinder.bf.]ingest_num_tenants` - Ingestion threads randomly generate a numerical tenant id in the range of `[0,ingest_num_tenants)`. Change this property to control how many different tenant id's are used when sending standard metrics to the service. Default is `4`.
 * `[grinder.bf.]ingest_metrics_per_tenant` - Ingestion threads randomly generate a numerical metric name suffix in the range of `[0,ingest_metrics_per_tenant)`. Metric names will generally be of the form `org.example.metric.%d`, or whatever the `name_fmt` property is set to. Change this property to control how many different metrics will have data generated for them. Default is `15`.
 * `[grinder.bf.]ingest_batch_size` - Ingestion threads will generate this many metrics in a single payload (HTTP request body). Default is `5`.
 * `[grinder.bf.]ingest_delay_millis` - Configures delayed metrics. Default is `""`, which doesn't produced any delayed metrics.
+* `[grinder.bf.]ingest_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `IngestThread` objects. Default is `None`. If the tgroup name is blank, or is not defined amongh the throttling groups (or if there is a _spelling_error_), then no throttling will be performed for this thread type.
 
 * `[grinder.bf.]enum_weight` - Default is `0`. NOTE: Enums are deprecated and will be removed in the future.
 * `[grinder.bf.]enum_num_tenants` - Exactly like `ingest_num_tenants`, except that this property controls the number of tenant id's for the `EnumIngestThread` class. This property is provided so that ingest and enum ingest threads can be configured independently. Default is `4.`
@@ -57,12 +60,16 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]annotations_weight` - Default is `5`.
 * `[grinder.bf.]annotations_num_tenants` - Exactly like `ingest_num_tenants`, except that this property controls the number of tenant id's for the `AnnotationsIngestThread` class. This property is provided so that ingest and annotation ingest threads can be configured independently. Default is `5`.
 * `[grinder.bf.]annotations_per_tenant` - Exactly like `ingest_metrics_per_tenant`, except that this property controls the number of metric name suffixes for the `AnnotationsIngestThread` class. This property is provided so that ingest and enum ingest threads can be configured independently. Default is `10`.
+* `[grinder.bf.]annotations_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `AnnotationsIngestThread` objects. Default is `None`. If the tgroup name is blank, or is not defined amongh the throttling groups (or if there is a _spelling_error_), then no throttling will be performed for this thread type.
 
 * `[grinder.bf.]singleplot_query_weight` - Default is `10`.
+* `[grinder.bf.]singleplot_query_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `SinglePlotQuery` objects. Default is `None`. If the tgroup name is blank, or is not defined amongh the throttling groups (or if there is a _spelling_error_), then no throttling will be performed for this thread type.
 
 * `[grinder.bf.]multiplot_query_weight` - Default is `10`.
+* `[grinder.bf.]multiplot_query_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `MultiPlotQuery` objects. Default is `None`. If the tgroup name is blank, or is not defined amongh the throttling groups (or if there is a _spelling_error_), then no throttling will be performed for this thread type.
 
 * `[grinder.bf.]search_query_weight` - Default is `10`.
+* `[grinder.bf.]search_query_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `SearchQuery` objects. Default is `None`. If the tgroup name is blank, or is not defined amongh the throttling groups (or if there is a _spelling_error_), then no throttling will be performed for this thread type.
 
 * `[grinder.bf.]enum_search_query_weight` - Default is `0`. NOTE: Enums are deprecated and will be removed in the future.
 
@@ -71,6 +78,7 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]enum_multiplot_query_weight` - Default is `0`. NOTE: Enums are deprecated and will be removed in the future.
 
 * `[grinder.bf.]annotations_query_weight` - Default is `8`.
+* `[grinder.bf.]annotations_query_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `AnnotationsQuery` objects. Default is `None`. If the tgroup name is blank, or is not defined amongh the throttling groups (or if there is a _spelling_error_), then no throttling will be performed for this thread type.
 
 
 

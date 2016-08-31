@@ -5,6 +5,7 @@ try:
 except ImportError:
     import json
 from abstract_thread import AbstractThread
+from throttling_group import NullThrottlingGroup
 
 
 class EnumIngestThread(AbstractThread):
@@ -14,8 +15,10 @@ class EnumIngestThread(AbstractThread):
     def generate_enum_metric_name(metric_id, config):
         return "enum_grinder_" + config['name_fmt'] % metric_id
 
-    def __init__(self, thread_num, agent_num, request, config):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config)
+    def __init__(self, thread_num, agent_num, request, config,
+                 tgroup=NullThrottlingGroup()):
+        AbstractThread.__init__(self, thread_num, agent_num, request, config,
+                                tgroup)
 
     def generate_enum_suffix(self):
         return "_" + str(random.randint(0, self.config['enum_num_values']))
@@ -42,10 +45,12 @@ class EnumIngestThread(AbstractThread):
             tenant_metric_id_values = []
             for i in xrange(self.config['enum_batch_size']):
                 tenant_id = random.randint(1, self.config['enum_num_tenants'])
-                metric_id = random.randint(1, self.config['enum_metrics_per_tenant'])
+                metric_id = random.randint(
+                    1, self.config['enum_metrics_per_tenant'])
                 value = 'e_g_' + str(metric_id) + self.generate_enum_suffix()
                 tmv = [tenant_id, metric_id, value]
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
+        self.count_request()
         result = self.request.POST(self.ingest_url(), payload)
         return result
