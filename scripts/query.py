@@ -7,6 +7,7 @@ except ImportError:
 from abstract_thread import AbstractThread, generate_metric_name
 from ingestenum import EnumIngestThread
 from throttling_group import NullThrottlingGroup
+from HTTPClient import NVPair
 
 
 class AbstractQuery(AbstractThread):
@@ -71,7 +72,10 @@ class MultiPlotQuery(AbstractQuery):
             tenant_id, frm,
             to, resolution)
         self.count_request()
-        result = self.request.POST(url, payload)
+        headers = ( NVPair("Content-Type", "application/json"), )
+        result = self.request.POST(url, payload, headers)
+        if result.getStatusCode() in [400, 415, 500]:
+            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
 
 
@@ -185,5 +189,8 @@ class EnumMultiPlotQuery(AbstractQuery):
             tenant_id, frm,
             to, resolution)
         self.count_request()
-        result = self.request.POST(url, payload)
+        headers = ( NVPair("Content-Type", "application/json"), )
+        result = self.request.POST(url, payload, headers)
+        if result.getStatusCode() in [400, 415, 500]:
+            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
