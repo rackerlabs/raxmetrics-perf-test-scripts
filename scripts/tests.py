@@ -15,6 +15,7 @@ import abstract_thread
 import thread_manager as tm
 from config import clean_configs
 from throttling_group import ThrottlingGroup
+from throttling_request import ThrottlingRequest
 
 try:
     from com.xhaus.jyson import JysonCodec as json
@@ -878,14 +879,15 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
             sleeps.append(arg)
 
         tgroup = ThrottlingGroup('test', 6, time_source, sleep_source)
+        treq = ThrottlingRequest(tgroup, MockReq())
 
-        th1 = ingest.IngestThread(0, 0, MockReq(), self.test_config, tgroup)
+        th1 = ingest.IngestThread(0, 0, treq, self.test_config)
         th2 = annotationsingest.AnnotationsIngestThread(
-            1, 0, MockReq(), self.test_config, tgroup)
-        th3 = query.SinglePlotQuery(2, 0, MockReq(), self.test_config, tgroup)
-        th4 = query.MultiPlotQuery(3, 0, MockReq(), self.test_config, tgroup)
-        th5 = query.SearchQuery(4, 0, MockReq(), self.test_config, tgroup)
-        th6 = query.AnnotationsQuery(5, 0, MockReq(), self.test_config, tgroup)
+            1, 0, treq, self.test_config)
+        th3 = query.SinglePlotQuery(2, 0, treq, self.test_config)
+        th4 = query.MultiPlotQuery(3, 0, treq, self.test_config)
+        th5 = query.SearchQuery(4, 0, treq, self.test_config)
+        th6 = query.AnnotationsQuery(5, 0, treq, self.test_config)
 
         # when
         th1.make_request(pp, 1000)

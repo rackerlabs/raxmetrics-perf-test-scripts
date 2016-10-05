@@ -27,10 +27,8 @@ class IngestThread(AbstractThread):
         5: 'decades'
     }
 
-    def __init__(self, thread_num, agent_num, request, config,
-                 tgroup=NullThrottlingGroup()):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config,
-                                tgroup)
+    def __init__(self, thread_num, agent_num, request, config):
+        AbstractThread.__init__(self, thread_num, agent_num, request, config)
 
     def generate_unit(self, tenant_id):
         unit_number = tenant_id % 6
@@ -73,7 +71,6 @@ class IngestThread(AbstractThread):
                 tmv = [tenant_id, metric_id, value]
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
-        self.count_request()
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(self.ingest_url(), payload, headers)
         if result.getStatusCode() >= 400:
