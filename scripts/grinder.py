@@ -35,12 +35,24 @@ from throttling_group import ThrottlingGroup
 #
 
 
+config = abstract_thread.default_config.copy()
+config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
+
+throttling_groups = {}
+for k, v in config.iteritems():
+    m = re.match(
+        '(grinder\.bf\.)?throttling_group\.(\w+)\.max_requests_per_minute',
+        str(k))
+    if m:
+        name = m.groups()[-1]
+        throttling_groups[name] = ThrottlingGroup(name, int(v))
+
+
 def create_request_obj(test_num, test_name):
     test = Test(test_num, test_name)
     request = HTTPRequest()
     test.record(request)
     return request
-
 
 requests_by_type = {
     IngestThread: create_request_obj(1, "Ingest test"),
@@ -56,18 +68,7 @@ requests_by_type = {
     AnnotationsQuery: create_request_obj(6, "AnnotationsQuery"),
 }
 
-config = abstract_thread.default_config.copy()
-config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
 thread_manager = tm.ThreadManager(config, requests_by_type)
-
-throttling_groups = {}
-for k, v in config.iteritems():
-    m = re.match(
-        '(grinder\.bf\.)?throttling_group\.(\w+)\.max_requests_per_minute',
-        str(k))
-    if m:
-        name = m.groups()[-1]
-        throttling_groups[name] = ThrottlingGroup(name, int(v))
 
 
 class TestRunner:
