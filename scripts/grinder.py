@@ -16,6 +16,7 @@ from query import EnumMultiPlotQuery
 from config import clean_configs
 import abstract_thread
 from throttling_group import ThrottlingGroup
+from throttling_request import ThrottlingRequest
 
 # ENTRY POINT into the Grinder
 
@@ -48,10 +49,13 @@ for k, v in config.iteritems():
         throttling_groups[name] = ThrottlingGroup(name, int(v))
 
 
-def create_request_obj(test_num, test_name):
+def create_request_obj(test_num, test_name, tgroup_name=None):
     test = Test(test_num, test_name)
     request = HTTPRequest()
     test.record(request)
+    if tgroup_name:
+        tgroup = throttling_groups[tgroup_name]
+        request = ThrottlingRequest(tgroup, request)
     return request
 
 requests_by_type = {
