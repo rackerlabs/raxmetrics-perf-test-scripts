@@ -11,28 +11,28 @@ class ThrottlingRequest(object):
 
     def GET(self, *args, **kwargs):
         self.count_request()
-        self.request.GET(*args, **kwargs)
+        return self.request.GET(*args, **kwargs)
 
     def HEAD(self, *args, **kwargs):
         self.count_request()
-        self.request.HEAD(*args, **kwargs)
+        return self.request.HEAD(*args, **kwargs)
 
     def POST(self, *args, **kwargs):
         self.count_request()
-        self.request.POST(*args, **kwargs)
+        return self.request.POST(*args, **kwargs)
 
     def PUT(self, *args, **kwargs):
         self.count_request()
-        self.request.PUT(*args, **kwargs)
+        return self.request.PUT(*args, **kwargs)
 
     def DELETE(self, *args, **kwargs):
         self.count_request()
-        self.request.DELETE(*args, **kwargs)
+        return self.request.DELETE(*args, **kwargs)
 
     def OPTIONS(self, *args, **kwargs):
         self.count_request()
-        self.request.OPTIONS(*args, **kwargs)
+        return self.request.OPTIONS(*args, **kwargs)
 
     def TRACE(self, *args, **kwargs):
         self.count_request()
-        self.request.TRACE(*args, **kwargs)
+        return self.request.TRACE(*args, **kwargs)
