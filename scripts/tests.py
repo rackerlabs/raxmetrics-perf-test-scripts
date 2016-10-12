@@ -34,6 +34,15 @@ def mock_sleep(cls, x):
     sleep_time = x
 
 
+class MockResponse(object):
+    def __init__(self, request, status_code=200):
+        self.request = request
+        self.status_code = status_code
+
+    def getStatusCode(self):
+        return self.status_code
+
+
 class MockReq():
     def __init__(self):
         self.post_url = None
