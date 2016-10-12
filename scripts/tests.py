@@ -40,7 +40,7 @@ class MockReq():
         self.post_payload = None
         self.get_url = None
 
-    def POST(self, url, payload):
+    def POST(self, url, payload, headers):
         global post_url, post_payload
         post_url = url
         post_payload = payload
@@ -48,7 +48,7 @@ class MockReq():
         self.post_payload = payload
         return url, payload
 
-    def GET(self, url):
+    def GET(self, url, payload, headers):
         global get_url
         get_url = url
         self.get_url = url
