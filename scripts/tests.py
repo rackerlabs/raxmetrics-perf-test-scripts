@@ -44,11 +44,12 @@ class MockResponse(object):
         return self.status_code
 
 
-class MockReq():
+class MockReq(object):
     def __init__(self):
         self.post_url = None
         self.post_payload = None
         self.get_url = None
+        self.headers = None
 
     def POST(self, url, payload, headers=None):
         global post_url, post_payload
@@ -56,12 +57,14 @@ class MockReq():
         post_payload = payload
         self.post_url = url
         self.post_payload = payload
+        self.headers = headers
         return MockResponse(self)
 
     def GET(self, url, payload=None, headers=None):
         global get_url
         get_url = url
         self.get_url = url
+        self.headers = headers
         return MockResponse(self)
 
 requests_by_type = {
