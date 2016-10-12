@@ -7,7 +7,11 @@ except ImportError:
 from abstract_thread import AbstractThread, generate_metric_name
 from ingestenum import EnumIngestThread
 from throttling_group import NullThrottlingGroup
-from HTTPClient import NVPair
+
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
 
 
 class AbstractQuery(AbstractThread):

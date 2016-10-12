@@ -6,7 +6,12 @@ except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_metric_name
 from throttling_group import NullThrottlingGroup
-from HTTPClient import NVPair
+
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
+
 
 RAND_MAX = 982374239
 

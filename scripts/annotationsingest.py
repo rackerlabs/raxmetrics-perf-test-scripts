@@ -7,7 +7,12 @@ except ImportError:
     import json
 from abstract_thread import AbstractThread, generate_metric_name
 from throttling_group import NullThrottlingGroup
-from HTTPClient import NVPair
+
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
+
 
 class AnnotationsIngestThread(AbstractThread):
     def __init__(self, thread_num, agent_num, request, config,
