@@ -55,13 +55,13 @@ class MockReq():
         post_payload = payload
         self.post_url = url
         self.post_payload = payload
-        return url, payload
+        return MockResponse(self)
 
     def GET(self, url, payload, headers):
         global get_url
         get_url = url
         self.get_url = url
-        return url
+        return MockResponse(self)
 
 requests_by_type = {
     ingest.IngestThread:                        MockReq(),
