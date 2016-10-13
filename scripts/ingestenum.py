@@ -59,6 +59,6 @@ class EnumIngestThread(AbstractThread):
         self.count_request()
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(self.ingest_url(), payload, headers)
-        if result.getStatusCode() in [400, 415, 500]:
+        if result.getStatusCode() >= 400:
             logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
