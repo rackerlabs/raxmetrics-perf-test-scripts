@@ -8,6 +8,11 @@ except ImportError:
 from abstract_thread import AbstractThread, generate_metric_name
 from throttling_group import NullThrottlingGroup
 
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
+
 
 class AnnotationsIngestThread(AbstractThread):
     def __init__(self, thread_num, agent_num, request, config,
@@ -39,5 +44,8 @@ class AnnotationsIngestThread(AbstractThread):
         payload = self.generate_payload(time, metric_id)
 
         self.count_request()
-        result = self.request.POST(self.ingest_url(tenant_id), payload)
+        headers = ( NVPair("Content-Type", "application/json"), )
+        result = self.request.POST(self.ingest_url(tenant_id), payload, headers)
+        if result.getStatusCode() >= 400:
+            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result

@@ -34,25 +34,34 @@ def mock_sleep(cls, x):
     sleep_time = x
 
 
+class MockResponse(object):
+    def __init__(self, request, status_code=200):
+        self.request = request
+        self.status_code = status_code
+
+    def getStatusCode(self):
+        return self.status_code
+
+
 class MockReq():
     def __init__(self):
         self.post_url = None
         self.post_payload = None
         self.get_url = None
 
-    def POST(self, url, payload):
+    def POST(self, url, payload, headers=None):
         global post_url, post_payload
         post_url = url
         post_payload = payload
         self.post_url = url
         self.post_payload = payload
-        return url, payload
+        return MockResponse(self)
 
-    def GET(self, url):
+    def GET(self, url, payload=None, headers=None):
         global get_url
         get_url = url
         self.get_url = url
-        return url
+        return MockResponse(self)
 
 requests_by_type = {
     ingest.IngestThread:                        MockReq(),
@@ -504,8 +513,10 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             "what": "annotation org.example.metric.%s" % metric_id,
             "when": 1000, "tags": "tag", "data": "data"}
 
-        url, payload = thread.make_request(pp, 1000, tenant_id,
-                                           metric_id)
+        response = thread.make_request(pp, 1000, tenant_id, metric_id)
+        url = response.request.post_url
+        payload = response.request.post_payload
+
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
@@ -567,8 +578,10 @@ class MakeIngestRequestsTest(TestCaseBase):
             [2, 0, 0],
             [2, 1, 0]
         ]
-        url, payload = thread.make_request(pp, 1000,
-                                           tenant_metric_id_values)
+        response = thread.make_request(pp, 1000, tenant_metric_id_values)
+        url = response.request.post_url
+        payload = response.request.post_payload
+
         # confirm request generates proper URL and payload
         self.assertEqual(
             url,
@@ -640,9 +653,12 @@ class MakeIngestEnumRequestsTest(TestCaseBase):
             }
         ]
 
-        url, payload = thread.make_request(
+        response = thread.make_request(
             pp, 1000,
             tenant_metric_id_values=[[2, 0, 'e_g_0_0'], [2, 1, 'e_g_1_0']])
+        url = response.request.post_url
+        payload = response.request.post_payload
+
         # confirm request generates proper URL and payload
         self.assertEqual(url,
                          'http://metrics-ingest.example.org/v2.0/tenantId/' +
@@ -659,21 +675,21 @@ class MakeQueryRequestsTest(TestCaseBase):
     def test_query_make_SinglePlotQuery_request(self):
         req = requests_by_type[query.SinglePlotQuery]
         qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 0, 'org.example.metric.metric123')
+        response = qq.make_request(None, 1000, 0, 'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
                          "org.example.metric.metric123?from=-86399000&" +
                          "to=1000&resolution=FULL")
-        self.assertEquals(req.get_url, result)
+        self.assertIs(req, response.request)
 
     def test_query_make_SearchQuery_request(self):
         req = requests_by_type[query.SearchQuery]
         qq = query.SearchQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 10, 'org.example.metric.*')
+        response = qq.make_request(None, 1000, 10, 'org.example.metric.*')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?" +
                          "query=org.example.metric.*")
-        self.assertEquals(req.get_url, result)
+        self.assertIs(req, response.request)
 
     def test_query_make_MultiPlotQuery_request(self):
         req = requests_by_type[query.MultiPlotQuery]
@@ -690,43 +706,42 @@ class MakeQueryRequestsTest(TestCaseBase):
             "org.example.metric.8",
             "org.example.metric.9"
         ])
-        result = qq.make_request(None, 1000, 20,
-                                 payload_sent)
+        response = qq.make_request(None, 1000, 20, payload_sent)
         self.assertEqual(req.post_url,
                          "http://metrics.example.org/v2.0/20/views?" +
                          "from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(req.post_payload, payload_sent)
-        self.assertEquals((req.post_url, req.post_payload), result)
+        self.assertIs(req, response.request)
 
     def test_query_make_AnnotationsQuery_request(self):
         req = requests_by_type[query.AnnotationsQuery]
         qq = query.AnnotationsQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 30)
+        response = qq.make_request(None, 1000, 30)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
                          "getEvents?from=-86399000&until=1000")
-        self.assertEquals(req.get_url, result)
+        self.assertIs(req, response.request)
 
     def test_query_make_EnumSearchQuery_request(self):
         req = requests_by_type[query.EnumSearchQuery]
         qq = query.EnumSearchQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 40)
+        response = qq.make_request(None, 1000, 40)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/40/metrics/search?" +
                          "query=enum_grinder_org.example.metric.*&" +
                          "include_enum_values=true")
-        self.assertEquals(req.get_url, result)
+        self.assertIs(req, response.request)
 
     def test_query_make_EnumSinglePlotQuery_request(self):
         req = requests_by_type[query.EnumSinglePlotQuery]
         qq = query.EnumSinglePlotQuery(0, self.agent_num, req, self.config)
-        result = qq.make_request(None, 1000, 50,
+        response = qq.make_request(None, 1000, 50,
                                  'enum_grinder_org.example.metric.metric456')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/50/views/" +
                          "enum_grinder_org.example.metric.metric456?" +
                          "from=-86399000&to=1000&resolution=FULL")
-        self.assertEquals(req.get_url, result)
+        self.assertIs(req, response.request)
 
     def test_query_make_EnumMultiPlotQuery_request(self):
         req = requests_by_type[query.EnumMultiPlotQuery]
@@ -737,13 +752,12 @@ class MakeQueryRequestsTest(TestCaseBase):
             "enum_grinder_org.example.metric.2",
             "enum_grinder_org.example.metric.3"
         ])
-        result = qq.make_request(None, 1000, 4,
-                                 payload_sent)
+        response = qq.make_request(None, 1000, 4, payload_sent)
         self.assertEqual(req.post_url,
                          "http://metrics.example.org/v2.0/4/views?" +
                          "from=-86399000&to=1000&resolution=FULL")
         self.assertEqual(req.post_payload, payload_sent)
-        self.assertEquals((req.post_url, req.post_payload), result)
+        self.assertIs(req, response.request)
 
 
 class ThrottlingGroupTest(unittest.TestCase):

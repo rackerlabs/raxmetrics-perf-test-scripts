@@ -7,6 +7,11 @@ except ImportError:
 from abstract_thread import AbstractThread, generate_metric_name
 from throttling_group import NullThrottlingGroup
 
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
+
 
 RAND_MAX = 982374239
 
@@ -69,5 +74,8 @@ class IngestThread(AbstractThread):
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
         self.count_request()
-        result = self.request.POST(self.ingest_url(), payload)
+        headers = ( NVPair("Content-Type", "application/json"), )
+        result = self.request.POST(self.ingest_url(), payload, headers)
+        if result.getStatusCode() >= 400:
+            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
