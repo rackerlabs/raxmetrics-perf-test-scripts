@@ -53,8 +53,10 @@ class IngestThread(AbstractThread):
                    tenant_metric_id_values]
         return json.dumps(payload)
 
-    def ingest_url(self):
-        return "%s/v2.0/tenantId/ingest/multi" % self.config['url']
+    def ingest_url(self, tenantId=None):
+        if tenantId is None:
+            tenantId = 'tenantId'
+        return "%s/v2.0/%s/ingest/multi" % (self.config['url'], str(tenantId))
 
     def make_request(self, logger, time, tenant_metric_id_values=None):
         if tenant_metric_id_values is None:
