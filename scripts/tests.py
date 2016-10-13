@@ -16,12 +16,18 @@ import thread_manager as tm
 from config import clean_configs
 from throttling_group import ThrottlingGroup
 from throttling_request import ThrottlingRequest
+from authenticating_request import AuthenticatingRequest
 
 try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
 import pprint
+
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
 
 pp = pprint.pprint
 sleep_time = -1
@@ -910,6 +916,30 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         self.assertEquals([60 - 6], sleeps)
 
 
+class AuthenticatingRequestTest(unittest.TestCase):
+    def test_adds_token_to_headers(self):
+
+        # given
+        req = MockReq()
+        token = 'this-is-the-token'
+        uri = '/path/to/resource'
+        body = 'this is the body'
+        ap = AuthenticatingRequest(request=req, token=token)
+
+        # when
+        ap.GET(uri, body)
+
+        # then
+        self.assertEqual(uri, req.get_url)
+        self.assertTrue(req.headers is not None)
+        self.assertEqual(1, len(req.headers))
+        self.assertTrue(req.headers[0] is not None)
+        header = req.headers[0]
+        self.assertTrue(isinstance(header, NVPair))
+        self.assertEqual('X-Auth-Token', header.getName())
+        self.assertEqual(token, header.getValue())
+
+
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()
 suite.addTest(loader.loadTestsFromTestCase(ThreadManagerTest))
@@ -921,6 +951,7 @@ suite.addTest(loader.loadTestsFromTestCase(MakeIngestEnumRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeQueryRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
+suite.addTest(loader.loadTestsFromTestCase(AuthenticatingRequestTest))
 unittest.TextTestRunner().run(suite)
 
 
