@@ -15,10 +15,6 @@ except ImportError:
 
 
 class AnnotationsIngestThread(AbstractThread):
-    def __init__(self, thread_num, agent_num, request, config,
-                 tgroup=NullThrottlingGroup()):
-        AbstractThread.__init__(self, thread_num, agent_num, request, config,
-                                tgroup)
 
     def generate_annotation(self, time, metric_id):
         metric_name = generate_metric_name(metric_id, self.config)
@@ -43,7 +39,6 @@ class AnnotationsIngestThread(AbstractThread):
                 1, self.config['annotations_per_tenant'])
         payload = self.generate_payload(time, metric_id)
 
-        self.count_request()
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(self.ingest_url(tenant_id), payload, headers)
         if result.getStatusCode() >= 400:

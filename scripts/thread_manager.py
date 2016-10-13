@@ -92,6 +92,6 @@ class ThreadManager(object):
             tgroup = None
             if tgname and trgoups and tgname in tgroups:
                 tgroup = tgroups[tgname]
-            return thread_type(thread_num, agent_num, req, self.config, tgroup)
+            return thread_type(thread_num, agent_num, req, self.config)
         else:
             raise TypeError("Unknown thread type: %s" % str(thread_type))

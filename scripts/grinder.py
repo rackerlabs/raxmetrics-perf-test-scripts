@@ -16,6 +16,7 @@ from query import EnumMultiPlotQuery
 from config import clean_configs
 import abstract_thread
 from throttling_group import ThrottlingGroup
+from throttling_request import ThrottlingRequest
 
 # ENTRY POINT into the Grinder
 
@@ -35,30 +36,8 @@ from throttling_group import ThrottlingGroup
 #
 
 
-def create_request_obj(test_num, test_name):
-    test = Test(test_num, test_name)
-    request = HTTPRequest()
-    test.record(request)
-    return request
-
-
-requests_by_type = {
-    IngestThread: create_request_obj(1, "Ingest test"),
-    EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
-    AnnotationsIngestThread:
-        create_request_obj(2, "Annotations Ingest test"),
-    SinglePlotQuery: create_request_obj(3, "SinglePlotQuery"),
-    MultiPlotQuery: create_request_obj(4, "MultiPlotQuery"),
-    SearchQuery: create_request_obj(5, "SearchQuery"),
-    EnumSearchQuery: create_request_obj(8, "EnumSearchQuery"),
-    EnumSinglePlotQuery: create_request_obj(9, "EnumSinglePlotQuery"),
-    EnumMultiPlotQuery: create_request_obj(10, "EnumMultiPlotQuery"),
-    AnnotationsQuery: create_request_obj(6, "AnnotationsQuery"),
-}
-
 config = abstract_thread.default_config.copy()
 config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
-thread_manager = tm.ThreadManager(config, requests_by_type)
 
 throttling_groups = {}
 for k, v in config.iteritems():
@@ -68,6 +47,55 @@ for k, v in config.iteritems():
     if m:
         name = m.groups()[-1]
         throttling_groups[name] = ThrottlingGroup(name, int(v))
+
+
+def create_request_obj(test_num, test_name, tgroup_name=None):
+    test = Test(test_num, test_name)
+    request = HTTPRequest()
+    test.record(request)
+    if tgroup_name:
+        tgroup = throttling_groups[tgroup_name]
+        request = ThrottlingRequest(tgroup, request)
+    return request
+
+requests_by_type = {
+    IngestThread:
+        create_request_obj(
+            1,
+            "Ingest test",
+            config.get('ingest_throttling_group', None)),
+    EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
+    AnnotationsIngestThread:
+        create_request_obj(
+            2,
+            "Annotations Ingest test",
+            config.get('annotations_throttling_group', None)),
+    SinglePlotQuery:
+        create_request_obj(
+            3,
+            "SinglePlotQuery",
+            config.get('singleplot_query_throttling_group', None)),
+    MultiPlotQuery:
+        create_request_obj(
+            4,
+            "MultiPlotQuery",
+            config.get('multiplot_query_throttling_group', None)),
+    SearchQuery:
+        create_request_obj(
+            5,
+            "SearchQuery",
+            config.get('search_query_throttling_group', None)),
+    EnumSearchQuery: create_request_obj(8, "EnumSearchQuery"),
+    EnumSinglePlotQuery: create_request_obj(9, "EnumSinglePlotQuery"),
+    EnumMultiPlotQuery: create_request_obj(10, "EnumMultiPlotQuery"),
+    AnnotationsQuery:
+        create_request_obj(
+            6,
+            "AnnotationsQuery",
+            config.get('annotations_query_throttling_group', None)),
+}
+
+thread_manager = tm.ThreadManager(config, requests_by_type)
 
 
 class TestRunner:

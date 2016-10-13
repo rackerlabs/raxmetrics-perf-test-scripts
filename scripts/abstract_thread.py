@@ -52,20 +52,15 @@ class AbstractThread(object):
     def make_request(self, logger, time):
         raise Exception("Can't create abstract thread")
 
-    def __init__(self, thread_num, agent_num, request, config,
-                 tgroup=NullThrottlingGroup()):
+    def __init__(self, thread_num, agent_num, request, config):
 
         self.thread_num = thread_num
         self.agent_num = agent_num
         self.request = request
-        self.tgroup = tgroup
 
         self.config = default_config.copy()
         if config:
             self.config.update(config)
-
-    def count_request(self):
-        self.tgroup.count_request()
 
     @classmethod
     def time(cls):
