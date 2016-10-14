@@ -1060,7 +1060,6 @@ suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(AuthenticatingRequestTest))
 suite.addTest(loader.loadTestsFromTestCase(UserTest))
-unittest.TextTestRunner().run(suite)
 
 
 class TestRunner:
@@ -1068,4 +1067,7 @@ class TestRunner:
         pass
 
     def __call__(self):
-        pass
+        unittest.TextTestRunner().run(suite)
+
+if __name__ == '__main__':
+    unittest.TextTestRunner().run(suite)
