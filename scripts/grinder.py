@@ -17,6 +17,8 @@ from config import clean_configs
 import abstract_thread
 from throttling_group import ThrottlingGroup
 from throttling_request import ThrottlingRequest
+from authenticating_request import AuthenticatingRequest
+from user import User
 
 # ENTRY POINT into the Grinder
 
@@ -49,42 +51,59 @@ for k, v in config.iteritems():
         throttling_groups[name] = ThrottlingGroup(name, int(v))
 
 
-def create_request_obj(test_num, test_name, tgroup_name=None):
+def create_request_obj(test_num, test_name, tgroup_name=None,
+                       auth_user=None):
     test = Test(test_num, test_name)
     request = HTTPRequest()
     test.record(request)
+    if auth_user:
+        request = AuthenticatingRequest(request, auth_user)
     if tgroup_name:
         tgroup = throttling_groups[tgroup_name]
         request = ThrottlingRequest(tgroup, request)
     return request
+
+# TODO: document these properties in the readme
+auth_url = config.get('auth_url', None)
+auth_username = config.get('auth_username', None)
+auth_api_key = config.get('auth_api_key', None)
+user = None
+if auth_url and auth_username and auth_api_key:
+    user = User(auth_url, auth_username, auth_api_key)
+
 
 requests_by_type = {
     IngestThread:
         create_request_obj(
             1,
             "Ingest test",
-            config.get('ingest_throttling_group', None)),
+            config.get('ingest_throttling_group', None),
+            user),
     EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
     AnnotationsIngestThread:
         create_request_obj(
             2,
             "Annotations Ingest test",
-            config.get('annotations_throttling_group', None)),
+            config.get('annotations_throttling_group', None),
+            user),
     SinglePlotQuery:
         create_request_obj(
             3,
             "SinglePlotQuery",
-            config.get('singleplot_query_throttling_group', None)),
+            config.get('singleplot_query_throttling_group', None),
+            user),
     MultiPlotQuery:
         create_request_obj(
             4,
             "MultiPlotQuery",
-            config.get('multiplot_query_throttling_group', None)),
+            config.get('multiplot_query_throttling_group', None),
+            user),
     SearchQuery:
         create_request_obj(
             5,
             "SearchQuery",
-            config.get('search_query_throttling_group', None)),
+            config.get('search_query_throttling_group', None),
+            user),
     EnumSearchQuery: create_request_obj(8, "EnumSearchQuery"),
     EnumSinglePlotQuery: create_request_obj(9, "EnumSinglePlotQuery"),
     EnumMultiPlotQuery: create_request_obj(10, "EnumMultiPlotQuery"),
@@ -92,7 +111,8 @@ requests_by_type = {
         create_request_obj(
             6,
             "AnnotationsQuery",
-            config.get('annotations_query_throttling_group', None)),
+            config.get('annotations_query_throttling_group', None),
+            user),
 }
 
 thread_manager = tm.ThreadManager(config, requests_by_type)
