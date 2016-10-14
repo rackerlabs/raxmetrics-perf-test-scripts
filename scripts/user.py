@@ -42,3 +42,11 @@ class User(object):
         if self.tenant_id is None:
             self._get_data()
         return self.tenant_id
+
+
+class NullUser(object):
+    def get_token(self):
+        return 'token'
+
+    def get_tenant_id(self):
+        return 'tenantId'
