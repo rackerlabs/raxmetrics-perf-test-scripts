@@ -17,10 +17,12 @@ from config import clean_configs
 from throttling_group import ThrottlingGroup
 from throttling_request import ThrottlingRequest
 from authenticating_request import AuthenticatingRequest
-from user import User
+from user import User, NullUser
 
+is_jython = False
 try:
     from com.xhaus.jyson import JysonCodec as json
+    is_jython = True
 except ImportError:
     import json
 import pprint
@@ -29,6 +31,8 @@ try:
     from HTTPClient import NVPair
 except ImportError:
     from nvpair import NVPair
+
+from connector import Connector
 
 pp = pprint.pprint
 sleep_time = -1
@@ -922,10 +926,10 @@ class AuthenticatingRequestTest(unittest.TestCase):
 
         # given
         req = MockReq()
-        token = 'this-is-the-token'
+        token = 'token'
         uri = '/path/to/resource'
         body = 'this is the body'
-        ap = AuthenticatingRequest(request=req, token=token)
+        ap = AuthenticatingRequest(request=req, user=NullUser())
 
         # when
         ap.GET(uri, body)
@@ -941,7 +945,7 @@ class AuthenticatingRequestTest(unittest.TestCase):
         self.assertEqual(token, header.getValue())
 
 
-class UserTest(unittest.TestCase):
+class UserTest(TestCaseBase):
 
     token = 'this-is-the-token'
     tenant = 'this-is-the-tenant'
@@ -986,7 +990,7 @@ class UserTest(unittest.TestCase):
         conn = object()
 
         # when
-        user = User(self.auth_url, self.username, self.api_key, connector=conn)
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # then
         self.assertIs(conn, user.connector)
@@ -994,7 +998,7 @@ class UserTest(unittest.TestCase):
     def test_get_data_makes_a_connection(self):
         # given
         conn = self.DummyConnector()
-        user = User(self.auth_url, self.username, self.api_key, connector=conn)
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # precondition
         self.assertFalse(conn.called)
@@ -1010,7 +1014,7 @@ class UserTest(unittest.TestCase):
     def test_get_data_sets_tenant_and_token(self):
         # given
         conn = self.DummyConnector()
-        user = User(self.auth_url, self.username, self.api_key, connector=conn)
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # precondition
         self.assertFalse(conn.called)
@@ -1027,7 +1031,7 @@ class UserTest(unittest.TestCase):
     def test_get_token_gets_token(self):
         # given
         conn = self.DummyConnector()
-        user = User(self.auth_url, self.username, self.api_key, connector=conn)
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # when
         result = user.get_token()
@@ -1038,13 +1042,22 @@ class UserTest(unittest.TestCase):
     def test_get_tenant_id_gets_tenant(self):
         # given
         conn = self.DummyConnector()
-        user = User(self.auth_url, self.username, self.api_key, connector=conn)
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # when
         result = user.get_tenant_id()
 
         # then the token was returned
         self.assertEqual(self.tenant, result)
+
+
+class ConnectorTest(TestCaseBase):
+    def test_passes_body_as_json(self):
+        conn = Connector()
+        resp = conn.post('http://httpbin.org/post', {}, [])
+        jsonified = resp.json()
+        self.assertEqual('{}', jsonified['data'])
+
 
 
 suite = unittest.TestSuite()
@@ -1060,6 +1073,7 @@ suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(AuthenticatingRequestTest))
 suite.addTest(loader.loadTestsFromTestCase(UserTest))
+suite.addTest(loader.loadTestsFromTestCase(ConnectorTest))
 
 
 class TestRunner:
@@ -1070,4 +1084,5 @@ class TestRunner:
         unittest.TextTestRunner().run(suite)
 
 if __name__ == '__main__':
-    unittest.TextTestRunner().run(suite)
+    if not is_jython:
+        unittest.TextTestRunner().run(suite)
