@@ -1,6 +1,5 @@
 
-import requests
-import json
+from connector import Connector
 
 
 class User(object):
@@ -8,26 +7,27 @@ class User(object):
     token = None
     tenant_id = None
 
-    def __init__(self, auth_url, username, api_key, connector=None):
+    def __init__(self, auth_url, username, api_key, conn=None):
 
-        if connector is None:
-            connector = requests
+        if conn is None:
+            conn = Connector()
 
         self.auth_url = auth_url
         self.username = username
         self.api_key = api_key
-        self.connector = connector
+        self.connector = conn
 
     def _get_data(self):
-        template = '{"auth":{ "RAX-KSKEY:apiKeyCredentials":{' \
-                   '"username":"%s","apiKey":"%s"}}}'
-        request_body = json.loads(template % (self.username, self.api_key))
+        request_body = {
+            "auth": {
+                "RAX-KSKEY:apiKeyCredentials": {
+                    "username": self.username,
+                    "apiKey": self.api_key}}}
         headers = {
             "Accept": "application/json",
             "Content-type": "application/json"
         }
-        resp = self.connector.post(self.auth_url, json=request_body,
-                                   headers=headers)
+        resp = self.connector.post(self.auth_url, request_body, headers)
         catalog = resp.json()
         self.tenant_id = catalog['access']['token']['tenant']['id']
         self.token = catalog['access']['token']['id']
