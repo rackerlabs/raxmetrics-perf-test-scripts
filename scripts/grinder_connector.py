@@ -15,5 +15,7 @@ class GrinderConnector(object):
         self.request = HTTPRequest()
 
     def post(self, url, body, headers, *args, **kwargs):
+        url = str(url)
         body = str(json.dumps(body))
-        return ResponseWrapper(self.request.POST(url, body, headers))
+        resp = self.request.POST(url, body, headers)
+        return ResponseWrapper(resp)

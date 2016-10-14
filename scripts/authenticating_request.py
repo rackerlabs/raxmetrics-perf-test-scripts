@@ -30,7 +30,8 @@ class AuthenticatingRequest(object):
             headers = [h for h in headers]
 
         # add the token header
-        headers.append(NVPair("X-Auth-Token", self.user.get_token()))
+        token = self.user.get_token()
+        headers.append(NVPair("X-Auth-Token", token))
 
         # update args and kwargs, as necessary
         if by_kwargs:
