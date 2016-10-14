@@ -122,7 +122,7 @@ class TestRunner:
     def __init__(self):
         agent_number = grinder.getAgentNumber()
         self.thread = thread_manager.setup_thread(
-            grinder.getThreadNumber(), agent_number, throttling_groups)
+            grinder.getThreadNumber(), agent_number, throttling_groups, user)
 
     def __call__(self):
         result = self.thread.make_request(grinder.logger.info,
