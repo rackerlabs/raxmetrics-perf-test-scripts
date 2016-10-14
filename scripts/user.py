@@ -1,6 +1,11 @@
 
 from connector import Connector
 
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
+
 
 class User(object):
 
@@ -23,10 +28,10 @@ class User(object):
                 "RAX-KSKEY:apiKeyCredentials": {
                     "username": self.username,
                     "apiKey": self.api_key}}}
-        headers = {
-            "Accept": "application/json",
-            "Content-type": "application/json"
-        }
+        headers = [
+            NVPair("Accept", "application/json"),
+            NVPair("Content-type", "application/json")
+        ]
         resp = self.connector.post(self.auth_url, request_body, headers)
         catalog = resp.json()
         self.tenant_id = catalog['access']['token']['tenant']['id']
