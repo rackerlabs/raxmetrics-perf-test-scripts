@@ -7,11 +7,9 @@ except ImportError:
 
 
 class AuthenticatingRequest(object):
-    def __init__(self, request, tenant_id=None, api_key=None, token=None):
+    def __init__(self, request, user):
         self.request = request
-        self.tenant_id = tenant_id
-        self.api_key = api_key
-        self.token = token
+        self.user = user
 
     def authenticate(self, args, kwargs, headers_arg_index):
 
@@ -32,7 +30,7 @@ class AuthenticatingRequest(object):
             headers = [h for h in headers]
 
         # add the token header
-        headers.append(NVPair("X-Auth-Token", self.token))
+        headers.append(NVPair("X-Auth-Token", self.user.get_token()))
 
         # update args and kwargs, as necessary
         if by_kwargs:
