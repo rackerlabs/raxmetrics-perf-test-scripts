@@ -1,5 +1,10 @@
 
 import re
+import sys
+import java.lang.System
+import java.io.File
+import java.io.FileInputStream
+import java.util.Properties
 
 from net.grinder.script.Grinder import grinder
 from net.grinder.script import Test
@@ -63,14 +68,29 @@ def create_request_obj(test_num, test_name, tgroup_name=None,
         request = ThrottlingRequest(tgroup, request)
     return request
 
+user = None
+
 # TODO: document these properties in the readme
 auth_url = config.get('auth_url', None)
 auth_username = config.get('auth_username', None)
 auth_api_key = config.get('auth_api_key', None)
-user = None
 if auth_url and auth_username and auth_api_key:
     user = User(auth_url, auth_username, auth_api_key)
 
+if user is None:
+    user_creds_relative_path = config.get('auth_properties_path', None)
+    if user_creds_relative_path:
+        user_creds_relative = java.io.File(user_creds_relative_path)
+        user_creds_file = grinder.getProperties().resolveRelativeFile(user_creds_relative)
+        stream = java.io.FileInputStream(user_creds_file)
+        user_creds_props = java.util.Properties()
+        user_creds_props.load(stream)
+        user_creds_dict = py_java.dict_from_properties(user_creds_props)
+        auth_url = user_creds_dict.get('auth_url', None)
+        auth_username = user_creds_dict.get('auth_username', None)
+        auth_api_key = user_creds_dict.get('auth_api_key', None)
+        if auth_url and auth_username and auth_api_key:
+            user = User(auth_url, auth_username, auth_api_key)
 
 requests_by_type = {
     IngestThread:
