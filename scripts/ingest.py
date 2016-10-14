@@ -55,7 +55,7 @@ class IngestThread(AbstractThread):
 
     def ingest_url(self, tenantId=None):
         if tenantId is None:
-            tenantId = 'tenantId'
+            tenantId = self.user.get_tenant_id()
         return "%s/v2.0/%s/ingest/multi" % (self.config['url'], str(tenantId))
 
     def make_request(self, logger, time, tenant_metric_id_values=None):
