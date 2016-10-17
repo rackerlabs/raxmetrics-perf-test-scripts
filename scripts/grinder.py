@@ -71,6 +71,10 @@ def create_request_obj(test_num, test_name, tgroup_name=None,
 user = None
 
 # TODO: document these properties in the readme
+
+# TODO: re-work how user credentials are retrieved into something like a plugin
+# TODO: system, so that it's more robust, easier to use, and less verbose
+
 auth_url = config.get('auth_url', None)
 auth_username = config.get('auth_username', None)
 auth_api_key = config.get('auth_api_key', None)
