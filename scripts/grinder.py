@@ -89,41 +89,35 @@ if user is None:
                                                None)
     encryptor = None
     if auth_properties_encr_key_file:
-        try:
-            if auth_properties_encr_key_file.startswith('~'):
-                user_home = java.lang.System.getProperty('user.home')
-                auth_properties_encr_key_file = \
-                    auth_properties_encr_key_file.replace('~', user_home)
-            stream = java.io.FileInputStream(auth_properties_encr_key_file)
-            auth_props_encr_key_props = java.util.Properties()
-            auth_props_encr_key_props.load(stream)
-            auth_props_encr_key_dict = py_java.dict_from_properties(
-                auth_props_encr_key_props)
-            auth_props_encr_key = auth_props_encr_key_dict.get('password', None)
-            encryptor = StandardPBEStringEncryptor()
-            encryptor.setPassword(auth_props_encr_key)
-        except Exception, e:
-            pass
+        if auth_properties_encr_key_file.startswith('~'):
+            user_home = java.lang.System.getProperty('user.home')
+            auth_properties_encr_key_file = \
+                auth_properties_encr_key_file.replace('~', user_home)
+        stream = java.io.FileInputStream(auth_properties_encr_key_file)
+        auth_props_encr_key_props = java.util.Properties()
+        auth_props_encr_key_props.load(stream)
+        auth_props_encr_key_dict = py_java.dict_from_properties(
+            auth_props_encr_key_props)
+        auth_props_encr_key = auth_props_encr_key_dict.get('password', None)
+        encryptor = StandardPBEStringEncryptor()
+        encryptor.setPassword(auth_props_encr_key)
 
     user_creds_relative_path = config.get('auth_properties_path', None)
     if user_creds_relative_path:
-        try:
-            user_creds_relative = java.io.File(user_creds_relative_path)
-            user_creds_file = grinder.getProperties().resolveRelativeFile(user_creds_relative)
-            stream = java.io.FileInputStream(user_creds_file)
-            if encryptor:
-                user_creds_props = EncryptableProperties(encryptor)
-            else:
-                user_creds_props = java.util.Properties()
-            user_creds_props.load(stream)
-            user_creds_dict = clean_configs(py_java.dict_from_properties(user_creds_props))
-            auth_url = user_creds_dict.get('auth_url', None)
-            auth_username = user_creds_dict.get('auth_username', None)
-            auth_api_key = user_creds_dict.get('auth_api_key', None)
-            if auth_url and auth_username and auth_api_key:
-                user = User(auth_url, auth_username, auth_api_key)
-        except Exception, e:
-            pass
+        user_creds_relative = java.io.File(user_creds_relative_path)
+        user_creds_file = grinder.getProperties().resolveRelativeFile(user_creds_relative)
+        stream = java.io.FileInputStream(user_creds_file)
+        if encryptor:
+            user_creds_props = EncryptableProperties(encryptor)
+        else:
+            user_creds_props = java.util.Properties()
+        user_creds_props.load(stream)
+        user_creds_dict = clean_configs(py_java.dict_from_properties(user_creds_props))
+        auth_url = user_creds_dict.get('auth_url', None)
+        auth_username = user_creds_dict.get('auth_username', None)
+        auth_api_key = user_creds_dict.get('auth_api_key', None)
+        if auth_url and auth_username and auth_api_key:
+            user = User(auth_url, auth_username, auth_api_key)
 
 
 requests_by_type = {
