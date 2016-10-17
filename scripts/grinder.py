@@ -84,17 +84,24 @@ if auth_url and auth_username and auth_api_key:
 if user is None:
     user_creds_relative_path = config.get('auth_properties_path', None)
     if user_creds_relative_path:
-        user_creds_relative = java.io.File(user_creds_relative_path)
-        user_creds_file = grinder.getProperties().resolveRelativeFile(user_creds_relative)
-        stream = java.io.FileInputStream(user_creds_file)
-        user_creds_props = java.util.Properties()
-        user_creds_props.load(stream)
-        user_creds_dict = py_java.dict_from_properties(user_creds_props)
-        auth_url = user_creds_dict.get('auth_url', None)
-        auth_username = user_creds_dict.get('auth_username', None)
-        auth_api_key = user_creds_dict.get('auth_api_key', None)
-        if auth_url and auth_username and auth_api_key:
-            user = User(auth_url, auth_username, auth_api_key)
+        try:
+            user_creds_relative = java.io.File(user_creds_relative_path)
+            user_creds_file = grinder.getProperties().resolveRelativeFile(user_creds_relative)
+            stream = java.io.FileInputStream(user_creds_file)
+            if encryptor:
+                user_creds_props = EncryptableProperties(encryptor)
+            else:
+                user_creds_props = java.util.Properties()
+            user_creds_props.load(stream)
+            user_creds_dict = clean_configs(py_java.dict_from_properties(user_creds_props))
+            auth_url = user_creds_dict.get('auth_url', None)
+            auth_username = user_creds_dict.get('auth_username', None)
+            auth_api_key = user_creds_dict.get('auth_api_key', None)
+            if auth_url and auth_username and auth_api_key:
+                user = User(auth_url, auth_username, auth_api_key)
+        except Exception, e:
+            pass
+
 
 requests_by_type = {
     IngestThread:
