@@ -10,6 +10,9 @@ from net.grinder.script.Grinder import grinder
 from net.grinder.script import Test
 from net.grinder.plugin.http import HTTPRequest
 
+from org.jasypt.properties import EncryptableProperties
+from org.jasypt.encryption.pbe import StandardPBEStringEncryptor
+
 import thread_manager as tm
 import py_java
 from annotationsingest import AnnotationsIngestThread
@@ -82,6 +85,26 @@ if auth_url and auth_username and auth_api_key:
     user = User(auth_url, auth_username, auth_api_key)
 
 if user is None:
+    auth_properties_encr_key_file = config.get('auth_properties_encr_key_file',
+                                               None)
+    encryptor = None
+    if auth_properties_encr_key_file:
+        try:
+            if auth_properties_encr_key_file.startswith('~'):
+                user_home = java.lang.System.getProperty('user.home')
+                auth_properties_encr_key_file = \
+                    auth_properties_encr_key_file.replace('~', user_home)
+            stream = java.io.FileInputStream(auth_properties_encr_key_file)
+            auth_props_encr_key_props = java.util.Properties()
+            auth_props_encr_key_props.load(stream)
+            auth_props_encr_key_dict = py_java.dict_from_properties(
+                auth_props_encr_key_props)
+            auth_props_encr_key = auth_props_encr_key_dict.get('password', None)
+            encryptor = StandardPBEStringEncryptor()
+            encryptor.setPassword(auth_props_encr_key)
+        except Exception, e:
+            pass
+
     user_creds_relative_path = config.get('auth_properties_path', None)
     if user_creds_relative_path:
         try:

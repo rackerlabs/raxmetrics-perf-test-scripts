@@ -9,7 +9,7 @@ import net.grinder.engine.process.ScriptContextImplementation
 def dict_from_properties(p):
     d = {}
     for entry in p.entrySet():
-        d[entry.key] = entry.value
+        d[entry.key] = p.getProperty(entry.key)
     return d
 
 
