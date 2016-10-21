@@ -1,7 +1,9 @@
 #!/bin/bash
 
-mkdir -p dependencies
-cd dependencies
+topsrc=`dirname $0`  # this gives you the directory where this script is located
+
+mkdir -p $topsrc/dependencies
+cd $topsrc/dependencies
 
 wget -O grinder-3.11-binary.zip 'http://downloads.sourceforge.net/project/grinder/The%20Grinder%203/3.11/grinder-3.11-binary.zip'
 unzip grinder-3.11-binary.zip
