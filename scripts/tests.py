@@ -47,12 +47,16 @@ def mock_sleep(cls, x):
 
 
 class MockResponse(object):
-    def __init__(self, request, status_code=200):
+    def __init__(self, request=None, status_code=200, json_data=None):
         self.request = request
         self.status_code = status_code
+        self.json_data = json_data
 
     def getStatusCode(self):
         return self.status_code
+
+    def json(self):
+        return self.json_data
 
 
 class MockReq(object):
@@ -77,6 +81,25 @@ class MockReq(object):
         self.get_url = url
         self.headers = headers
         return MockResponse(self)
+
+
+class FakeIdentityConnector(object):
+    called = False
+    url = None
+    json = None
+    headers = None
+
+    def post(self, url, json=None, headers=None):
+        self.called = True
+        self.url = url
+        self.json = json
+        self.headers = headers
+        return MockResponse(None, json_data={
+            'access': {
+                'token': {
+                    'id': UserTest.token,
+                    'tenant': {
+                        'id': UserTest.tenant}}}})
 
 requests_by_type = {
     ingest.IngestThread:                        MockReq(),
@@ -953,27 +976,6 @@ class UserTest(TestCaseBase):
     username = 'user123'
     api_key = '0123456789abcdef0123456789abcdef'
 
-    class DummyResponse(object):
-        def json(self):
-            return {
-                'access': {
-                    'token': {
-                        'id': UserTest.token,
-                        'tenant': {
-                            'id': UserTest.tenant }}}}
-
-    class DummyConnector(object):
-        called = False
-        url = None
-        json = None
-        headers = None
-        def post(self, url, json=None, headers=None):
-            self.called = True
-            self.url = url
-            self.json = json
-            self.headers = headers
-            return UserTest.DummyResponse()
-
     def test_constructor_sets_fields(self):
 
         # when
@@ -997,7 +999,7 @@ class UserTest(TestCaseBase):
 
     def test_get_data_makes_a_connection(self):
         # given
-        conn = self.DummyConnector()
+        conn = FakeIdentityConnector()
         user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # precondition
@@ -1013,7 +1015,7 @@ class UserTest(TestCaseBase):
 
     def test_get_data_sets_tenant_and_token(self):
         # given
-        conn = self.DummyConnector()
+        conn = FakeIdentityConnector()
         user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # precondition
@@ -1030,7 +1032,7 @@ class UserTest(TestCaseBase):
 
     def test_get_token_gets_token(self):
         # given
-        conn = self.DummyConnector()
+        conn = FakeIdentityConnector()
         user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # when
@@ -1041,7 +1043,7 @@ class UserTest(TestCaseBase):
 
     def test_get_tenant_id_gets_tenant(self):
         # given
-        conn = self.DummyConnector()
+        conn = FakeIdentityConnector()
         user = User(self.auth_url, self.username, self.api_key, conn=conn)
 
         # when
