@@ -1,6 +1,8 @@
 
 import re
 import sys
+import os.path
+
 import java.lang.System
 import java.io.File
 import java.io.FileInputStream
@@ -87,10 +89,8 @@ if user is None:
                                                None)
     encryptor = None
     if auth_properties_encr_key_file:
-        if auth_properties_encr_key_file.startswith('~'):
-            user_home = java.lang.System.getProperty('user.home')
-            auth_properties_encr_key_file = \
-                auth_properties_encr_key_file.replace('~', user_home)
+        auth_properties_encr_key_file = os.path.expanduser(
+            auth_properties_encr_key_file)
         stream = java.io.FileInputStream(auth_properties_encr_key_file)
         auth_props_encr_key_props = java.util.Properties()
         auth_props_encr_key_props.load(stream)
