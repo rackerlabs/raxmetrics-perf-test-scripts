@@ -16,12 +16,23 @@ import thread_manager as tm
 from config import clean_configs
 from throttling_group import ThrottlingGroup
 from throttling_request import ThrottlingRequest
+from authenticating_request import AuthenticatingRequest
+from user import User, NullUser
 
+is_jython = False
 try:
     from com.xhaus.jyson import JysonCodec as json
+    is_jython = True
 except ImportError:
     import json
 import pprint
+
+try:
+    from HTTPClient import NVPair
+except ImportError:
+    from nvpair import NVPair
+
+from connector import Connector
 
 pp = pprint.pprint
 sleep_time = -1
@@ -36,19 +47,24 @@ def mock_sleep(cls, x):
 
 
 class MockResponse(object):
-    def __init__(self, request, status_code=200):
+    def __init__(self, request=None, status_code=200, json_data=None):
         self.request = request
         self.status_code = status_code
+        self.json_data = json_data
 
     def getStatusCode(self):
         return self.status_code
 
+    def json(self):
+        return self.json_data
 
-class MockReq():
+
+class MockReq(object):
     def __init__(self):
         self.post_url = None
         self.post_payload = None
         self.get_url = None
+        self.headers = None
 
     def POST(self, url, payload, headers=None):
         global post_url, post_payload
@@ -56,13 +72,34 @@ class MockReq():
         post_payload = payload
         self.post_url = url
         self.post_payload = payload
+        self.headers = headers
         return MockResponse(self)
 
     def GET(self, url, payload=None, headers=None):
         global get_url
         get_url = url
         self.get_url = url
+        self.headers = headers
         return MockResponse(self)
+
+
+class FakeIdentityConnector(object):
+    called = False
+    url = None
+    json = None
+    headers = None
+
+    def post(self, url, json=None, headers=None):
+        self.called = True
+        self.url = url
+        self.json = json
+        self.headers = headers
+        return MockResponse(None, json_data={
+            'access': {
+                'token': {
+                    'id': UserTest.token,
+                    'tenant': {
+                        'id': UserTest.tenant}}}})
 
 requests_by_type = {
     ingest.IngestThread:                        MockReq(),
@@ -907,6 +944,124 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         self.assertEquals([60 - 6], sleeps)
 
 
+class AuthenticatingRequestTest(unittest.TestCase):
+    def test_adds_token_to_headers(self):
+
+        # given
+        req = MockReq()
+        token = 'token'
+        uri = '/path/to/resource'
+        body = 'this is the body'
+        ap = AuthenticatingRequest(request=req, user=NullUser())
+
+        # when
+        ap.GET(uri, body)
+
+        # then
+        self.assertEqual(uri, req.get_url)
+        self.assertTrue(req.headers is not None)
+        self.assertEqual(1, len(req.headers))
+        self.assertTrue(req.headers[0] is not None)
+        header = req.headers[0]
+        self.assertTrue(isinstance(header, NVPair))
+        self.assertEqual('X-Auth-Token', header.getName())
+        self.assertEqual(token, header.getValue())
+
+
+class UserTest(TestCaseBase):
+
+    token = 'this-is-the-token'
+    tenant = 'this-is-the-tenant'
+    auth_url = 'https://example.com/v2.0/tokens'
+    username = 'user123'
+    api_key = '0123456789abcdef0123456789abcdef'
+
+    def test_constructor_sets_fields(self):
+
+        # when
+        user = User(self.auth_url, self.username, self.api_key)
+
+        # then
+        self.assertEqual(self.auth_url, user.auth_url)
+        self.assertEqual(self.username, user.username)
+        self.assertEqual(self.api_key, user.api_key)
+
+    def test_constructor_sets_connector(self):
+
+        # given
+        conn = object()
+
+        # when
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+
+        # then
+        self.assertIs(conn, user.connector)
+
+    def test_get_data_makes_a_connection(self):
+        # given
+        conn = FakeIdentityConnector()
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+
+        # precondition
+        self.assertFalse(conn.called)
+        self.assertIs(None, user.token)
+        self.assertIs(None, user.tenant_id)
+
+        # when
+        result = user._get_data()
+
+        # then the connector was called
+        self.assertTrue(conn.called)
+
+    def test_get_data_sets_tenant_and_token(self):
+        # given
+        conn = FakeIdentityConnector()
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+
+        # precondition
+        self.assertFalse(conn.called)
+        self.assertIs(None, user.token)
+        self.assertIs(None, user.tenant_id)
+
+        # when
+        result = user._get_data()
+
+        # then
+        self.assertEqual(self.tenant, user.tenant_id)
+        self.assertEqual(self.token, user.token)
+
+    def test_get_token_gets_token(self):
+        # given
+        conn = FakeIdentityConnector()
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+
+        # when
+        result = user.get_token()
+
+        # then the token was returned
+        self.assertEqual(self.token, result)
+
+    def test_get_tenant_id_gets_tenant(self):
+        # given
+        conn = FakeIdentityConnector()
+        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+
+        # when
+        result = user.get_tenant_id()
+
+        # then the token was returned
+        self.assertEqual(self.tenant, result)
+
+
+class ConnectorTest(TestCaseBase):
+    def test_passes_body_as_json(self):
+        conn = Connector()
+        resp = conn.post('http://httpbin.org/post', {}, [])
+        jsonified = resp.json()
+        self.assertEqual('{}', jsonified['data'])
+
+
+
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()
 suite.addTest(loader.loadTestsFromTestCase(ThreadManagerTest))
@@ -918,7 +1073,9 @@ suite.addTest(loader.loadTestsFromTestCase(MakeIngestEnumRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeQueryRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
-unittest.TextTestRunner().run(suite)
+suite.addTest(loader.loadTestsFromTestCase(AuthenticatingRequestTest))
+suite.addTest(loader.loadTestsFromTestCase(UserTest))
+suite.addTest(loader.loadTestsFromTestCase(ConnectorTest))
 
 
 class TestRunner:
@@ -926,4 +1083,8 @@ class TestRunner:
         pass
 
     def __call__(self):
-        pass
+        unittest.TextTestRunner().run(suite)
+
+if __name__ == '__main__':
+    if not is_jython:
+        unittest.TextTestRunner().run(suite)

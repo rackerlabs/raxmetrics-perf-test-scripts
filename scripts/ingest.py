@@ -53,8 +53,10 @@ class IngestThread(AbstractThread):
                    tenant_metric_id_values]
         return json.dumps(payload)
 
-    def ingest_url(self):
-        return "%s/v2.0/tenantId/ingest/multi" % self.config['url']
+    def ingest_url(self, tenantId=None):
+        if tenantId is None:
+            tenantId = self.user.get_tenant_id()
+        return "%s/v2.0/%s/ingest/multi" % (self.config['url'], str(tenantId))
 
     def make_request(self, logger, time, tenant_metric_id_values=None):
         if tenant_metric_id_values is None:
@@ -69,7 +71,8 @@ class IngestThread(AbstractThread):
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
         headers = ( NVPair("Content-Type", "application/json"), )
-        result = self.request.POST(self.ingest_url(), payload, headers)
+        url = self.ingest_url()
+        result = self.request.POST(url, payload, headers)
         if result.getStatusCode() >= 400:
             logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
