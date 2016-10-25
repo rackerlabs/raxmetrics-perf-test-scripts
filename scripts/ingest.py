@@ -28,6 +28,11 @@ class IngestThread(AbstractThread):
     }
 
     def generate_unit(self, tenant_id):
+        if isinstance(tenant_id, basestring):
+            try:
+                tenant_id = int(tenant_id)
+            except TypeError:
+                tenant_id = hash(tenant_id)
         unit_number = tenant_id % 6
         return self.units_map[unit_number]
 
