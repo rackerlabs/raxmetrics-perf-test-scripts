@@ -90,7 +90,7 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 The following command will download the necessary software packages and place them under the `dependencies/` folder:
 
 ```bash
-./setup-resources.sh
+./setup-dependencies.sh
 ```
 
 Note this needs to be run on each node in the cluster, as well as the console.
