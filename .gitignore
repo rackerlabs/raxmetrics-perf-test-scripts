@@ -3,7 +3,9 @@
 .idea
 *.iml
 _scratch*
-dependencies
+dependencies/grinder-*/
+dependencies/jyson-*/
+dependencies/jasypt-*/
 resources/logs/
 htmlcov/
 .coverage
