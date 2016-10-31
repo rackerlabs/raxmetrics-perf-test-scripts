@@ -31,7 +31,7 @@ class IngestThread(AbstractThread):
         if isinstance(tenant_id, basestring):
             try:
                 tenant_id = int(tenant_id)
-            except TypeError:
+            except (TypeError, ValueError):
                 tenant_id = hash(tenant_id)
         unit_number = tenant_id % 6
         return self.units_map[unit_number]
