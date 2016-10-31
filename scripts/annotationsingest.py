@@ -27,7 +27,9 @@ class AnnotationsIngestThread(AbstractThread):
         payload = self.generate_annotation(time, metric_id)
         return json.dumps(payload)
 
-    def ingest_url(self, tenant_id):
+    def ingest_url(self, tenant_id=None):
+        if tenant_id is None:
+            tenant_id = self.user.get_tenant_id()
         return "%s/v2.0/%s/events" % (self.config['url'], tenant_id)
 
     def make_request(self, logger, time, tenant_id=None, metric_id=None):
