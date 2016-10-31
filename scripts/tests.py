@@ -553,7 +553,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             "what": "annotation org.example.metric.%s" % metric_id,
             "when": 1000, "tags": "tag", "data": "data"}
 
-        response = thread.make_request(pp, 1000, tenant_id, metric_id)
+        response = thread.make_request(pp, 1000, (tenant_id, metric_id))
         url = response.request.post_url
         payload = response.request.post_payload
 
