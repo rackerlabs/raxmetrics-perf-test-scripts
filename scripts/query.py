@@ -33,7 +33,7 @@ class SinglePlotQuery(AbstractQuery):
     def make_request(self, logger, time, tenant_id=None,
                      metric_name=None):
         if tenant_id is None:
-            tenant_id = random.randint(0, self.config['ingest_num_tenants'])
+            tenant_id = self.user.get_tenant_id()
         if metric_name is None:
             metric_name = generate_metric_name(
                 random.randint(0, self.config['ingest_metrics_per_tenant']),
@@ -63,7 +63,7 @@ class MultiPlotQuery(AbstractQuery):
 
     def make_request(self, logger, time, tenant_id=None, payload=None):
         if tenant_id is None:
-            tenant_id = random.randint(0, self.config['ingest_num_tenants'])
+            tenant_id = self.user.get_tenant_id()
         if payload is None:
             payload = self.generate_multiplot_payload()
         to = time
@@ -92,7 +92,7 @@ class SearchQuery(AbstractQuery):
     def make_request(self, logger, time, tenant_id=None,
                      metric_regex=None):
         if tenant_id is None:
-            tenant_id = random.randint(0, self.config['ingest_num_tenants'])
+            tenant_id = self.user.get_tenant_id()
         if metric_regex is None:
             metric_regex = self.generate_metrics_regex()
         url = "%s/v2.0/%s/metrics/search?query=%s" % (
@@ -107,8 +107,7 @@ class AnnotationsQuery(AbstractQuery):
 
     def make_request(self, logger, time, tenant_id=None):
         if tenant_id is None:
-            tenant_id = random.randint(0,
-                                       self.config['annotations_num_tenants'])
+            tenant_id = self.user.get_tenant_id()
         to = time
         frm = time - self.one_day
         url = "%s/v2.0/%s/events/getEvents?from=%d&until=%d" % (
