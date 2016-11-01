@@ -16,6 +16,15 @@ except ImportError:
 RAND_MAX = 982374239
 
 
+def int_from_tenant(tenant_id):
+    if isinstance(tenant_id, basestring):
+        try:
+            return int(tenant_id)
+        except (TypeError, ValueError):
+            pass
+    return hash(tenant_id)
+
+
 class IngestThread(AbstractThread):
 
     units_map = {
@@ -28,11 +37,7 @@ class IngestThread(AbstractThread):
     }
 
     def generate_unit(self, tenant_id):
-        if isinstance(tenant_id, basestring):
-            try:
-                tenant_id = int(tenant_id)
-            except (TypeError, ValueError):
-                tenant_id = hash(tenant_id)
+        tenant_id = int_from_tenant(tenant_id)
         unit_number = tenant_id % 6
         return self.units_map[unit_number]
 
@@ -41,14 +46,15 @@ class IngestThread(AbstractThread):
 
         collection_time = time
         # all even tenants have possible delayed metrics
-        if len(ingest_delay_millis) > 0 and tenant_id % 2 == 0:
+        tenant_int = int_from_tenant(tenant_id)
+        if len(ingest_delay_millis) > 0 and tenant_int % 2 == 0:
             collection_times = [time - long(delay) for delay in
                                 ingest_delay_millis.split(",")]
             collection_time = random.choice(collection_times)
 
         return {'tenantId': str(tenant_id),
                 'metricName': generate_metric_name(metric_id, self.config),
-                'unit': self.generate_unit(tenant_id),
+                'unit': self.generate_unit(tenant_int),
                 'metricValue': value,
                 'ttlInSeconds': (2 * 24 * 60 * 60),
                 'collectionTime': collection_time}
