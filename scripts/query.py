@@ -76,7 +76,7 @@ class MultiPlotQuery(AbstractQuery):
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(url, payload, headers)
         if result.getStatusCode() >= 400:
-            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
+            logger("MultiPlotQuery Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
 
 
@@ -188,5 +188,5 @@ class EnumMultiPlotQuery(AbstractQuery):
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(url, payload, headers)
         if result.getStatusCode() >= 400:
-            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
+            logger("EnumMultiPlotQuery Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result

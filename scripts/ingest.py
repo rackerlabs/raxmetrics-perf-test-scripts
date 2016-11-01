@@ -84,5 +84,5 @@ class IngestThread(AbstractThread):
         url = self.ingest_url()
         result = self.request.POST(url, payload, headers)
         if result.getStatusCode() >= 400:
-            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
+            logger("IngestThread Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
