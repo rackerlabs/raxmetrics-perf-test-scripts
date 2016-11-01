@@ -41,7 +41,7 @@ class SinglePlotQuery(AbstractQuery):
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
-        url = "%s/v2.0/%d/views/%s?from=%d&to=%s&resolution=%s" % (
+        url = "%s/v2.0/%s/views/%s?from=%d&to=%s&resolution=%s" % (
             self.config['query_url'],
             tenant_id, metric_name, frm,
             to, resolution)
@@ -69,7 +69,7 @@ class MultiPlotQuery(AbstractQuery):
         to = time
         frm = time - self.one_day
         resolution = 'FULL'
-        url = "%s/v2.0/%d/views?from=%d&to=%d&resolution=%s" % (
+        url = "%s/v2.0/%s/views?from=%d&to=%d&resolution=%s" % (
             self.config['query_url'],
             tenant_id, frm,
             to, resolution)
@@ -95,7 +95,7 @@ class SearchQuery(AbstractQuery):
             tenant_id = random.randint(0, self.config['ingest_num_tenants'])
         if metric_regex is None:
             metric_regex = self.generate_metrics_regex()
-        url = "%s/v2.0/%d/metrics/search?query=%s" % (
+        url = "%s/v2.0/%s/metrics/search?query=%s" % (
             self.config['query_url'],
             tenant_id, metric_regex)
         result = self.request.GET(url)
@@ -111,7 +111,7 @@ class AnnotationsQuery(AbstractQuery):
                                        self.config['annotations_num_tenants'])
         to = time
         frm = time - self.one_day
-        url = "%s/v2.0/%d/events/getEvents?from=%d&until=%d" % (
+        url = "%s/v2.0/%s/events/getEvents?from=%d&until=%d" % (
             self.config['query_url'], tenant_id, frm, to)
         result = self.request.GET(url)
         return result
