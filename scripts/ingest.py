@@ -47,7 +47,7 @@ class IngestThread(AbstractThread):
         collection_time = time
         # all even tenants have possible delayed metrics
         tenant_int = int_from_tenant(tenant_id)
-        if len(ingest_delay_millis) > 0 and tenant_int % 2 == 0:
+        if len(ingest_delay_millis) > 0:
             collection_times = [time - long(delay) for delay in
                                 ingest_delay_millis.split(",")]
             collection_time = random.choice(collection_times)
