@@ -54,5 +54,5 @@ class EnumIngestThread(AbstractThread):
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(self.ingest_url(), payload, headers)
         if result.getStatusCode() >= 400:
-            logger("Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
+            logger("EnumIngestThread Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result

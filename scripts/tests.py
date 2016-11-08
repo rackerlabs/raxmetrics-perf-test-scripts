@@ -545,20 +545,20 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
         agent_num = 0
         thread = annotationsingest.AnnotationsIngestThread(
             0, agent_num, MockReq(), self.test_config)
-        tenant_id = 2
+        tenant_id = 'tenantId'
+        expected_url = (
+            'http://metrics-ingest.example.org/v2.0/%s/events' % tenant_id)
         metric_id = 4
         valid_payload = {
             "what": "annotation org.example.metric.%s" % metric_id,
             "when": 1000, "tags": "tag", "data": "data"}
 
-        response = thread.make_request(pp, 1000, tenant_id, metric_id)
+        response = thread.make_request(pp, 1000, (tenant_id, metric_id))
         url = response.request.post_url
         payload = response.request.post_payload
 
         # confirm request generates proper URL and payload
-        self.assertEqual(
-            url,
-            'http://metrics-ingest.example.org/v2.0/2/events')
+        self.assertEqual(expected_url, url)
         self.assertEqual(eval(payload), valid_payload)
 
 
