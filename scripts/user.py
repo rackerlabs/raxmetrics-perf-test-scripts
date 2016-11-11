@@ -1,4 +1,6 @@
 
+import threading
+
 from connector import Connector
 
 try:
@@ -21,8 +23,18 @@ class User(object):
         self.username = username
         self.api_key = api_key
         self.connector = conn
+        self.lock = threading.RLock()
 
     def _get_data(self):
+        self.lock.acquire()
+        try:
+            if self.token is None or self.tenant_id is None:
+                return self._get_data_sync()
+        finally:
+            self.lock.release()
+        return self.tenant_id, self.token
+
+    def _get_data_sync(self):
         request_body = {
             "auth": {
                 "RAX-KSKEY:apiKeyCredentials": {
