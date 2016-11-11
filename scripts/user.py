@@ -1,5 +1,8 @@
 
+import datetime
+import email.utils
 import threading
+import time
 
 from connector import Connector
 
@@ -44,7 +47,35 @@ class User(object):
             NVPair("Accept", "application/json"),
             NVPair("Content-type", "application/json")
         ]
-        resp = self.connector.post(self.auth_url, request_body, headers)
+        for retries in xrange(3):
+            resp = self.connector.post(self.auth_url, request_body, headers)
+            if 200 <= resp.status_code < 300:
+                break
+            if resp.status_code in [413, 429]:
+                try:
+                    # TODO: lower/upper case
+                    retry_after = resp.headers.get('Retry-After')
+                    if retry_after:
+                        # TODO: double-check time zone
+                        after = email.utils.parsedate(retry_after)
+                        now = datetime.datetime.utcnow()
+                        delta = (after - now).total_seconds()
+                        if delta > 0:
+                            self.logger('got status code %s, will retry' %
+                                        resp.status_code)
+                            time.sleep(delta)
+                except:
+                    self.logger('got status code %s, can\'t retry' %
+                                resp.status_code)
+                    return (None,None)
+            else:
+                self.logger('got status code %s, won\'t retry' %
+                            resp.status_code)
+                return (None, None)
+        else:
+            self.logger('Couldn\'t get token and tenant')
+            return (None, None)
+
         catalog = resp.json()
         self.tenant_id = catalog['access']['token']['tenant']['id']
         self.token = catalog['access']['token']['id']
