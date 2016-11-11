@@ -6,6 +6,19 @@ class ResponseWrapper(object):
     def __init__(self, response):
         self.response = response
 
+    @property
+    def status_code(self):
+        return self.response.getStatusCode()
+
+    @property
+    def headers(self):
+        return dict([(name, self.response.getHeader(name))
+                     for name in self.response.listHeaders()])
+
+    @property
+    def body(self):
+        return self.response.getText()
+
     def json(self):
         return json.loads(self.response.getText())
 
