@@ -58,8 +58,8 @@ def create_request_obj(test_num, test_name, tgroup_name=None,
     test = Test(test_num, test_name)
     request = HTTPRequest()
     request = ResponseCheckingRequest(request)
-    request = ExceptionHandlingRequest(request)
     test.record(request)
+    request = ExceptionHandlingRequest(request)
     if auth_user:
         request = AuthenticatingRequest(request, auth_user)
     if tgroup_name:
