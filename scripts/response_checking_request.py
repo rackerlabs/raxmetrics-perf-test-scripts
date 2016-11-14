@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from http_failure_exception import HttpFailureException
+
 
 class ResponseCheckingRequest():
     def __init__(self, request):
@@ -7,7 +9,7 @@ class ResponseCheckingRequest():
 
     def check(self, response):
         if not (200 <= response.getStatusCode() < 300):
-            raise Exception('The HTTP request did not succeed')
+            raise HttpFailureException(response)
         return response
 
     def GET(self, *args, **kwargs):

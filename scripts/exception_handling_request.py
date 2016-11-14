@@ -1,4 +1,6 @@
 
+from http_failure_exception import HttpFailureException
+
 
 class ExceptionHandlingRequest():
 
@@ -13,8 +15,8 @@ class ExceptionHandlingRequest():
     def wrap(self, callee):
         try:
             return callee()
-        except:
-            return None
+        except HttpFailureException as e:
+            return e.response
 
     def GET(self, *args, **kwargs):
         return self.wrap(lambda:self.request.GET(*args, **kwargs))
