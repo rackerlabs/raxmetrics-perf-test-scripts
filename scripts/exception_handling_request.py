@@ -19,22 +19,22 @@ class ExceptionHandlingRequest():
             return e.response
 
     def GET(self, *args, **kwargs):
-        return self.wrap(lambda:self.request.GET(*args, **kwargs))
+        return self.wrap(lambda: self.request.GET(*args, **kwargs))
 
     def HEAD(self, *args, **kwargs):
-        return self.wrap(lambda:self.request.HEAD(*args, **kwargs))
+        return self.wrap(lambda: self.request.HEAD(*args, **kwargs))
 
     def POST(self, *args, **kwargs):
-        return self.wrap(lambda:self.request.POST(*args, **kwargs))
+        return self.wrap(lambda: self.request.POST(*args, **kwargs))
 
     def PUT(self, *args, **kwargs):
-        return self.wrap(lambda:self.request.PUT(*args, **kwargs))
+        return self.wrap(lambda: self.request.PUT(*args, **kwargs))
 
     def DELETE(self, *args, **kwargs):
-        return self.wrap(lambda:self.request.DELETE(*args, **kwargs))
+        return self.wrap(lambda: self.request.DELETE(*args, **kwargs))
 
     def OPTIONS(self, *args, **kwargs):
-        return self.wrap(lambda:self.request.OPTIONS(*args, **kwargs))
+        return self.wrap(lambda: self.request.OPTIONS(*args, **kwargs))
 
     def TRACE(self, *args, **kwargs):
-        return self.wrap(lambda:self.request.TRACE(*args, **kwargs))
+        return self.wrap(lambda: self.request.TRACE(*args, **kwargs))
