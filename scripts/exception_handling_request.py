@@ -15,7 +15,7 @@ class ExceptionHandlingRequest():
     def wrap(self, callee):
         try:
             return callee()
-        except HttpFailureException as e:
+        except HttpFailureException, e:
             return e.response
 
     def GET(self, *args, **kwargs):
