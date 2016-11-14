@@ -19,6 +19,7 @@ from throttling_group import ThrottlingGroup
 from throttling_request import ThrottlingRequest
 from authenticating_request import AuthenticatingRequest
 from response_checking_request import ResponseCheckingRequest
+from exception_handling_request import ExceptionHandlingRequest
 from get_user import get_user
 
 # ENTRY POINT into the Grinder
@@ -57,6 +58,7 @@ def create_request_obj(test_num, test_name, tgroup_name=None,
     test = Test(test_num, test_name)
     request = HTTPRequest()
     request = ResponseCheckingRequest(request)
+    request = ExceptionHandlingRequest(request)
     test.record(request)
     if auth_user:
         request = AuthenticatingRequest(request, auth_user)
