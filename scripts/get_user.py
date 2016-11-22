@@ -15,6 +15,41 @@ import py_java
 
 
 def get_user(config, grinder):
+    """Load user credentials from the provided config.
+
+    The algorithm proceeds as follows:
+
+    First, the config is checked for the `auth_url`, `auth_username`, and
+    `auth_api_key` properties. If those are provided, then a `user.User` object
+    is constructed and returned.
+
+    If any of those properties is not provided in the main configuration file,
+    then the `auth_properties_path` property is checked. If that is not
+    provided, processing stops and `None` is returned. Otherwise, the
+    `auth_properties_path` property is interpreted as the relative path to a
+    second properties file.
+
+    Similar to the above, the second properties file will be checked for the
+    `auth_url`, `auth_username`, and `auth_api_key` properties. If those are
+    provided, then a `user.User` object is constructed and returned. If any of those
+    properties is not provided, then `None` is returned.
+
+    No attempt is made to authenticate the user based on the provided
+    properties. Authentication will occur lazily the calling code tries to
+    access the `User`'s token or tenant data. If the credentials are incorrect,
+    an error will occur then, rather than in this function.
+
+    Any exceptions (e.g. `IOError("File not found")` ) are propagated to the
+    caller.
+
+    :param config: the test configuration loaded from the .properties file(s)
+    :param grinder: the ScriptContext provided by The Grinder, used to resolve
+        file paths
+
+    :return: a user.User object for the configured user credentials, or None if
+        any credential properties weren't provided in the config.
+    :rtype: user.User
+    """
     auth_url = config.get('auth_url', None)
     auth_username = config.get('auth_username', None)
     auth_api_key = config.get('auth_api_key', None)

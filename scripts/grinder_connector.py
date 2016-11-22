@@ -2,7 +2,13 @@
 from net.grinder.plugin.http import HTTPRequest
 from com.xhaus.jyson import JysonCodec as json
 
+
 class ResponseWrapper(object):
+
+    """A wrapper class to make `HTTPClient.HTTPResponse` act more like a
+    `requests.Response`, for interoperability.
+    """
+
     def __init__(self, response):
         self.response = response
 
@@ -24,6 +30,11 @@ class ResponseWrapper(object):
 
 
 class GrinderConnector(object):
+
+    """A connector that makes HTTP requests via The Grinder's worker thread.
+    This is used by the `user.User` class to authenticate.
+    """
+
     def __init__(self):
         self.request = HTTPRequest()
 

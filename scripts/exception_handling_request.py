@@ -5,9 +5,10 @@ from http_failure_exception import HttpFailureException
 class ExceptionHandlingRequest():
 
     """This class catches exceptions thrown by the wrapped request object,
-     namely a ResponseCheckingRequest instance. That way, if there is an HTTP
-     error, it gets counted in the grinder statistics, but the exception
-     stacktrace doesn't clutter up the grinder logs."""
+     namely a `response_checking_request.ResponseCheckingRequest` instance.
+     That way, if there is an HTTP error, it gets counted in the grinder
+     statistics, but the exception stacktrace doesn't clutter up the grinder
+     logs."""
 
     def __init__(self, request):
         self.request = request
