@@ -16,6 +16,7 @@ class User(object):
 
     token = None
     tenant_id = None
+    logger = None
 
     def __init__(self, auth_url, username, api_key, conn=None):
 
@@ -54,19 +55,24 @@ class User(object):
                             now = datetime.datetime.utcnow()
                             delta = (after - now).total_seconds()
                             if delta > 0:
-                                self.logger('got status code %s, will retry' %
-                                            resp.status_code)
+                                if self.logger:
+                                    self.logger("Got status code %s, will "
+                                                "retry" %
+                                                resp.status_code)
                                 time.sleep(delta)
                     except:
-                        self.logger('got status code %s, can\'t retry' %
-                                    resp.status_code)
+                        if self.logger:
+                            self.logger("Got status code %s, can't retry" %
+                                        resp.status_code)
                         return (None, None)
                 else:
-                    self.logger('got status code %s, won\'t retry' %
-                                resp.status_code)
+                    if self.logger:
+                        self.logger("Got status code %s, won't retry" %
+                                    resp.status_code)
                     return (None, None)
             else:
-                self.logger('Couldn\'t get token and tenant')
+                if self.logger:
+                    self.logger("Couldn't get token and tenant")
                 return (None, None)
 
             catalog = resp.json()
