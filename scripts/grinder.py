@@ -72,8 +72,6 @@ user = None
 # TODO: re-work how user credentials are retrieved into something like a plugin
 # TODO: system, so that it's more robust, easier to use, and less verbose
 
-
-
 user = get_user(config, grinder)
 
 requests_by_type = {

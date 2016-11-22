@@ -67,7 +67,7 @@ class User(object):
                 except:
                     self.logger('got status code %s, can\'t retry' %
                                 resp.status_code)
-                    return (None,None)
+                    return (None, None)
             else:
                 self.logger('got status code %s, won\'t retry' %
                             resp.status_code)

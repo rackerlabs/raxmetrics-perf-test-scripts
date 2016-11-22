@@ -31,8 +31,8 @@ def get_user(config, grinder):
 
     Similar to the above, the second properties file will be checked for the
     `auth_url`, `auth_username`, and `auth_api_key` properties. If those are
-    provided, then a `user.User` object is constructed and returned. If any of those
-    properties is not provided, then `None` is returned.
+    provided, then a `user.User` object is constructed and returned. If any of
+    those properties is not provided, then `None` is returned.
 
     No attempt is made to authenticate the user based on the provided
     properties. Authentication will occur lazily the calling code tries to
@@ -74,14 +74,16 @@ def get_user(config, grinder):
     user_creds_relative_path = config.get('auth_properties_path', None)
     if user_creds_relative_path:
         user_creds_relative = java.io.File(user_creds_relative_path)
-        user_creds_file = grinder.getProperties().resolveRelativeFile(user_creds_relative)
+        user_creds_file = grinder.getProperties().resolveRelativeFile(
+            user_creds_relative)
         stream = java.io.FileInputStream(user_creds_file)
         if encryptor:
             user_creds_props = EncryptableProperties(encryptor)
         else:
             user_creds_props = java.util.Properties()
         user_creds_props.load(stream)
-        user_creds_dict = clean_configs(py_java.dict_from_properties(user_creds_props))
+        user_creds_dict = clean_configs(
+            py_java.dict_from_properties(user_creds_props))
         auth_url = user_creds_dict.get('auth_url', None)
         auth_username = user_creds_dict.get('auth_username', None)
         auth_api_key = user_creds_dict.get('auth_api_key', None)
