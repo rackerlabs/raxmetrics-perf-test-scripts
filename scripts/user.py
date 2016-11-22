@@ -48,9 +48,11 @@ class User(object):
                 if resp.status_code in [413, 429]:
                     try:
                         # TODO: lower/upper case
+                        # https://jira.rax.io/browse/CMD-1449
                         retry_after = resp.headers.get('Retry-After')
                         if retry_after:
                             # TODO: double-check time zone
+                            # https://jira.rax.io/browse/CMD-1449
                             after = email.utils.parsedate(retry_after)
                             now = datetime.datetime.utcnow()
                             delta = (after - now).total_seconds()
