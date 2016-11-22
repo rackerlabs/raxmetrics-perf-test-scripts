@@ -82,11 +82,9 @@ class User(object):
 
         self.lock.acquire()
         try:
-            if self.token is None or self.tenant_id is None:
-                return get_data_sync()
+            return get_data_sync()
         finally:
             self.lock.release()
-        return self.tenant_id, self.token
 
     def get_token(self):
         if self.token is None:
