@@ -220,6 +220,66 @@ class ThreadManagerTest(TestCaseBase):
         th = self.tm.setup_thread(14, 0)
         self.assertEqual(type(th), ingest.IngestThread)
 
+    def test_thread_type_assignment_15(self):
+        th = self.tm.setup_thread(15, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_16(self):
+        th = self.tm.setup_thread(16, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_17(self):
+        th = self.tm.setup_thread(17, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_18(self):
+        th = self.tm.setup_thread(18, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_19(self):
+        th = self.tm.setup_thread(19, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_20(self):
+        th = self.tm.setup_thread(20, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_21(self):
+        th = self.tm.setup_thread(21, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_22(self):
+        th = self.tm.setup_thread(22, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_23(self):
+        th = self.tm.setup_thread(23, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_24(self):
+        th = self.tm.setup_thread(24, 0)
+        self.assertEqual(type(th), ingest.IngestThread)
+
+    def test_thread_type_assignment_25(self):
+        th = self.tm.setup_thread(25, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
+    def test_thread_type_assignment_26(self):
+        th = self.tm.setup_thread(26, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
+    def test_thread_type_assignment_27(self):
+        th = self.tm.setup_thread(27, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
+    def test_thread_type_assignment_28(self):
+        th = self.tm.setup_thread(28, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
+    def test_thread_type_assignment_29(self):
+        th = self.tm.setup_thread(29, 0)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+
     def test_thread_type_assignment_30(self):
         th = self.tm.setup_thread(30, 0)
         self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
@@ -238,7 +298,7 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_34(self):
         th = self.tm.setup_thread(34, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), query.SinglePlotQuery)
 
     def test_thread_type_assignment_35(self):
         th = self.tm.setup_thread(35, 0)
@@ -258,10 +318,22 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_39(self):
         th = self.tm.setup_thread(39, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.MultiPlotQuery)
 
     def test_thread_type_assignment_40(self):
         th = self.tm.setup_thread(40, 0)
+        self.assertEqual(type(th), query.SearchQuery)
+
+    def test_thread_type_assignment_41(self):
+        th = self.tm.setup_thread(41, 0)
+        self.assertEqual(type(th), query.SearchQuery)
+
+    def test_thread_type_assignment_42(self):
+        th = self.tm.setup_thread(42, 0)
+        self.assertEqual(type(th), query.SearchQuery)
+
+    def test_thread_type_assignment_43(self):
+        th = self.tm.setup_thread(43, 0)
         self.assertEqual(type(th), query.SearchQuery)
 
     def test_thread_type_assignment_44(self):
