@@ -8,7 +8,6 @@ import random
 import math
 
 import ingest
-import ingestenum
 import query
 import annotationsingest
 import abstract_thread
@@ -103,14 +102,10 @@ class FakeIdentityConnector(object):
 
 requests_by_type = {
     ingest.IngestThread:                        MockReq(),
-    ingestenum.EnumIngestThread:                MockReq(),
     annotationsingest.AnnotationsIngestThread:  MockReq(),
     query.SinglePlotQuery:                      MockReq(),
     query.MultiPlotQuery:                       MockReq(),
     query.SearchQuery:                          MockReq(),
-    query.EnumSearchQuery:                      MockReq(),
-    query.EnumSinglePlotQuery:                  MockReq(),
-    query.EnumMultiPlotQuery:                   MockReq(),
     query.AnnotationsQuery:                     MockReq(),
 }
 
@@ -134,11 +129,6 @@ grinder_props = {
     'grinder.bf.metrics_per_tenant': '15',
     'grinder.bf.ingest_batch_size': '5',
 
-    'grinder.bf.enum_ingest_weight': '0',
-    'grinder.bf.enum_num_tenants': '4',
-    'grinder.bf.enum_metrics_per_tenant': '5',
-    'grinder.bf.enum_batch_size': '5',
-
     'grinder.bf.annotations_weight': '5',
     'grinder.bf.annotations_num_tenants': '4',
     'grinder.bf.annotations_per_tenant': '5',
@@ -148,12 +138,6 @@ grinder_props = {
     'grinder.bf.multiplot_query_weight': '2',
 
     'grinder.bf.search_query_weight': '2',
-
-    'grinder.bf.enum_search_query_weight': '0',
-
-    'grinder.bf.enum_single_plot_query_weight': '0',
-
-    'grinder.bf.enum_multiplot_query_weight': '0',
 
     'grinder.bf.annotations_query_weight': '1',
 }
@@ -171,12 +155,6 @@ class TestCaseBase(unittest.TestCase):
 class ThreadManagerTest(TestCaseBase):
     def setUp(self):
         config = grinder_props.copy()
-        config.update({
-            'grinder.bf.enum_ingest_weight': 15,
-            'grinder.bf.enum_search_query_weight': 1,
-            'grinder.bf.enum_single_plot_query_weight': 1,
-            'grinder.bf.enum_multiplot_query_weight': 1,
-        })
         self.tm = tm.ThreadManager(config, requests_by_type)
 
         self.test_config = abstract_thread.default_config.copy()
@@ -242,66 +220,6 @@ class ThreadManagerTest(TestCaseBase):
         th = self.tm.setup_thread(14, 0)
         self.assertEqual(type(th), ingest.IngestThread)
 
-    def test_thread_type_assignment_15(self):
-        th = self.tm.setup_thread(15, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_16(self):
-        th = self.tm.setup_thread(16, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_17(self):
-        th = self.tm.setup_thread(17, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_18(self):
-        th = self.tm.setup_thread(18, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_19(self):
-        th = self.tm.setup_thread(19, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_20(self):
-        th = self.tm.setup_thread(20, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_21(self):
-        th = self.tm.setup_thread(21, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_22(self):
-        th = self.tm.setup_thread(22, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_23(self):
-        th = self.tm.setup_thread(23, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_24(self):
-        th = self.tm.setup_thread(24, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_25(self):
-        th = self.tm.setup_thread(25, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_26(self):
-        th = self.tm.setup_thread(26, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_27(self):
-        th = self.tm.setup_thread(27, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_28(self):
-        th = self.tm.setup_thread(28, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
-    def test_thread_type_assignment_29(self):
-        th = self.tm.setup_thread(29, 0)
-        self.assertEqual(type(th), ingestenum.EnumIngestThread)
-
     def test_thread_type_assignment_30(self):
         th = self.tm.setup_thread(30, 0)
         self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
@@ -346,18 +264,6 @@ class ThreadManagerTest(TestCaseBase):
         th = self.tm.setup_thread(40, 0)
         self.assertEqual(type(th), query.SearchQuery)
 
-    def test_thread_type_assignment_41(self):
-        th = self.tm.setup_thread(41, 0)
-        self.assertEqual(type(th), query.EnumSearchQuery)
-
-    def test_thread_type_assignment_42(self):
-        th = self.tm.setup_thread(42, 0)
-        self.assertEqual(type(th), query.EnumSinglePlotQuery)
-
-    def test_thread_type_assignment_43(self):
-        th = self.tm.setup_thread(43, 0)
-        self.assertEqual(type(th), query.EnumMultiPlotQuery)
-
     def test_thread_type_assignment_44(self):
         th = self.tm.setup_thread(44, 0)
         self.assertEqual(type(th), query.AnnotationsQuery)
@@ -378,11 +284,6 @@ class InitProcessTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 0,
-            'enum_num_tenants': 4,
-            'enum_metrics_per_tenant': 2,
-            'enum_batch_size': 3,
-
             'annotations_weight': 2,
             'annotations_num_tenants': 3,
             'annotations_per_tenant': 2,
@@ -392,12 +293,6 @@ class InitProcessTest(TestCaseBase):
             'multiplot_query_weight': 10,
 
             'search_query_weight': 9,
-
-            'enum_search_query_weight': 0,
-
-            'enum_single_plot_query_weight': 0,
-
-            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -414,11 +309,6 @@ class GeneratePayloadTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 0,
-            'enum_num_tenants': 4,
-            'enum_metrics_per_tenant': 2,
-            'enum_batch_size': 3,
-
             'annotations_weight': 2,
             'annotations_num_tenants': 3,
             'annotations_per_tenant': 2,
@@ -428,12 +318,6 @@ class GeneratePayloadTest(TestCaseBase):
             'multiplot_query_weight': 10,
 
             'search_query_weight': 9,
-
-            'enum_search_query_weight': 0,
-
-            'enum_single_plot_query_weight': 0,
-
-            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -463,32 +347,6 @@ class GeneratePayloadTest(TestCaseBase):
                           'unit': 'days'}]
         self.assertEqual(payload, valid_payload)
 
-    def test_generate_enum_payload(self):
-        agent_num = 1
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
-                                             self.test_config)
-        payload = json.loads(
-            thread.generate_payload(1, [[2, 1, 'e_g_1_0'], [2, 2, 'e_g_2_0']]))
-        valid_payload = [{
-            'timestamp': 1,
-            'tenantId': '2',
-            'enums': [{
-                'value': 'e_g_1_0',
-                'name': ingestenum.EnumIngestThread.
-                         generate_enum_metric_name(1, self.test_config)
-            }]},
-            {
-                'timestamp': 1,
-                'tenantId': '2',
-                'enums': [{
-                    'value': 'e_g_2_0',
-                    'name': ingestenum.EnumIngestThread.
-                             generate_enum_metric_name(2, self.test_config)
-                }]
-            }
-        ]
-        self.assertEqual(payload, valid_payload)
-
     def test_generate_annotations_payload(self):
         agent_num = 1
         thread = annotationsingest.AnnotationsIngestThread(
@@ -516,11 +374,6 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 0,
-            'enum_num_tenants': 4,
-            'enum_metrics_per_tenant': 2,
-            'enum_batch_size': 3,
-
             'annotations_weight': 2,
             'annotations_num_tenants': 3,
             'annotations_per_tenant': 2,
@@ -530,12 +383,6 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             'multiplot_query_weight': 10,
 
             'search_query_weight': 9,
-
-            'enum_search_query_weight': 0,
-
-            'enum_single_plot_query_weight': 0,
-
-            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -576,11 +423,6 @@ class MakeIngestRequestsTest(TestCaseBase):
             'ingest_metrics_per_tenant': 7,
             'ingest_batch_size': 3,
 
-            'enum_ingest_weight': 0,
-            'enum_num_tenants': 4,
-            'enum_metrics_per_tenant': 2,
-            'enum_batch_size': 3,
-
             'annotations_weight': 2,
             'annotations_num_tenants': 3,
             'annotations_per_tenant': 2,
@@ -590,12 +432,6 @@ class MakeIngestRequestsTest(TestCaseBase):
             'multiplot_query_weight': 10,
 
             'search_query_weight': 9,
-
-            'enum_search_query_weight': 0,
-
-            'enum_single_plot_query_weight': 0,
-
-            'enum_multiplot_query_weight': 0,
 
             'annotations_query_weight': 8,
         })
@@ -624,83 +460,6 @@ class MakeIngestRequestsTest(TestCaseBase):
         self.assertEqual(
             url,
             'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
-        self.assertEqual(eval(payload), valid_payload)
-
-
-class MakeIngestEnumRequestsTest(TestCaseBase):
-    def setUp(self):
-        self.test_config = abstract_thread.default_config.copy()
-        self.test_config.update({
-            'url': 'http://metrics-ingest.example.org',
-            'query_url': 'http://metrics.example.org',
-
-            'name_fmt': "org.example.metric.%d",
-
-            'ingest_weight': 2,
-            'ingest_num_tenants': 3,
-            'ingest_metrics_per_tenant': 7,
-            'ingest_batch_size': 3,
-
-            'enum_ingest_weight': 0,
-            'enum_num_tenants': 4,
-            'enum_metrics_per_tenant': 2,
-            'enum_batch_size': 3,
-
-            'annotations_weight': 2,
-            'annotations_num_tenants': 3,
-            'annotations_per_tenant': 2,
-
-            'singleplot_query_weight': 11,
-
-            'multiplot_query_weight': 10,
-
-            'search_query_weight': 9,
-
-            'enum_search_query_weight': 0,
-
-            'enum_single_plot_query_weight': 0,
-
-            'enum_multiplot_query_weight': 0,
-
-            'annotations_query_weight': 8,
-        })
-
-    def test_ingest_enum_make_request(self):
-        global sleep_time
-        agent_num = 0
-        thread = ingestenum.EnumIngestThread(0, agent_num, MockReq(),
-                                             self.test_config)
-        valid_payload = [
-            {
-                'tenantId': '2',
-                'timestamp': 1000,
-                'enums': [{
-                    'value': 'e_g_0_0',
-                    'name': ingestenum.EnumIngestThread.
-                            generate_enum_metric_name(0, self.test_config)
-                }]
-            },
-            {
-                'tenantId': '2',
-                'timestamp': 1000,
-                'enums': [{
-                    'value': 'e_g_1_0',
-                    'name': ingestenum.EnumIngestThread.
-                            generate_enum_metric_name(1, self.test_config)
-                }]
-            }
-        ]
-
-        response = thread.make_request(
-            pp, 1000,
-            tenant_metric_id_values=[[2, 0, 'e_g_0_0'], [2, 1, 'e_g_1_0']])
-        url = response.request.post_url
-        payload = response.request.post_payload
-
-        # confirm request generates proper URL and payload
-        self.assertEqual(url,
-                         'http://metrics-ingest.example.org/v2.0/tenantId/' +
-                         'ingest/aggregated/multi')
         self.assertEqual(eval(payload), valid_payload)
 
 
@@ -758,43 +517,6 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
                          "getEvents?from=-86399000&until=1000")
-        self.assertIs(req, response.request)
-
-    def test_query_make_EnumSearchQuery_request(self):
-        req = requests_by_type[query.EnumSearchQuery]
-        qq = query.EnumSearchQuery(0, self.agent_num, req, self.config)
-        response = qq.make_request(None, 1000, 40)
-        self.assertEqual(req.get_url,
-                         "http://metrics.example.org/v2.0/40/metrics/search?" +
-                         "query=enum_grinder_org.example.metric.*&" +
-                         "include_enum_values=true")
-        self.assertIs(req, response.request)
-
-    def test_query_make_EnumSinglePlotQuery_request(self):
-        req = requests_by_type[query.EnumSinglePlotQuery]
-        qq = query.EnumSinglePlotQuery(0, self.agent_num, req, self.config)
-        response = qq.make_request(None, 1000, 50,
-                                 'enum_grinder_org.example.metric.metric456')
-        self.assertEqual(req.get_url,
-                         "http://metrics.example.org/v2.0/50/views/" +
-                         "enum_grinder_org.example.metric.metric456?" +
-                         "from=-86399000&to=1000&resolution=FULL")
-        self.assertIs(req, response.request)
-
-    def test_query_make_EnumMultiPlotQuery_request(self):
-        req = requests_by_type[query.EnumMultiPlotQuery]
-        qq = query.EnumMultiPlotQuery(0, self.agent_num, req, self.config)
-        payload_sent = json.dumps([
-            "enum_grinder_org.example.metric.0",
-            "enum_grinder_org.example.metric.1",
-            "enum_grinder_org.example.metric.2",
-            "enum_grinder_org.example.metric.3"
-        ])
-        response = qq.make_request(None, 1000, 4, payload_sent)
-        self.assertEqual(req.post_url,
-                         "http://metrics.example.org/v2.0/4/views?" +
-                         "from=-86399000&to=1000&resolution=FULL")
-        self.assertEqual(req.post_payload, payload_sent)
         self.assertIs(req, response.request)
 
 
@@ -1069,7 +791,6 @@ suite.addTest(loader.loadTestsFromTestCase(InitProcessTest))
 suite.addTest(loader.loadTestsFromTestCase(GeneratePayloadTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeAnnotationsIngestRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeIngestRequestsTest))
-suite.addTest(loader.loadTestsFromTestCase(MakeIngestEnumRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeQueryRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
