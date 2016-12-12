@@ -5,10 +5,8 @@ import ast
 from abstract_thread import default_config
 from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
-from ingestenum import EnumIngestThread
 from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
-from query import EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery
-from query import EnumMultiPlotQuery
+from query import AnnotationsQuery
 from config import clean_configs, convert
 
 
@@ -55,7 +53,6 @@ class ThreadManager(object):
         thread_types = [
             (IngestThread, self.config['ingest_weight'],
                 self.config.get('ingest_throttling_group', None)),
-            (EnumIngestThread, self.config['enum_ingest_weight'], None),
             (AnnotationsIngestThread, self.config['annotations_weight'],
                 self.config.get('annotations_throttling_group', None)),
             (SinglePlotQuery, self.config['singleplot_query_weight'],
@@ -64,11 +61,6 @@ class ThreadManager(object):
                 self.config.get('multiplot_query_throttling_group', None)),
             (SearchQuery, self.config['search_query_weight'],
                 self.config.get('search_query_throttling_group', None)),
-            (EnumSearchQuery, self.config['enum_search_query_weight'], None),
-            (EnumSinglePlotQuery,
-                self.config['enum_single_plot_query_weight'], None),
-            (EnumMultiPlotQuery, self.config['enum_multiplot_query_weight'],
-                None),
             (AnnotationsQuery, self.config['annotations_query_weight'],
                 self.config.get('annotations_query_throttling_group', None)),
         ]

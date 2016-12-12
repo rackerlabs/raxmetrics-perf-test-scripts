@@ -9,10 +9,7 @@ import thread_manager as tm
 import py_java
 from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
-from ingestenum import EnumIngestThread
 from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
-from query import EnumSearchQuery, EnumSinglePlotQuery, AnnotationsQuery
-from query import EnumMultiPlotQuery
 from config import clean_configs
 import abstract_thread
 from throttling_group import ThrottlingGroup
@@ -81,7 +78,6 @@ requests_by_type = {
             "Ingest test",
             config.get('ingest_throttling_group', None),
             user),
-    EnumIngestThread: create_request_obj(7, "Enum Ingest test"),
     AnnotationsIngestThread:
         create_request_obj(
             2,
@@ -106,9 +102,6 @@ requests_by_type = {
             "SearchQuery",
             config.get('search_query_throttling_group', None),
             user),
-    EnumSearchQuery: create_request_obj(8, "EnumSearchQuery"),
-    EnumSinglePlotQuery: create_request_obj(9, "EnumSinglePlotQuery"),
-    EnumMultiPlotQuery: create_request_obj(10, "EnumMultiPlotQuery"),
     AnnotationsQuery:
         create_request_obj(
             6,

@@ -22,12 +22,6 @@ default_config = {
     # ingestion
     'ingest_delay_millis': "",
 
-    'enum_ingest_weight': 0,
-    'enum_num_tenants': 4,
-    'enum_metrics_per_tenant': 10,
-    'enum_batch_size': 5,
-    'enum_num_values': 10,
-
     'annotations_weight': 5,
     'annotations_num_tenants': 5,
     'annotations_per_tenant': 10,
@@ -37,12 +31,6 @@ default_config = {
     'multiplot_query_weight': 10,
 
     'search_query_weight': 10,
-
-    'enum_search_query_weight': 0,
-
-    'enum_single_plot_query_weight': 0,
-
-    'enum_multiplot_query_weight': 0,
 
     'annotations_query_weight': 8}
 
