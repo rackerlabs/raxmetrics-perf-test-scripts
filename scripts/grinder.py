@@ -10,6 +10,7 @@ import py_java
 from annotationsingest import AnnotationsIngestThread
 from ingest import IngestThread
 from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
+from query import AnnotationsQuery
 from config import clean_configs
 import abstract_thread
 from throttling_group import ThrottlingGroup
