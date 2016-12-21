@@ -51,17 +51,12 @@ for k, v in config.iteritems():
         throttling_groups[name] = ThrottlingGroup(name, int(v))
 
 
-def create_test_around_object(test_num, test_name, obj):
-    test = Test(test_num, test_name)
-    test.record(obj)
-    return test
-
-
 def create_request_obj(test_num, test_name, tgroup_name=None,
                        auth_user=None):
+    test = Test(test_num, test_name)
     request = HTTPRequest()
     request = ResponseCheckingRequest(request)
-    create_test_around_object(test_num, test_name, request)
+    test.record(request)
     request = ExceptionHandlingRequest(request)
     if auth_user:
         request = AuthenticatingRequest(request, auth_user)
