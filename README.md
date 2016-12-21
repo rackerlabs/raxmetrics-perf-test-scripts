@@ -69,6 +69,7 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]auth_api_key` - The API key to authenticate with before running the perf test.
 * `[grinder.bf.]auth_properties_path` - Path to a `.properties` file that contains the user credentials. If any of `auth_url`, `auth_username`, or `auth_api_key` is not specified in the main config file, then this property will be checked for credentials. The property file referred to by this property will **only** be checked for user credentials; any other properties defined in it will not be used for any purpose, nor will this `.properties` file in any way override the main config.
 * `[grinder.bf.]auth_properties_encr_key_file` - Path to a `.properties` file that hass a `password` entry giving a simple encryption key. If this property is specified, then properties in the `auth_properties_path` file can be encrypted using jasypt, e.g. `ENC(abc123...)`. The property file referred to by `auth_properties_encr_key_file` will **only** be checked for a `password` property; any other properties defined in it will not be used for any purpose, nor will this property file in any way override the main config.
+* `[grinder.bf.]print_tokens` - True to print authentication tokens to the log when they are retrieved from the identity service. Default is False.
 
 ##Installing
 The following command will download the necessary software packages and place them under the `dependencies/` folder:
