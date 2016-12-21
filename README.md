@@ -46,6 +46,7 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]ingest_batch_size` - Ingestion threads will generate this many metrics in a single payload (HTTP request body). Default is `5`.
 * `[grinder.bf.]ingest_delay_millis` - Configures delayed metrics. Default is `""`, which doesn't produced any delayed metrics.
 * `[grinder.bf.]ingest_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `IngestThread` objects. Default is `None`. If the tgroup name is blank, or is not defined amongh the throttling groups (or if there is a _spelling_error_), then no throttling will be performed for this thread type.
+* `[grinder.bf.]ingest_count_raw_metrics` - `True` to create a secondary Grinder `Test` object to track the total number of metrics ingested, not just the number of HTTP requests. The count is increased by the number of metrics in a given POST payload (which should be equal to `ingest_batch_size`), when the given request is successful. Note that this will skew the total TPS and other statistics that Grinder collects. Default is False.
 
 * `[grinder.bf.]annotations_weight` - Default is `5`.
 * `[grinder.bf.]annotations_num_tenants` - Exactly like `ingest_num_tenants`, except that this property controls the number of tenant id's for the `AnnotationsIngestThread` class. This property is provided so that ingest and annotation ingest threads can be configured independently. Default is `5`.
