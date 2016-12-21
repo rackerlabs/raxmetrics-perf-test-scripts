@@ -18,7 +18,7 @@ class User(object):
     tenant_id = None
     logger = None
 
-    def __init__(self, auth_url, username, api_key, conn=None):
+    def __init__(self, auth_url, username, api_key, config, conn=None):
 
         if conn is None:
             conn = Connector()
@@ -26,6 +26,7 @@ class User(object):
         self.auth_url = auth_url
         self.username = username
         self.api_key = api_key
+        self.config = config
         self.connector = conn
         self.lock = threading.RLock()
 
@@ -80,6 +81,9 @@ class User(object):
             catalog = resp.json()
             self.tenant_id = catalog['access']['token']['tenant']['id']
             self.token = catalog['access']['token']['id']
+            if self.config.get('print_tokens', False):
+                self.logger('token for user "%s" is %s' %
+                            (self.username, self.token))
             return self.tenant_id, self.token
 
         self.lock.acquire()

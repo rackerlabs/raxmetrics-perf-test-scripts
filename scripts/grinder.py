@@ -117,8 +117,12 @@ thread_manager = tm.ThreadManager(config, requests_by_type)
 class TestRunner:
     def __init__(self):
         agent_number = grinder.getAgentNumber()
+        thread_number = grinder.getThreadNumber()
         self.thread = thread_manager.setup_thread(
-            grinder.getThreadNumber(), agent_number, throttling_groups, user)
+            thread_number, agent_number, throttling_groups, user)
+        worker_type = type(self.thread)
+        grinder.logger.info('Worker %s-%s type %s' %
+                            (agent_number, thread_number, worker_type))
 
     def __call__(self):
         result = self.thread.make_request(grinder.logger.info,

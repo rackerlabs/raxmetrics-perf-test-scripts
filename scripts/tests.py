@@ -773,7 +773,7 @@ class UserTest(TestCaseBase):
     def test_constructor_sets_fields(self):
 
         # when
-        user = User(self.auth_url, self.username, self.api_key)
+        user = User(self.auth_url, self.username, self.api_key, config={})
 
         # then
         self.assertEqual(self.auth_url, user.auth_url)
@@ -786,7 +786,7 @@ class UserTest(TestCaseBase):
         conn = object()
 
         # when
-        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+        user = User(self.auth_url, self.username, self.api_key, config={}, conn=conn)
 
         # then
         self.assertIs(conn, user.connector)
@@ -794,7 +794,7 @@ class UserTest(TestCaseBase):
     def test_get_data_makes_a_connection(self):
         # given
         conn = FakeIdentityConnector()
-        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+        user = User(self.auth_url, self.username, self.api_key, config={}, conn=conn)
 
         # precondition
         self.assertFalse(conn.called)
@@ -810,7 +810,7 @@ class UserTest(TestCaseBase):
     def test_get_data_sets_tenant_and_token(self):
         # given
         conn = FakeIdentityConnector()
-        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+        user = User(self.auth_url, self.username, self.api_key, config={}, conn=conn)
 
         # precondition
         self.assertFalse(conn.called)
@@ -827,7 +827,7 @@ class UserTest(TestCaseBase):
     def test_get_token_gets_token(self):
         # given
         conn = FakeIdentityConnector()
-        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+        user = User(self.auth_url, self.username, self.api_key, config={}, conn=conn)
 
         # when
         result = user.get_token()
@@ -838,7 +838,7 @@ class UserTest(TestCaseBase):
     def test_get_tenant_id_gets_tenant(self):
         # given
         conn = FakeIdentityConnector()
-        user = User(self.auth_url, self.username, self.api_key, conn=conn)
+        user = User(self.auth_url, self.username, self.api_key, config={}, conn=conn)
 
         # when
         result = user.get_tenant_id()

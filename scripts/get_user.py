@@ -54,7 +54,7 @@ def get_user(config, grinder):
     auth_username = config.get('auth_username', None)
     auth_api_key = config.get('auth_api_key', None)
     if auth_url and auth_username and auth_api_key:
-        return User(auth_url, auth_username, auth_api_key)
+        return User(auth_url, auth_username, auth_api_key, config)
 
     auth_properties_encr_key_file = config.get('auth_properties_encr_key_file',
                                                None)
@@ -88,5 +88,5 @@ def get_user(config, grinder):
         auth_username = user_creds_dict.get('auth_username', None)
         auth_api_key = user_creds_dict.get('auth_api_key', None)
         if auth_url and auth_username and auth_api_key:
-            return User(auth_url, auth_username, auth_api_key)
+            return User(auth_url, auth_username, auth_api_key, config)
     return None
