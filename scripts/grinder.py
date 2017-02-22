@@ -13,6 +13,7 @@ from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import AnnotationsQuery
 from config import clean_configs
 import abstract_thread
+from raw_ingest_counter import RawIngestCounter
 from throttling_group import ThrottlingGroup
 from throttling_request import ThrottlingRequest
 from authenticating_request import AuthenticatingRequest
@@ -110,6 +111,10 @@ requests_by_type = {
             config.get('annotations_query_throttling_group', None),
             user),
 }
+
+if config.get('ingest_count_raw_metrics', False):
+    test = Test(101, "Metrics Ingested Raw Count")
+    IngestThread.raw_ingest_counter = RawIngestCounter(test)
 
 thread_manager = tm.ThreadManager(config, requests_by_type)
 

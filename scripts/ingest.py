@@ -1,5 +1,7 @@
 import random
 
+from raw_ingest_counter import NullIngestCounter
+
 try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
@@ -35,6 +37,8 @@ class IngestThread(AbstractThread):
         4: 'years',
         5: 'decades'
     }
+
+    raw_ingest_counter = NullIngestCounter()
 
     def generate_unit(self, tenant_id):
         tenant_id = int_from_tenant(tenant_id)
@@ -85,4 +89,9 @@ class IngestThread(AbstractThread):
         result = self.request.POST(url, payload, headers)
         if result.getStatusCode() >= 400:
             logger("IngestThread Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
+        if 200 <= result.getStatusCode() < 300:
+            self.count_raw_metrics(len(tenant_metric_id_values))
         return result
+
+    def count_raw_metrics(self, n):
+        self.raw_ingest_counter.count(n)
