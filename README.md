@@ -114,8 +114,8 @@ java net.grinder.Grinder $GRINDER_PROPERTIES_FILE
 
 There are currently some example properties files in the `properties` folder:
 
-1. grinder-local.properties has some configs for running on your localhost
-2. grinder-unittests.properties holds the configs used by the unit tests
+1. `grinder-local.properties` has some configs for running on your localhost
+2. `grinder-unittests.properties` holds the configs used by the unit tests
 
 ##Coverage
 There is a set of unit tests to check the function of the individual components in the scripts.
