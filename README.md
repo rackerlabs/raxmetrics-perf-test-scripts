@@ -84,35 +84,38 @@ Note this needs to be run on each node in the cluster, as well as the console.
 ##Starting the console
 The GUI is started like so:
 ```bash
-cd $BLUEFLOOD_INSTALL/contrib/grinder
-java -cp  resources/grinder-3.11/lib/grinder.jar:resources/jyson-1.0.2/lib/jyson-1.0.2.jar net.grinder.Console
+. set-env.sh
+java net.grinder.Console
 ```
+
 The console can be run headless, like so:
 ```bash
-java -cp  resources/grinder-3.11/lib/grinder.jar:resources/jyson-1.0.2/lib/jyson-1.0.2.jar net.grinder.Console -headless
+. set-env.sh
+java net.grinder.Console -headless
 ```
 
 and you interact with a rest api like so:
+
 ```bash
 curl -X POST http://localhost:6373/agents/stop-workers
 curl -X POST http://localhost:6373/agents/start-workers
 ```
+
 The graphical console gives some useful status info, so you may prefer using that.
 
 
 ##Starting the agents
 Each agent is started like so:
+
 ```bash
-java -cp  resources/grinder-3.11/lib/grinder.jar:resources/jyson-1.0.2/lib/jyson-1.0.2.jar net.grinder.Grinder $GRINDER_PROPERTIES_FILE
-```
-There are currently some example properties files here:
-```bash
-$BLUEFLOOD_INSTALL/contrib/grinder/properties/
+. set-env.sh
+java net.grinder.Grinder $GRINDER_PROPERTIES_FILE
 ```
 
-grinder.properties runs the unit tests
-grinder.properties.local has some configs for running on your localhost
-grinder.properties.staging runs the staging configuration and is meant to be run on two nodes
+There are currently some example properties files in the `properties` folder:
+
+1. grinder-local.properties has some configs for running on your localhost
+2. grinder-unittests.properties holds the configs used by the unit tests
 
 ##Coverage
 There is a set of unit tests to check the function of the individual components in the scripts.
