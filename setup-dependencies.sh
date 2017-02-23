@@ -1,6 +1,6 @@
 #!/bin/bash
 
-topsrc=`dirname $0`  # this gives you the directory where this script is located
+topsrc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # this gives you the directory where this script is located
 
 mkdir -p $topsrc/dependencies
 cd $topsrc/dependencies
