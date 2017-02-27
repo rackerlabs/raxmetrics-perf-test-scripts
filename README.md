@@ -82,19 +82,17 @@ The following command will download the necessary software packages and place th
 Note this needs to be run on each node in the cluster, as well as the console.
 
 ##Starting the console
-The GUI is started like so:
+The GUI can be started with the provided script:
 ```bash
-. set-env.sh
-java net.grinder.Console
+./run-console.sh
 ```
 
-The console can be run headless, like so:
+The console can also be run headless, with another provided script:
 ```bash
-. set-env.sh
-java net.grinder.Console -headless
+./run-headless-console.sh
 ```
 
-and you interact with a rest api like so:
+and you can interact with a rest api like so:
 
 ```bash
 curl -X POST http://localhost:6373/agents/stop-workers
@@ -105,11 +103,10 @@ The graphical console gives some useful status info, so you may prefer using tha
 
 
 ##Starting the agents
-Each agent is started like so:
+Each agent is started with the provided script, like so:
 
 ```bash
-. set-env.sh
-java net.grinder.Grinder $GRINDER_PROPERTIES_FILE
+./run-agent.sh $GRINDER_PROPERTIES_FILE
 ```
 
 There are currently some example properties files in the `properties` folder:
