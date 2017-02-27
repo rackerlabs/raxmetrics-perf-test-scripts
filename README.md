@@ -1,4 +1,4 @@
-# Blueflood Grinder Integration
+# Blueflood Grinder Integration <a href="https://github.com/rackerlabs/raxmetrics-perf-test-scripts"><img src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png" height="32" width="32"/></a>
 ##Intro
 Grinder is a distributed load testing tool described [here](http://grinder.sourceforge.net/g3/getting-started.html)
 
