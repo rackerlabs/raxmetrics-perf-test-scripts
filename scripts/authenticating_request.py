@@ -50,33 +50,30 @@ class AuthenticatingRequest(object):
 
         return args, kwargs
 
+    def execute_request(self, request_method, headers_arg_index, args, kwargs):
+        args, kwargs = self.authenticate(args, kwargs, headers_arg_index)
+        return request_method(*args, **kwargs)
+
     def GET(self, *args, **kwargs):
-        args, kwargs = self.authenticate(args, kwargs, 2)
-        return self.request.GET(*args, **kwargs)
+        return self.execute_request(self.request.GET, 2, args, kwargs)
 
     def HEAD(self, *args, **kwargs):
-        args, kwargs = self.authenticate(args, kwargs, 2)
-        return self.request.HEAD(*args, **kwargs)
+        return self.execute_request(self.request.HEAD, 2, args, kwargs)
 
     def POST(self, *args, **kwargs):
-        args, kwargs = self.authenticate(args, kwargs, 2)
-        return self.request.POST(*args, **kwargs)
+        return self.execute_request(self.request.POST, 2, args, kwargs)
 
     def PUT(self, *args, **kwargs):
-        args, kwargs = self.authenticate(args, kwargs, 2)
-        return self.request.PUT(*args, **kwargs)
+        return self.execute_request(self.request.PUT, 2, args, kwargs)
 
     def DELETE(self, *args, **kwargs):
-        args, kwargs = self.authenticate(args, kwargs, 1)
-        return self.request.DELETE(*args, **kwargs)
+        return self.execute_request(self.request.DELETE, 1, args, kwargs)
 
     def OPTIONS(self, *args, **kwargs):
-        args, kwargs = self.authenticate(args, kwargs, 2)
-        return self.request.OPTIONS(*args, **kwargs)
+        return self.execute_request(self.request.OPTIONS, 2, args, kwargs)
 
     def TRACE(self, *args, **kwargs):
-        args, kwargs = self.authenticate(args, kwargs, 1)
-        return self.request.TRACE(*args, **kwargs)
+        return self.execute_request(self.request.TRACE, 1, args, kwargs)
 
 
 class NullAuthenticatingRequest(AuthenticatingRequest):
