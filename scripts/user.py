@@ -102,6 +102,11 @@ class User(object):
             self._get_data()
         return self.tenant_id
 
+    def reauthenticate(self):
+        self.token = None
+        self.tenant_id = None
+        return self._get_data()
+
 
 class NullUser(object):
     def get_token(self):
