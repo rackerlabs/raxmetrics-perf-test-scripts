@@ -761,6 +761,41 @@ class AuthenticatingRequestTest(unittest.TestCase):
         self.assertEqual('X-Auth-Token', header.getName())
         self.assertEqual(token, header.getValue())
 
+    def test_reauthenticates_on_401(self):
+
+        # given
+        class MockReqAlways401(MockReq):
+            def GET(self, url, payload=None, headers=None):
+                global get_url
+                get_url = url
+                self.get_url = url
+                self.headers = headers
+                return MockResponse(self, 401)
+
+        class ReauthenticatingNullUser(NullUser):
+            reauthenticated = False
+
+            def reauthenticate(self):
+                self.reauthenticated = True
+
+        req = MockReqAlways401()
+        token = 'token'
+        uri = '/path/to/resource'
+        body = 'this is the body'
+        user = ReauthenticatingNullUser()
+
+        ap = AuthenticatingRequest(request=req,
+                                   user=user)
+
+        # precondition
+        self.assertFalse(user.reauthenticated)
+
+        # when
+        ap.GET(uri, body)
+
+        # then
+        self.assertTrue(user.reauthenticated)
+
 
 class UserTest(TestCaseBase):
 

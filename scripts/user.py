@@ -114,3 +114,6 @@ class NullUser(object):
 
     def get_tenant_id(self):
         return 'tenantId'
+
+    def reauthenticate(self):
+        return self.get_tenant_id(), self.get_token()
