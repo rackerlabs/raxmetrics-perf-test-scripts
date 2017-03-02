@@ -17,6 +17,7 @@ class User(object):
     token = None
     tenant_id = None
     logger = None
+    expires = False
 
     def __init__(self, auth_url, username, api_key, config, conn=None):
 
@@ -81,6 +82,9 @@ class User(object):
             catalog = resp.json()
             self.tenant_id = catalog['access']['token']['tenant']['id']
             self.token = catalog['access']['token']['id']
+            expiration_date = catalog['access']['token']['expires']
+            self.expires = datetime.datetime.strptime(expiration_date,
+                                                      "%Y-%m-%dT%H:%M:%S.%fZ")
             if self.config.get('print_tokens', False):
                 self.logger('token for user "%s" is %s' %
                             (self.username, self.token))
