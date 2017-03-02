@@ -109,7 +109,17 @@ class User(object):
     def reauthenticate(self):
         self.token = None
         self.tenant_id = None
+        self.expires = None
         return self._get_data()
+
+    def is_expired(self):
+        if not self.expires:
+            return False
+
+        if datetime.datetime.utcnow() >= self.expires:
+            return True
+
+        return False
 
 
 class NullUser(object):
