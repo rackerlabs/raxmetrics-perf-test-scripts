@@ -51,6 +51,8 @@ class AuthenticatingRequest(object):
         return args, kwargs
 
     def execute_request(self, request_method, headers_arg_index, args, kwargs):
+        if self.user.is_expired():
+            self.user.reauthenticate()
         args1, kwargs1 = self.authenticate(args, kwargs, headers_arg_index)
         response = request_method(*args1, **kwargs1)
         if response.getStatusCode() in [401, 403]:
