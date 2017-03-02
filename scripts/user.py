@@ -17,7 +17,7 @@ class User(object):
     token = None
     tenant_id = None
     logger = None
-    expires = False
+    expires = None
 
     def __init__(self, auth_url, username, api_key, config, conn=None):
 
@@ -112,11 +112,14 @@ class User(object):
         self.expires = None
         return self._get_data()
 
-    def is_expired(self):
+    def is_expired(self, current_time=None):
+        if current_time is None:
+            current_time = datetime.datetime.utcnow()
+
         if not self.expires:
             return False
 
-        if datetime.datetime.utcnow() >= self.expires:
+        if current_time >= self.expires:
             return True
 
         return False
