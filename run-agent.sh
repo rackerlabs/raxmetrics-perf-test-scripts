@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PROPERTIES_FILE=$1
 if [ -z "$PROPERTIES_FILE" ]; then

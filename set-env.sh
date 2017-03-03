@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 called=$_
 topsrc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # this gives you the directory where this script is located
