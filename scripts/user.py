@@ -85,9 +85,6 @@ class User(object):
             expiration_date = catalog['access']['token']['expires']
             self.expires = datetime.datetime.strptime(expiration_date,
                                                       "%Y-%m-%dT%H:%M:%S.%fZ")
-            if self.config.get('print_tokens', False):
-                self.logger('token for user "%s" is %s' %
-                            (self.username, self.token))
             return self.tenant_id, self.token
 
         self.lock.acquire()
