@@ -7,5 +7,5 @@ if [ -z "$PROPERTIES_FILE" ]; then
 fi
 
 topsrc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # this gives you the directory where this script is located
-source $topsrc/set-env.sh
+source $topsrc/set-env.bash
 java net.grinder.Grinder "$PROPERTIES_FILE"
