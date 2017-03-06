@@ -17,6 +17,7 @@ class User(object):
     token = None
     tenant_id = None
     logger = None
+    expires = None
 
     def __init__(self, auth_url, username, api_key, config, conn=None):
 
@@ -81,9 +82,9 @@ class User(object):
             catalog = resp.json()
             self.tenant_id = catalog['access']['token']['tenant']['id']
             self.token = catalog['access']['token']['id']
-            if self.config.get('print_tokens', False):
-                self.logger('token for user "%s" is %s' %
-                            (self.username, self.token))
+            expiration_date = catalog['access']['token']['expires']
+            self.expires = datetime.datetime.strptime(expiration_date,
+                                                      "%Y-%m-%dT%H:%M:%S.%fZ")
             return self.tenant_id, self.token
 
         self.lock.acquire()
@@ -102,6 +103,24 @@ class User(object):
             self._get_data()
         return self.tenant_id
 
+    def reauthenticate(self):
+        self.token = None
+        self.tenant_id = None
+        self.expires = None
+        return self._get_data()
+
+    def is_expired(self, current_time=None):
+        if current_time is None:
+            current_time = datetime.datetime.utcnow()
+
+        if not self.expires:
+            return False
+
+        if current_time >= self.expires:
+            return True
+
+        return False
+
 
 class NullUser(object):
     def get_token(self):
@@ -109,3 +128,6 @@ class NullUser(object):
 
     def get_tenant_id(self):
         return 'tenantId'
+
+    def reauthenticate(self):
+        return self.get_tenant_id(), self.get_token()

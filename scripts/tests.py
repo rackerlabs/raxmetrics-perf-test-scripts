@@ -6,6 +6,7 @@ import time
 import unittest
 import random
 import math
+from datetime import datetime
 
 import ingest
 import query
@@ -87,6 +88,12 @@ class FakeIdentityConnector(object):
     url = None
     json = None
     headers = None
+    expires_timestamp = None
+
+    def __init__(self, expires_timestamp=None):
+        if expires_timestamp is None:
+            expires_timestamp = '2016-01-01T00:00:00.000000Z'
+        self.expires_timestamp = expires_timestamp
 
     def post(self, url, json=None, headers=None):
         self.called = True
@@ -97,6 +104,7 @@ class FakeIdentityConnector(object):
             'access': {
                 'token': {
                     'id': UserTest.token,
+                    'expires': self.expires_timestamp,
                     'tenant': {
                         'id': UserTest.tenant}}}})
 
@@ -761,6 +769,41 @@ class AuthenticatingRequestTest(unittest.TestCase):
         self.assertEqual('X-Auth-Token', header.getName())
         self.assertEqual(token, header.getValue())
 
+    def test_reauthenticates_on_401(self):
+
+        # given
+        class MockReqAlways401(MockReq):
+            def GET(self, url, payload=None, headers=None):
+                global get_url
+                get_url = url
+                self.get_url = url
+                self.headers = headers
+                return MockResponse(self, 401)
+
+        class ReauthenticatingNullUser(NullUser):
+            reauthenticated = False
+
+            def reauthenticate(self):
+                self.reauthenticated = True
+
+        req = MockReqAlways401()
+        token = 'token'
+        uri = '/path/to/resource'
+        body = 'this is the body'
+        user = ReauthenticatingNullUser()
+
+        ap = AuthenticatingRequest(request=req,
+                                   user=user)
+
+        # precondition
+        self.assertFalse(user.reauthenticated)
+
+        # when
+        ap.GET(uri, body)
+
+        # then
+        self.assertTrue(user.reauthenticated)
+
 
 class UserTest(TestCaseBase):
 
@@ -845,6 +888,80 @@ class UserTest(TestCaseBase):
 
         # then the token was returned
         self.assertEqual(self.tenant, result)
+
+    def test_gets_expiration_timestamp_from_catalog(self):
+        # given
+        expires_str = '2017-01-01T00:00:00.000000Z'
+        expires_dt = datetime(2017, 1, 1)
+        conn = FakeIdentityConnector(expires_timestamp=expires_str)
+        user = User(self.auth_url, self.username, self.api_key, config={},
+                    conn=conn)
+
+        # when
+        result = user._get_data()
+
+        # then the expiration timestamp was set to the correct value
+        self.assertIsNotNone(user.expires)
+        self.assertEqual(expires_dt, user.expires)
+
+    def test_is_expired_false_when_not_yet_set(self):
+        # given
+        expires_str = '2017-01-01T00:00:00.000000Z'
+        current_time = datetime(2016, 12, 31)
+        conn = FakeIdentityConnector(expires_timestamp=expires_str)
+        user = User(self.auth_url, self.username, self.api_key, config={},
+                    conn=conn)
+
+        # when
+        result = user.is_expired(current_time=current_time)
+
+        # then the token is considered not yet expired
+        self.assertFalse(result)
+
+        # when
+        current_time2 = datetime(2017, 1, 2)
+        result = user.is_expired(current_time=current_time2)
+
+        # then the token is considered not yet expired
+        self.assertFalse(result)
+
+    def test_is_expired_false(self):
+        # given
+        expires_str = '2017-01-01T00:00:00.000000Z'
+        current_time = datetime(2016, 12, 31)
+        conn = FakeIdentityConnector(expires_timestamp=expires_str)
+        user = User(self.auth_url, self.username, self.api_key, config={},
+                    conn=conn)
+
+        user._get_data()
+
+        # precondition
+        self.assertIsNotNone(user.expires)
+
+        # when
+        result = user.is_expired(current_time=current_time)
+
+        # then the token is not yet expired
+        self.assertFalse(result)
+
+    def test_is_expired_true(self):
+        # given
+        expires_str = '2017-01-01T00:00:00.000000Z'
+        current_time = datetime(2017, 1, 2)
+        conn = FakeIdentityConnector(expires_timestamp=expires_str)
+        user = User(self.auth_url, self.username, self.api_key, config={},
+                    conn=conn)
+
+        user._get_data()
+
+        # precondition
+        self.assertIsNotNone(user.expires)
+
+        # when
+        result = user.is_expired(current_time=current_time)
+
+        # then the token is not yet expired
+        self.assertTrue(result)
 
 
 class ConnectorTest(TestCaseBase):
