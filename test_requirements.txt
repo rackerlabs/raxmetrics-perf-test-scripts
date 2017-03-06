@@ -1,0 +1,5 @@
+# requirements for running run-unit-tests-with-coverage.bash
+# run "pip install -r test_requirements.txt" once before running the tests in python
+
+coverage==4.2
+requests==2.11.1
