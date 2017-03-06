@@ -76,7 +76,7 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 The following command will download the necessary software packages and place them under the `dependencies/` folder:
 
 ```bash
-./setup-dependencies.sh
+./setup-dependencies.bash
 ```
 
 Note this needs to be run on each node in the cluster, as well as the console.
@@ -84,12 +84,12 @@ Note this needs to be run on each node in the cluster, as well as the console.
 ##Starting the console
 The GUI can be started with the provided script:
 ```bash
-./run-console.sh
+./run-console.bash
 ```
 
 The console can also be run headless, with another provided script:
 ```bash
-./run-headless-console.sh
+./run-headless-console.bash
 ```
 
 and you can interact with a rest api like so:
@@ -106,7 +106,7 @@ The graphical console gives some useful status info, so you may prefer using tha
 Each agent is started with the provided script, like so:
 
 ```bash
-./run-agent.sh $GRINDER_PROPERTIES_FILE
+./run-agent.bash $GRINDER_PROPERTIES_FILE
 ```
 
 There are currently some example properties files in the `properties` folder:
@@ -117,5 +117,5 @@ There are currently some example properties files in the `properties` folder:
 ##Coverage
 There is a set of unit tests to check the function of the individual components in the scripts.
 The relevant file is `scripts/tests.py`.
-To run the unit tests under Jython and Grinder, you can simply run `./run-unit-tests.sh` at the bash prompt.
-Alternately, there is a `./run-unit-tests-with-coverage.sh` command that will run the unit tests under Python, collect code coverage numbers, and produce a report at `htmlcov/index.html`.
+To run the unit tests under Jython and Grinder, you can simply run `./run-unit-tests.bash` at the bash prompt.
+Alternately, there is a `./run-unit-tests-with-coverage.bash` command that will run the unit tests under Python, collect code coverage numbers, and produce a report at `htmlcov/index.html`.
