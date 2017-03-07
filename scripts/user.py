@@ -83,8 +83,19 @@ class User(object):
             self.tenant_id = catalog['access']['token']['tenant']['id']
             self.token = catalog['access']['token']['id']
             expiration_date = catalog['access']['token']['expires']
-            self.expires = datetime.datetime.strptime(expiration_date,
-                                                      "%Y-%m-%dT%H:%M:%S.%fZ")
+            try:
+                self.expires = datetime.datetime.strptime(expiration_date,
+                                                          "%Y-%m-%dT%H:%M:%S.%fZ")
+            except:
+                parts = expiration_date.split('.')
+                dt = datetime.datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
+                if len(parts) > 1:
+                    microseconds = parts[1]
+                    if microseconds.endswith('Z'):
+                        microseconds = microseconds[0:-1]
+                    dt = dt.replace(microsecond=int(microseconds))
+                self.expires = dt
+                pass
             return self.tenant_id, self.token
 
         self.lock.acquire()
@@ -131,3 +142,6 @@ class NullUser(object):
 
     def reauthenticate(self):
         return self.get_tenant_id(), self.get_token()
+
+    def is_expired(self):
+        return False

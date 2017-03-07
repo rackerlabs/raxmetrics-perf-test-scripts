@@ -157,7 +157,9 @@ class TestCaseBase(unittest.TestCase):
 
     def assertIsInstance(self, obj, cls, msg=None):
         return self.assertTrue(isinstance(obj, cls), msg)
-    pass
+
+    def assertIsNotNone(self, expr, msg=None):
+        return self.assertTrue(expr is not None, msg)
 
 
 class ThreadManagerTest(TestCaseBase):
@@ -785,6 +787,9 @@ class AuthenticatingRequestTest(unittest.TestCase):
 
             def reauthenticate(self):
                 self.reauthenticated = True
+
+            def is_expired(self):
+                return False
 
         req = MockReqAlways401()
         token = 'token'
