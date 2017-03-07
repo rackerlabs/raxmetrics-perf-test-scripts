@@ -142,3 +142,6 @@ class NullUser(object):
 
     def reauthenticate(self):
         return self.get_tenant_id(), self.get_token()
+
+    def is_expired(self):
+        return False

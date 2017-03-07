@@ -788,6 +788,9 @@ class AuthenticatingRequestTest(unittest.TestCase):
             def reauthenticate(self):
                 self.reauthenticated = True
 
+            def is_expired(self):
+                return False
+
         req = MockReqAlways401()
         token = 'token'
         uri = '/path/to/resource'
