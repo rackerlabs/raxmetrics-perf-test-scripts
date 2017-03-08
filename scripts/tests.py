@@ -14,7 +14,7 @@ import annotationsingest
 import abstract_thread
 import thread_manager as tm
 from config import clean_configs
-from throttling_group import ThrottlingGroup
+from throttling_group import ThrottlingGroup, SmoothThrottlingGroup
 from throttling_request import ThrottlingRequest
 from authenticating_request import AuthenticatingRequest
 from user import User, NullUser
@@ -688,6 +688,64 @@ class ThrottlingGroupTest(unittest.TestCase):
         self.assertEqual(61, last_time_returned[0])
 
 
+class SmoothThrottlingGroupTest(unittest.TestCase):
+    def test_single_thread_throttles_smoothly(self):
+
+        sleeps = []
+
+        def sleep_source(arg):
+            # this sleep source just logs what arguments were passed to it, and
+            # doesn't actually sleep
+            sleeps.append(arg)
+
+        tgroup = SmoothThrottlingGroup('test', 6, sleep_source=sleep_source)
+        treq = ThrottlingRequest(tgroup, MockReq())
+        test_config = abstract_thread.default_config.copy()
+        th1 = ingest.IngestThread(0, 0, treq, test_config)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEqual([10], sleeps)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEqual([10, 10], sleeps)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEqual([10, 10, 10], sleeps)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEqual([10, 10, 10, 10], sleeps)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEqual([10, 10, 10, 10, 10], sleeps)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEqual([10, 10, 10, 10, 10, 10], sleeps)
+
+        # when
+        th1.make_request(pp, 1000)
+
+        # then
+        self.assertEqual([10, 10, 10, 10, 10, 10, 10], sleeps)
+
+
 class ThreadsWithThrottlingGroupTest(unittest.TestCase):
     def test_multiple_threads_share_throttling_group(self):
         # given
@@ -997,6 +1055,7 @@ suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(AuthenticatingRequestTest))
 suite.addTest(loader.loadTestsFromTestCase(UserTest))
 suite.addTest(loader.loadTestsFromTestCase(ConnectorTest))
+suite.addTest(loader.loadTestsFromTestCase(SmoothThrottlingGroupTest))
 
 
 class TestRunner:
