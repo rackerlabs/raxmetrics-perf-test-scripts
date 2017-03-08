@@ -74,7 +74,7 @@ class SmoothThrottlingGroup(object):
         self.time_source = time_source
         self.sleep_source = sleep_source
         self.q = Queue()
-        self.semaphore = threading.Semaphore()
+        self.semaphore = threading.Semaphore(0)
         self.throttler_thread = threading.Thread(target=self.throttler,
                                                  name=name)
         self.throttler_thread.setDaemon(True)
