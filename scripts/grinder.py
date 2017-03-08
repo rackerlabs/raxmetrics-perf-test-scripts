@@ -49,19 +49,26 @@ for k, v in config.iteritems():
         str(k))
     if m:
         name = m.groups()[-1]
+        grinder.logger.info('Instantiating throttling group named "%s", with '
+                            'max rpm=%d' % (name, int(v)))
         throttling_groups[name] = ThrottlingGroup(name, int(v))
 
 
 def create_request_obj(test_num, test_name, tgroup_name=None,
                        auth_user=None):
+    grinder.logger.info('Creating %s request object')
     test = Test(test_num, test_name)
     request = HTTPRequest()
     request = ResponseCheckingRequest(request)
     test.record(request)
     request = ExceptionHandlingRequest(request)
     if auth_user:
+        grinder.logger.info('%s request object will authenticate with '
+                            'username "%s".' % (test_name, auth_user.username))
         request = AuthenticatingRequest(request, auth_user)
     if tgroup_name:
+        grinder.logger.info('%s request object will throttle with group '
+                            '"%s".' % (test_name, tgroup_name))
         tgroup = throttling_groups[tgroup_name]
         request = ThrottlingRequest(tgroup, request)
     return request
