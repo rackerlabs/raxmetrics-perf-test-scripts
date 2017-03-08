@@ -50,7 +50,7 @@ for k, v in config.iteritems():
     if m:
         name = m.groups()[-1]
         tgroup_type_prop_name = ('throttling_group.%s.type' % name)
-        if config.get(type_prop_name, None) == 'smooth':
+        if config.get(tgroup_type_prop_name, None) == 'smooth':
             tgroup_type_s = 'smooth'
             tgroup_type = SmoothThrottlingGroup
         else:
