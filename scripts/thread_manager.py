@@ -82,7 +82,7 @@ class ThreadManager(object):
         if thread_type in self.requests_by_type:
             req = self.requests_by_type[thread_type]
             tgroup = None
-            if tgname and trgoups and tgname in tgroups:
+            if tgname and tgroups and tgname in tgroups:
                 tgroup = tgroups[tgname]
             return thread_type(thread_num, agent_num, req, self.config, user)
         else:
