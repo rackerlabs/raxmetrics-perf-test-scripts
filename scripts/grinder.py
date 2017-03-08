@@ -56,7 +56,7 @@ for k, v in config.iteritems():
 
 def create_request_obj(test_num, test_name, tgroup_name=None,
                        auth_user=None):
-    grinder.logger.info('Creating %s request object')
+    grinder.logger.info('Creating %s request object' % test_name)
     test = Test(test_num, test_name)
     request = HTTPRequest()
     request = ResponseCheckingRequest(request)
