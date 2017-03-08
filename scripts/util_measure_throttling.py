@@ -14,6 +14,7 @@ class MeasuringRequest(object):
     count = 0
     last_t = 0
     rpm = 0
+    start_time = 0
 
     def __init__(self):
         self.reset()
@@ -30,8 +31,13 @@ class MeasuringRequest(object):
             self.rpm = self.count * 60 / delta
             self.count = 0
             self.last_t = t
-            print(locale.format("%d", self.rpm, grouping=True) +
-                  " requests per minute")
+            print(
+                ("%d seconds elapsed, running at about " % (t - self.start_time)) +
+                locale.format("%d", self.rpm, grouping=True) +
+                " requests per minute")
+
+    def start(self):
+        self.start_time = time.time()
 
 
 def main():
@@ -43,12 +49,16 @@ def main():
 
     args = parser.parse_args()
 
+    print('Max requests per minute: %s' % str(args.max_rpm))
+    print('Run length in seconds: %s' % str(args.run_seconds))
+
     req0 = MeasuringRequest()
 
     tgroup = ThrottlingGroup('name', args.max_rpm)
     req = ThrottlingRequest(tgroup, req0)
 
     start_time = time.time()
+    req0.start()
     while True:
         req.GET()
         t = time.time()
