@@ -652,7 +652,8 @@ class ThrottlingGroupTest(unittest.TestCase):
         last_time_returned = [None]
 
         def time_source():
-            # this time source returns a fixed sequence of numbers
+            # This time source returns a fixed sequence of numbers.
+            # First it will return 0, then it will return 61.
             t = times()
             last_time_returned[0] = t
             return t
@@ -673,13 +674,18 @@ class ThrottlingGroupTest(unittest.TestCase):
         # then it increments the count and doesn't sleep
         self.assertEquals(1, tg.count)
         self.assertEquals([], sleeps)
+        self.assertEqual(0, last_time_returned[0])
 
-        # when we count the second request
+        # when we count the second request (due to time_source, from the
+        # ThrottlingGroup's perspective, 60 seconds have transpired)
         tg.count_request()
 
-        # then it resets the count to one and doesn't sleep
+        # then it resets the count to one and doesn't sleep. that is, the
+        # one-minute timeout transpired, so the next request shouldn't be
+        # throttled.
         self.assertEquals(1, tg.count)
         self.assertEquals([], sleeps)
+        self.assertEqual(61, last_time_returned[0])
 
 
 class ThreadsWithThrottlingGroupTest(unittest.TestCase):
