@@ -32,7 +32,8 @@ class MeasuringRequest(object):
             self.count = 0
             self.last_t = t
             print(
-                ("%d seconds elapsed, running at about " % (t - self.start_time)) +
+                ("%d seconds elapsed, running at about " % (t -
+                                                            self.start_time)) +
                 locale.format("%d", self.rpm, grouping=True) +
                 " requests per minute")
 
