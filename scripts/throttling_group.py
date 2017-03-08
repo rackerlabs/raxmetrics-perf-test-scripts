@@ -3,6 +3,7 @@
 from __future__ import with_statement
 import threading
 import time
+from Queue import Queue
 
 
 class ThrottlingGroup(object):
@@ -56,3 +57,35 @@ class ThrottlingGroup(object):
 class NullThrottlingGroup(object):
     def count_request(self):
         pass
+
+
+class SmoothThrottlingGroup(object):
+    def __init__(self, name, max_requests_per_minute, time_source=None,
+                 sleep_source=None):
+
+        if time_source is None:
+            time_source = time.time
+        if sleep_source is None:
+            sleep_source = time.sleep
+
+        self.name = name
+        self.seconds_per_request = 60 / float(max_requests_per_minute)
+        self.start_time = -1
+        self.time_source = time_source
+        self.sleep_source = sleep_source
+        self.q = Queue()
+        self.semaphore = threading.Semaphore()
+        self.throttler_thread = threading.Thread(target=self.throttler,
+                                                 name=name)
+        self.throttler_thread.setDaemon(True)
+        self.throttler_thread.start()
+
+    def throttler(self):
+        while True:
+            self.q.get()
+            self.sleep_source(self.seconds_per_request)
+            self.semaphore.release()
+
+    def count_request(self):
+        self.q.put(None)
+        self.semaphore.acquire()

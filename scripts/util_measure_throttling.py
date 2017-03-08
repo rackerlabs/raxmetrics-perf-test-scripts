@@ -5,7 +5,7 @@ import locale
 import argparse
 
 from throttling_request import ThrottlingRequest
-from throttling_group import ThrottlingGroup
+from throttling_group import ThrottlingGroup, SmoothThrottlingGroup
 
 locale.setlocale(locale.LC_ALL, 'en_US')
 
@@ -47,15 +47,25 @@ def main():
                         help='How long to run the test.')
     parser.add_argument('--max-rpm', type=int, default=1000,
                         help='Maximum requests per minute')
+    parser.add_argument('--smooth', action='store_true',
+                        help='Use the smooth throttling group, instead of the '
+                             'default.')
 
     args = parser.parse_args()
 
     print('Max requests per minute: %s' % str(args.max_rpm))
     print('Run length in seconds: %s' % str(args.run_seconds))
+    if args.smooth:
+        print('Throttling group type: smooth')
+    else:
+        print('Throttling group type: default')
 
     req0 = MeasuringRequest()
 
-    tgroup = ThrottlingGroup('name', args.max_rpm)
+    if args.smooth:
+        tgroup = SmoothThrottlingGroup('name', args.max_rpm)
+    else:
+        tgroup = ThrottlingGroup('name', args.max_rpm)
     req = ThrottlingRequest(tgroup, req0)
 
     start_time = time.time()
