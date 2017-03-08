@@ -14,7 +14,7 @@ from query import AnnotationsQuery
 from config import clean_configs
 import abstract_thread
 from raw_ingest_counter import RawIngestCounter
-from throttling_group import ThrottlingGroup
+from throttling_group import ThrottlingGroup, SmoothThrottlingGroup
 from throttling_request import ThrottlingRequest
 from authenticating_request import AuthenticatingRequest
 from response_checking_request import ResponseCheckingRequest
@@ -49,9 +49,17 @@ for k, v in config.iteritems():
         str(k))
     if m:
         name = m.groups()[-1]
+        tgroup_type_prop_name = ('throttling_group.%s.type' % name)
+        if config.get(type_prop_name, None) == 'smooth':
+            tgroup_type_s = 'smooth'
+            tgroup_type = SmoothThrottlingGroup
+        else:
+            tgroup_type_s = 'default'
+            tgroup_type = ThrottlingGroup
         grinder.logger.info('Instantiating throttling group named "%s", with '
-                            'max rpm=%d' % (name, int(v)))
-        throttling_groups[name] = ThrottlingGroup(name, int(v))
+                            'max rpm=%d, type=%s' %
+                            (name, int(v), tgroup_type_s))
+        throttling_groups[name] = tgroup_type(name, int(v))
 
 
 def create_request_obj(test_num, test_name, tgroup_name=None,
