@@ -39,16 +39,6 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]name_fmt` - Default is `org.example.metric.%d`.
 
 * `[grinder.bf.]throttling_group.<name>.max_requests_per_minute` - Create a throttling group with the given `name`. The value of the property is taken as the throttling group's `max_requests_per_minute` parameter. By default, no throttling groups are created if no properties are specified.
-* `[grinder.bf.]throttling_group.<name>.type` - Optionally specify the type of
-throttling group. Possible values are `smooth` and `default`. `default` divides
-time up into 60-second intervals. Requests will run at full speed until the
-limit is reached, and then the throttler will block all requests until the
-60-second interval has elapsed. This tends to cause "bursts" of requests,
-interleaved with periods of silence. `smooth` tries to space out requests
-evenly, such that there are no great bursts, but tends to allow slightly fewer
-total requests than `max_requests_per_minute`. If the property is not
-specified, or if it is empty, or it is not one of the allowed values, `default`
-is assumed.
 
 * `[grinder.bf.]ingest_weight` - Default is `15`.
 * `[grinder.bf.]ingest_num_tenants` - Ingestion threads randomly generate a numerical tenant id in the range of `[0,ingest_num_tenants)`. Change this property to control how many different tenant id's are used when sending standard metrics to the service. Default is `4`.
