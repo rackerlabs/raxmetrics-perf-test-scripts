@@ -110,7 +110,7 @@ class FakeIdentityConnector(object):
 
 requests_by_type = {
     ingest.IngestGenerator:                        MockReq(),
-    annotationsingest.AnnotationsIngestThread:  MockReq(),
+    annotationsingest.AnnotationsIngestGenerator:  MockReq(),
     query.SinglePlotQuery:                      MockReq(),
     query.MultiPlotQuery:                       MockReq(),
     query.SearchQuery:                          MockReq(),
@@ -272,39 +272,39 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_25(self):
         th = self.tm.setup_thread(25, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_26(self):
         th = self.tm.setup_thread(26, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_27(self):
         th = self.tm.setup_thread(27, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_28(self):
         th = self.tm.setup_thread(28, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_29(self):
         th = self.tm.setup_thread(29, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_30(self):
         th = self.tm.setup_thread(30, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_31(self):
         th = self.tm.setup_thread(31, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_32(self):
         th = self.tm.setup_thread(32, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_33(self):
         th = self.tm.setup_thread(33, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_34(self):
         th = self.tm.setup_thread(34, 0)
@@ -431,7 +431,7 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_annotations_payload(self):
         agent_num = 1
-        thread = annotationsingest.AnnotationsIngestThread(
+        thread = annotationsingest.AnnotationsIngestGenerator(
             0, agent_num, MockReq(), self.test_config)
         payload = json.loads(thread.generate_payload(0, 3))
         valid_payload = {
@@ -472,7 +472,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
     def test_annotationsingest_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = annotationsingest.AnnotationsIngestThread(
+        thread = annotationsingest.AnnotationsIngestGenerator(
             0, agent_num, MockReq(), self.test_config)
         tenant_id = 'tenantId'
         expected_url = (
@@ -717,7 +717,7 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         treq = ThrottlingRequest(tgroup, MockReq())
 
         th1 = ingest.IngestGenerator(0, 0, treq, self.test_config)
-        th2 = annotationsingest.AnnotationsIngestThread(
+        th2 = annotationsingest.AnnotationsIngestGenerator(
             1, 0, treq, self.test_config)
         th3 = query.SinglePlotQuery(2, 0, treq, self.test_config)
         th4 = query.MultiPlotQuery(3, 0, treq, self.test_config)

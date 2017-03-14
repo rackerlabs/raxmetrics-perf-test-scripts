@@ -14,7 +14,7 @@ except ImportError:
     from nvpair import NVPair
 
 
-class AnnotationsIngestThread(AbstractGenerator):
+class AnnotationsIngestGenerator(AbstractGenerator):
 
     def generate_annotation(self, time, metric_id):
         metric_name = generate_metric_name(metric_id, self.config)

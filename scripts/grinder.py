@@ -7,7 +7,7 @@ from net.grinder.plugin.http import HTTPRequest
 
 import thread_manager as tm
 import py_java
-from annotationsingest import AnnotationsIngestThread
+from annotationsingest import AnnotationsIngestGenerator
 from ingest import IngestGenerator
 from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import AnnotationsQuery
@@ -88,7 +88,7 @@ requests_by_type = {
             "Ingest test",
             config.get('ingest_throttling_group', None),
             user),
-    AnnotationsIngestThread:
+    AnnotationsIngestGenerator:
         create_request_obj(
             2,
             "Annotations Ingest test",
