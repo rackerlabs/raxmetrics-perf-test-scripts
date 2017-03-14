@@ -48,7 +48,7 @@ class ThrottlingGroup(object):
             t2 = t1
             delta_n = delta / self.seconds_per_request
             n += delta_n
-            if n > 1:
+            if n >= 1:
                 count = int(math.floor(n))
                 n -= count
                 for i in xrange(count):
