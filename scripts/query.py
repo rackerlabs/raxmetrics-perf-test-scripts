@@ -4,7 +4,7 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, generate_metric_name
+from abstract_thread import AbstractGenerator, generate_metric_name
 from throttling_group import NullThrottlingGroup
 
 try:
@@ -13,14 +13,14 @@ except ImportError:
     from nvpair import NVPair
 
 
-class AbstractQuery(AbstractThread):
+class AbstractQuery(AbstractGenerator):
     one_day = (1000 * 60 * 60 * 24)
 
     query_interval_name = None
 
     def __init__(self, thread_num, agent_number, request, config, user=None):
-        AbstractThread.__init__(self, thread_num, agent_number, request,
-                                config, user)
+        AbstractGenerator.__init__(self, thread_num, agent_number, request,
+                                   config, user)
         self.thread_num = thread_num
         self.config = config
         self.request = request

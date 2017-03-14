@@ -6,7 +6,7 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, generate_metric_name
+from abstract_thread import AbstractGenerator, generate_metric_name
 from throttling_group import NullThrottlingGroup
 
 try:
@@ -27,7 +27,7 @@ def int_from_tenant(tenant_id):
     return hash(tenant_id)
 
 
-class IngestThread(AbstractThread):
+class IngestThread(AbstractGenerator):
 
     units_map = {
         0: 'minutes',

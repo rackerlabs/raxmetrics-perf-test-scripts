@@ -35,7 +35,7 @@ default_config = {
     'annotations_query_weight': 8}
 
 
-class AbstractThread(object):
+class AbstractGenerator(object):
     # superclass for the various thread types
 
     def make_request(self, logger, time):
