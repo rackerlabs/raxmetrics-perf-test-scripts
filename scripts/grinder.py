@@ -8,7 +8,7 @@ from net.grinder.plugin.http import HTTPRequest
 import thread_manager as tm
 import py_java
 from annotationsingest import AnnotationsIngestThread
-from ingest import IngestThread
+from ingest import IngestGenerator
 from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import AnnotationsQuery
 from config import clean_configs
@@ -82,7 +82,7 @@ user = None
 user = get_user(config, grinder)
 
 requests_by_type = {
-    IngestThread:
+    IngestGenerator:
         create_request_obj(
             1,
             "Ingest test",
@@ -122,7 +122,7 @@ requests_by_type = {
 
 if config.get('ingest_count_raw_metrics', False):
     test = Test(101, "Metrics Ingested Raw Count")
-    IngestThread.raw_ingest_counter = RawIngestCounter(test)
+    IngestGenerator.raw_ingest_counter = RawIngestCounter(test)
 
 thread_manager = tm.ThreadManager(config, requests_by_type)
 

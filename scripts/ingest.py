@@ -27,7 +27,7 @@ def int_from_tenant(tenant_id):
     return hash(tenant_id)
 
 
-class IngestThread(AbstractGenerator):
+class IngestGenerator(AbstractGenerator):
 
     units_map = {
         0: 'minutes',

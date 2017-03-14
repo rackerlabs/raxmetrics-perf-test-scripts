@@ -4,7 +4,7 @@ import ast
 
 from abstract_thread import default_config
 from annotationsingest import AnnotationsIngestThread
-from ingest import IngestThread
+from ingest import IngestGenerator
 from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
 from query import AnnotationsQuery
 from config import clean_configs, convert
@@ -51,8 +51,8 @@ class ThreadManager(object):
         thread_type = None
 
         thread_types = [
-            (IngestThread, self.config['ingest_weight'],
-                self.config.get('ingest_throttling_group', None)),
+            (IngestGenerator, self.config['ingest_weight'],
+             self.config.get('ingest_throttling_group', None)),
             (AnnotationsIngestThread, self.config['annotations_weight'],
                 self.config.get('annotations_throttling_group', None)),
             (SinglePlotQuery, self.config['singleplot_query_weight'],
