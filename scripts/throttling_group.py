@@ -4,6 +4,7 @@ from __future__ import with_statement
 import threading
 import time
 from Queue import Queue
+import math
 
 
 class ThrottlingGroup(object):
@@ -27,7 +28,6 @@ class ThrottlingGroup(object):
 
         self.name = name
         self.seconds_per_request = 60 / float(max_requests_per_minute)
-        self.start_time = -1
         self.time_source = time_source
         self.sleep_source = sleep_source
         self.q = Queue()
@@ -38,10 +38,22 @@ class ThrottlingGroup(object):
         self.throttler_thread.start()
 
     def throttler(self):
+        t2 = self.time_source()
+        n = 0
+        self.q.get()
         while True:
-            self.q.get()
             self.sleep_source(self.seconds_per_request)
-            self.semaphore.release()
+            t1 = self.time_source()
+            delta = t1 - t2
+            t2 = t1
+            delta_n = delta / self.seconds_per_request
+            n += delta_n
+            if n > 1:
+                count = int(math.floor(n))
+                n -= count
+                for i in xrange(count):
+                    self.semaphore.release()
+                    self.q.get()
 
     def count_request(self):
         self.q.put(None)
