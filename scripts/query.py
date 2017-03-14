@@ -13,7 +13,7 @@ except ImportError:
     from nvpair import NVPair
 
 
-class AbstractQuery(AbstractGenerator):
+class AbstractQueryGenerator(AbstractGenerator):
     one_day = (1000 * 60 * 60 * 24)
 
     query_interval_name = None
@@ -26,7 +26,7 @@ class AbstractQuery(AbstractGenerator):
         self.request = request
 
 
-class SinglePlotQuery(AbstractQuery):
+class SinglePlotQuery(AbstractQueryGenerator):
     query_interval_name = 'singleplot_query_weight'
 
     def make_request(self, logger, time, tenant_id=None,
@@ -48,7 +48,7 @@ class SinglePlotQuery(AbstractQuery):
         return result
 
 
-class MultiPlotQuery(AbstractQuery):
+class MultiPlotQuery(AbstractQueryGenerator):
     query_interval_name = 'multiplot_query_weight'
 
     def generate_multiplot_payload(self):
@@ -79,7 +79,7 @@ class MultiPlotQuery(AbstractQuery):
         return result
 
 
-class SearchQuery(AbstractQuery):
+class SearchQuery(AbstractQueryGenerator):
     query_interval_name = 'search_query_weight'
 
     def generate_metrics_regex(self):
@@ -101,7 +101,7 @@ class SearchQuery(AbstractQuery):
         return result
 
 
-class AnnotationsQuery(AbstractQuery):
+class AnnotationsQuery(AbstractQueryGenerator):
     query_interval_name = 'annotations_query_weight'
 
     def make_request(self, logger, time, tenant_id=None):
