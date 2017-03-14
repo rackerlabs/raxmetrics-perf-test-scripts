@@ -612,7 +612,20 @@ class ThrottlingGroupTest(unittest.TestCase):
             # doesn't actually sleep
             sleeps.append(arg)
 
-        tgroup = ThrottlingGroup('test', 6, sleep_source=sleep_source)
+        max_rpm = 6
+        spr = 60 / float(max_rpm)
+        times = iter(i * spr for i in xrange(1000)).next
+        last_time_returned = [None]
+
+        def time_source():
+            # this time source returns an incrementing sequence of numbers
+            # starting from zero
+            t = times()
+            last_time_returned[0] = t
+            return t
+
+        tgroup = ThrottlingGroup('test', max_rpm, sleep_source=sleep_source,
+                                 time_source=time_source)
         treq = ThrottlingRequest(tgroup, MockReq())
         test_config = abstract_thread.default_config.copy()
         th1 = ingest.IngestThread(0, 0, treq, test_config)
@@ -680,7 +693,10 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
             'search_query_weight': 1,
             'annotations_query_weight': 1,
         })
-        times = iter(xrange(10)).next
+
+        max_rpm = 6
+        spr = 60 / float(max_rpm)
+        times = iter(i * spr for i in xrange(1000)).next
         last_time_returned = [None]
 
         def time_source():
