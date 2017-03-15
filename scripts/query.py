@@ -48,7 +48,7 @@ class SinglePlotQueryGenerator(AbstractQueryGenerator):
         return result
 
 
-class MultiPlotQuery(AbstractQueryGenerator):
+class MultiPlotQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'multiplot_query_weight'
 
     def generate_multiplot_payload(self):

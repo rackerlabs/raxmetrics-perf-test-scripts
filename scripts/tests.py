@@ -112,7 +112,7 @@ requests_by_type = {
     ingest.IngestGenerator:                        MockReq(),
     annotationsingest.AnnotationsIngestGenerator:  MockReq(),
     query.SinglePlotQueryGenerator:                      MockReq(),
-    query.MultiPlotQuery:                       MockReq(),
+    query.MultiPlotQueryGenerator:                       MockReq(),
     query.SearchQuery:                          MockReq(),
     query.AnnotationsQuery:                     MockReq(),
 }
@@ -320,15 +320,15 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_37(self):
         th = self.tm.setup_thread(37, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
     def test_thread_type_assignment_38(self):
         th = self.tm.setup_thread(38, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
     def test_thread_type_assignment_39(self):
         th = self.tm.setup_thread(39, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
     def test_thread_type_assignment_40(self):
         th = self.tm.setup_thread(40, 0)
@@ -571,8 +571,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertIs(req, response.request)
 
     def test_query_make_MultiPlotQuery_request(self):
-        req = requests_by_type[query.MultiPlotQuery]
-        qq = query.MultiPlotQuery(0, self.agent_num, req, self.config)
+        req = requests_by_type[query.MultiPlotQueryGenerator]
+        qq = query.MultiPlotQueryGenerator(0, self.agent_num, req, self.config)
         payload_sent = json.dumps([
             "org.example.metric.0",
             "org.example.metric.1",
@@ -720,7 +720,7 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         th2 = annotationsingest.AnnotationsIngestGenerator(
             1, 0, treq, self.test_config)
         th3 = query.SinglePlotQueryGenerator(2, 0, treq, self.test_config)
-        th4 = query.MultiPlotQuery(3, 0, treq, self.test_config)
+        th4 = query.MultiPlotQueryGenerator(3, 0, treq, self.test_config)
         th5 = query.SearchQuery(4, 0, treq, self.test_config)
         th6 = query.AnnotationsQuery(5, 0, treq, self.test_config)
 

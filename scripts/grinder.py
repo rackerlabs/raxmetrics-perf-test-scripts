@@ -9,7 +9,7 @@ import thread_manager as tm
 import py_java
 from annotationsingest import AnnotationsIngestGenerator
 from ingest import IngestGenerator
-from query import SinglePlotQueryGenerator, MultiPlotQuery, SearchQuery
+from query import SinglePlotQueryGenerator, MultiPlotQueryGenerator, SearchQuery
 from query import AnnotationsQuery
 from config import clean_configs
 import abstract_thread
@@ -100,7 +100,7 @@ requests_by_type = {
             "SinglePlotQuery",
             config.get('singleplot_query_throttling_group', None),
             user),
-    MultiPlotQuery:
+    MultiPlotQueryGenerator:
         create_request_obj(
             4,
             "MultiPlotQuery",
