@@ -50,25 +50,25 @@ for k, v in config.iteritems():
     if m:
         name = m.groups()[-1]
         tgroup_type_prop_name = ('throttling_group.%s.type' % name)
-        grinder.logger.info('Instantiating throttling group named "%s", with '
-                            'max rpm=%d' % (name, int(v)))
+        grinder.logger.debug('Instantiating throttling group named "%s", with '
+                             'max rpm=%d' % (name, int(v)))
         throttling_groups[name] = ThrottlingGroup(name, int(v))
 
 
 def create_request_obj(test_num, test_name, tgroup_name=None,
                        auth_user=None):
-    grinder.logger.info('Creating %s request object' % test_name)
+    grinder.logger.debug('Creating %s request object' % test_name)
     test = Test(test_num, test_name)
     request = HTTPRequest()
     request = ResponseCheckingRequest(request)
     test.record(request)
     request = ExceptionHandlingRequest(request)
     if auth_user:
-        grinder.logger.info('%s request object will authenticate with '
+        grinder.logger.debug('%s request object will authenticate with '
                             'username "%s".' % (test_name, auth_user.username))
         request = AuthenticatingRequest(request, auth_user)
     if tgroup_name:
-        grinder.logger.info('%s request object will throttle with group '
+        grinder.logger.debug('%s request object will throttle with group '
                             '"%s".' % (test_name, tgroup_name))
         tgroup = throttling_groups[tgroup_name]
         request = ThrottlingRequest(tgroup, request)
@@ -134,8 +134,8 @@ class TestRunner:
         self.thread = thread_manager.setup_thread(
             thread_number, agent_number, throttling_groups, user)
         worker_type = type(self.thread)
-        grinder.logger.info('Worker %s-%s type %s' %
-                            (agent_number, thread_number, worker_type))
+        grinder.logger.debug('Worker %s-%s type %s' %
+                             (agent_number, thread_number, worker_type))
 
     def __call__(self):
         result = self.thread.make_request(grinder.logger.info,
