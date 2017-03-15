@@ -4,7 +4,7 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractGenerator, generate_metric_name
+from abstract_generator import AbstractGenerator, generate_metric_name
 from throttling_group import NullThrottlingGroup
 
 try:
