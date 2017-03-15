@@ -36,10 +36,10 @@ default_config = {
 
 
 class AbstractGenerator(object):
-    # superclass for the various thread types
+    # superclass for the various generator types
 
     def make_request(self, logger, time):
-        raise Exception("Can't create abstract thread")
+        raise Exception("Can't create abstract generator")
 
     def __init__(self, thread_num, agent_num, request, config, user=None):
 

@@ -9,9 +9,9 @@ import math
 
 class ThrottlingGroup(object):
     """Throttling groups allow you to limit the number of requests made by
-     threads. Separate threads can share a single ThrottlingGroup object, so
-     that they all count towards the limit. The ThrottlingGroup object uses a
-     background thread to coordinate the timing of requests. Requests will be
+     generators. Separate generators can share a single ThrottlingGroup object,
+     so that they all count towards the limit. The ThrottlingGroup object uses
+     a background thread to coordinate the timing of requests. Requests will be
      made at an interval approximately long enough to keep the total number of
      requests for a given 60-second timespan at or below the configured limit.
      Typically, in practice, timing and calculation overhead will keep the
