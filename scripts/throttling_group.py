@@ -32,12 +32,12 @@ class ThrottlingGroup(object):
         self.sleep_source = sleep_source
         self.q = Queue()
         self.semaphore = threading.Semaphore(0)
-        self.throttler_thread = threading.Thread(target=self.throttler,
+        self.throttler_thread = threading.Thread(target=self.__throttler,
                                                  name=name)
         self.throttler_thread.setDaemon(True)
         self.throttler_thread.start()
 
-    def throttler(self):
+    def __throttler(self):
         """
         This method should not be called directly. It will be run in a separate
         thread. It synchronizes requests using a locked producer/consumer
