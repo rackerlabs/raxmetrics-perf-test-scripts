@@ -603,9 +603,18 @@ class MakeQueryRequestsTest(TestCaseBase):
 
 
 class ThrottlingGroupTest(unittest.TestCase):
-    def test_throttling(self):
-        # given
-        times = iter(xrange(10)).next
+    def test_single_thread_throttles_smoothly(self):
+
+        sleeps = []
+
+        def sleep_source(arg):
+            # this sleep source just logs what arguments were passed to it, and
+            # doesn't actually sleep
+            sleeps.append(arg)
+
+        max_rpm = 6
+        spr = 60 / float(max_rpm)
+        times = iter(i * spr for i in xrange(1000)).next
         last_time_returned = [None]
 
         def time_source():
@@ -615,71 +624,53 @@ class ThrottlingGroupTest(unittest.TestCase):
             last_time_returned[0] = t
             return t
 
-        sleeps = []
+        tgroup = ThrottlingGroup('test', max_rpm, sleep_source=sleep_source,
+                                 time_source=time_source)
+        treq = ThrottlingRequest(tgroup, MockReq())
+        test_config = abstract_thread.default_config.copy()
+        th1 = ingest.IngestThread(0, 0, treq, test_config)
 
-        def sleep_source(arg):
-            # this sleep source just logs what arguments were passed to it, and
-            # doesn't actually sleep
-            sleeps.append(arg)
+        # when
+        th1.make_request(pp, 1000)
 
-        tg = ThrottlingGroup('test', 2, time_source=time_source,
-                             sleep_source=sleep_source)
+        # then
+        self.assertEqual([10], sleeps)
 
-        # when we count the first request
-        tg.count_request()
+        # when
+        th1.make_request(pp, 1000)
 
-        # then it increments the count and doesn't sleep
-        self.assertEquals(1, tg.count)
-        self.assertEquals([], sleeps)
+        # then
+        self.assertEqual([10, 10], sleeps)
 
-        # when we count the second request
-        tg.count_request()
+        # when
+        th1.make_request(pp, 1000)
 
-        # then it increments the count and doesn't sleep
-        self.assertEquals(2, tg.count)
-        self.assertEquals([], sleeps)
+        # then
+        self.assertEqual([10, 10, 10], sleeps)
 
-        # when we count a request over the limit
-        tg.count_request()
+        # when
+        th1.make_request(pp, 1000)
 
-        # then it sleeps and then resets the count to one
-        self.assertEquals(1, tg.count)
-        self.assertEquals([60 - 2], sleeps)
+        # then
+        self.assertEqual([10, 10, 10, 10], sleeps)
 
-    def test_count_reset_after_minute_transpires(self):
-        # given
-        times = iter([0, 61]).next
-        last_time_returned = [None]
+        # when
+        th1.make_request(pp, 1000)
 
-        def time_source():
-            # this time source returns a fixed sequence of numbers
-            t = times()
-            last_time_returned[0] = t
-            return t
+        # then
+        self.assertEqual([10, 10, 10, 10, 10], sleeps)
 
-        sleeps = []
+        # when
+        th1.make_request(pp, 1000)
 
-        def sleep_source(arg):
-            # this sleep source just logs what arguments were passed to it, and
-            # doesn't actually sleep
-            sleeps.append(arg)
+        # then
+        self.assertEqual([10, 10, 10, 10, 10, 10], sleeps)
 
-        tg = ThrottlingGroup('test', 2, time_source=time_source,
-                             sleep_source=sleep_source)
+        # when
+        th1.make_request(pp, 1000)
 
-        # when we count the first request
-        tg.count_request()
-
-        # then it increments the count and doesn't sleep
-        self.assertEquals(1, tg.count)
-        self.assertEquals([], sleeps)
-
-        # when we count the second request
-        tg.count_request()
-
-        # then it resets the count to one and doesn't sleep
-        self.assertEquals(1, tg.count)
-        self.assertEquals([], sleeps)
+        # then
+        self.assertEqual([10, 10, 10, 10, 10, 10, 10], sleeps)
 
 
 class ThreadsWithThrottlingGroupTest(unittest.TestCase):
@@ -702,7 +693,10 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
             'search_query_weight': 1,
             'annotations_query_weight': 1,
         })
-        times = iter(xrange(10)).next
+
+        max_rpm = 6
+        spr = 60 / float(max_rpm)
+        times = iter(i * spr for i in xrange(1000)).next
         last_time_returned = [None]
 
         def time_source():
@@ -732,20 +726,45 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
 
         # when
         th1.make_request(pp, 1000)
+
+        # then
+        self.assertEquals([10], sleeps)
+
+        # when
         th2.make_request(pp, 1000)
+
+        # then
+        self.assertEquals([10, 10], sleeps)
+
+        # when
         th3.make_request(pp, 1000)
+
+        # then
+        self.assertEquals([10, 10, 10], sleeps)
+
+        # when
         th4.make_request(pp, 1000)
+
+        # then
+        self.assertEquals([10, 10, 10, 10], sleeps)
+
+        # when
         th5.make_request(pp, 1000)
+
+        # then
+        self.assertEquals([10, 10, 10, 10, 10], sleeps)
+
+        # when
         th6.make_request(pp, 1000)
 
         # then
-        self.assertEquals([], sleeps)
+        self.assertEquals([10, 10, 10, 10, 10, 10], sleeps)
 
         # when
         th1.make_request(pp, 1000)
 
         # then
-        self.assertEquals([60 - 6], sleeps)
+        self.assertEquals([10, 10, 10, 10, 10, 10, 10], sleeps)
 
 
 class AuthenticatingRequestTest(unittest.TestCase):
