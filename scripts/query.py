@@ -26,7 +26,7 @@ class AbstractQueryGenerator(AbstractGenerator):
         self.request = request
 
 
-class SinglePlotQuery(AbstractQueryGenerator):
+class SinglePlotQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'singleplot_query_weight'
 
     def make_request(self, logger, time, tenant_id=None,

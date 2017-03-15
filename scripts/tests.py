@@ -111,7 +111,7 @@ class FakeIdentityConnector(object):
 requests_by_type = {
     ingest.IngestGenerator:                        MockReq(),
     annotationsingest.AnnotationsIngestGenerator:  MockReq(),
-    query.SinglePlotQuery:                      MockReq(),
+    query.SinglePlotQueryGenerator:                      MockReq(),
     query.MultiPlotQuery:                       MockReq(),
     query.SearchQuery:                          MockReq(),
     query.AnnotationsQuery:                     MockReq(),
@@ -308,15 +308,15 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_34(self):
         th = self.tm.setup_thread(34, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
     def test_thread_type_assignment_35(self):
         th = self.tm.setup_thread(35, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
     def test_thread_type_assignment_36(self):
         th = self.tm.setup_thread(36, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
     def test_thread_type_assignment_37(self):
         th = self.tm.setup_thread(37, 0)
@@ -552,8 +552,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.requests_by_type = requests_by_type.copy()
 
     def test_query_make_SinglePlotQuery_request(self):
-        req = requests_by_type[query.SinglePlotQuery]
-        qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
+        req = requests_by_type[query.SinglePlotQueryGenerator]
+        qq = query.SinglePlotQueryGenerator(0, self.agent_num, req, self.config)
         response = qq.make_request(None, 1000, 0, 'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
@@ -719,7 +719,7 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         th1 = ingest.IngestGenerator(0, 0, treq, self.test_config)
         th2 = annotationsingest.AnnotationsIngestGenerator(
             1, 0, treq, self.test_config)
-        th3 = query.SinglePlotQuery(2, 0, treq, self.test_config)
+        th3 = query.SinglePlotQueryGenerator(2, 0, treq, self.test_config)
         th4 = query.MultiPlotQuery(3, 0, treq, self.test_config)
         th5 = query.SearchQuery(4, 0, treq, self.test_config)
         th6 = query.AnnotationsQuery(5, 0, treq, self.test_config)
