@@ -38,6 +38,17 @@ class ThrottlingGroup(object):
         self.throttler_thread.start()
 
     def throttler(self):
+        """
+        This method should not be called directly. It will be run in a separate
+        thread. It synchronizes requests using a locked producer/consumer
+        pattern. When another thread wants to make a request, it will call
+        `q.put()` in count_request and then wait to acquire the semaphore. This
+        method will then sleep for the configured amount of time, if it isn't
+        already. After sleeping, it will release the semaphore, which will
+        allow the other thread to continue with the request. If this method
+        sleeps too long (i.e. `sleep()` is not always exact), it will release
+        the semaphore multiple time to allow the other threads to catch up.
+        """
         t2 = self.time_source()
         n = 0
         self.q.get()
