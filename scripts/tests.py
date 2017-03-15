@@ -113,7 +113,7 @@ requests_by_type = {
     annotationsingest.AnnotationsIngestGenerator:  MockReq(),
     query.SinglePlotQueryGenerator:                      MockReq(),
     query.MultiPlotQueryGenerator:                       MockReq(),
-    query.SearchQuery:                          MockReq(),
+    query.SearchQueryGenerator:                          MockReq(),
     query.AnnotationsQuery:                     MockReq(),
 }
 
@@ -332,19 +332,19 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_40(self):
         th = self.tm.setup_thread(40, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_41(self):
         th = self.tm.setup_thread(41, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_42(self):
         th = self.tm.setup_thread(42, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_43(self):
         th = self.tm.setup_thread(43, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_44(self):
         th = self.tm.setup_thread(44, 0)
@@ -562,8 +562,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertIs(req, response.request)
 
     def test_query_make_SearchQuery_request(self):
-        req = requests_by_type[query.SearchQuery]
-        qq = query.SearchQuery(0, self.agent_num, req, self.config)
+        req = requests_by_type[query.SearchQueryGenerator]
+        qq = query.SearchQueryGenerator(0, self.agent_num, req, self.config)
         response = qq.make_request(None, 1000, 10, 'org.example.metric.*')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?" +
@@ -721,7 +721,7 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
             1, 0, treq, self.test_config)
         th3 = query.SinglePlotQueryGenerator(2, 0, treq, self.test_config)
         th4 = query.MultiPlotQueryGenerator(3, 0, treq, self.test_config)
-        th5 = query.SearchQuery(4, 0, treq, self.test_config)
+        th5 = query.SearchQueryGenerator(4, 0, treq, self.test_config)
         th6 = query.AnnotationsQuery(5, 0, treq, self.test_config)
 
         # when

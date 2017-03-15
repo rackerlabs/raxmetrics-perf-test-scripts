@@ -79,7 +79,7 @@ class MultiPlotQueryGenerator(AbstractQueryGenerator):
         return result
 
 
-class SearchQuery(AbstractQueryGenerator):
+class SearchQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'search_query_weight'
 
     def generate_metrics_regex(self):
