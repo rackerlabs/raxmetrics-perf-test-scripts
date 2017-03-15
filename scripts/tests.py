@@ -111,10 +111,10 @@ class FakeIdentityConnector(object):
 requests_by_type = {
     ingest.IngestGenerator:                        MockReq(),
     annotationsingest.AnnotationsIngestGenerator:  MockReq(),
-    query.SinglePlotQueryGenerator:                      MockReq(),
-    query.MultiPlotQueryGenerator:                       MockReq(),
-    query.SearchQueryGenerator:                          MockReq(),
-    query.AnnotationsQueryGenerator:                     MockReq(),
+    query.SinglePlotQueryGenerator:                MockReq(),
+    query.MultiPlotQueryGenerator:                 MockReq(),
+    query.SearchQueryGenerator:                    MockReq(),
+    query.AnnotationsQueryGenerator:               MockReq(),
 }
 
 
