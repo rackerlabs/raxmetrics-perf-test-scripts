@@ -532,7 +532,7 @@ class MakeIngestRequestsTest(TestCaseBase):
         global sleep_time
         agent_num = 0
         generator = ingest.IngestGenerator(0, agent_num, MockReq(),
-                                        self.test_config)
+                                           self.test_config)
         valid_payload = [
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
