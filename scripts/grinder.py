@@ -9,8 +9,8 @@ import thread_manager as tm
 import py_java
 from annotationsingest import AnnotationsIngestGenerator
 from ingest import IngestGenerator
-from query import SinglePlotQueryGenerator, MultiPlotQueryGenerator, SearchQueryGenerator
-from query import AnnotationsQueryGenerator
+from query import SinglePlotQueryGenerator, MultiPlotQueryGenerator
+from query import SearchQueryGenerator, AnnotationsQueryGenerator
 from config import clean_configs
 import abstract_thread
 from raw_ingest_counter import RawIngestCounter

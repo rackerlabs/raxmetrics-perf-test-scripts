@@ -272,39 +272,48 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_25(self):
         th = self.tm.setup_thread(25, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_26(self):
         th = self.tm.setup_thread(26, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_27(self):
         th = self.tm.setup_thread(27, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_28(self):
         th = self.tm.setup_thread(28, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_29(self):
         th = self.tm.setup_thread(29, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_30(self):
         th = self.tm.setup_thread(30, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_31(self):
         th = self.tm.setup_thread(31, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_32(self):
         th = self.tm.setup_thread(32, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_33(self):
         th = self.tm.setup_thread(33, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestGenerator)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_34(self):
         th = self.tm.setup_thread(34, 0)
@@ -406,7 +415,8 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_payload(self):
         agent_num = 1
-        thread = ingest.IngestGenerator(0, agent_num, MockReq(), self.test_config)
+        thread = ingest.IngestGenerator(0, agent_num, MockReq(),
+                                        self.test_config)
         payload = json.loads(
             thread.generate_payload(0, [[2, 3, 0], [2, 4, 0], [2, 5, 0]]))
         valid_payload = [{'collectionTime': 0,
@@ -521,7 +531,8 @@ class MakeIngestRequestsTest(TestCaseBase):
     def test_ingest_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = ingest.IngestGenerator(0, agent_num, MockReq(), self.test_config)
+        thread = ingest.IngestGenerator(0, agent_num, MockReq(),
+                                        self.test_config)
         valid_payload = [
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
@@ -553,8 +564,10 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_SinglePlotQuery_request(self):
         req = requests_by_type[query.SinglePlotQueryGenerator]
-        qq = query.SinglePlotQueryGenerator(0, self.agent_num, req, self.config)
-        response = qq.make_request(None, 1000, 0, 'org.example.metric.metric123')
+        qq = query.SinglePlotQueryGenerator(0, self.agent_num, req,
+                                            self.config)
+        response = qq.make_request(None, 1000, 0,
+                                   'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
                          "org.example.metric.metric123?from=-86399000&" +
@@ -594,7 +607,8 @@ class MakeQueryRequestsTest(TestCaseBase):
 
     def test_query_make_AnnotationsQuery_request(self):
         req = requests_by_type[query.AnnotationsQueryGenerator]
-        qq = query.AnnotationsQueryGenerator(0, self.agent_num, req, self.config)
+        qq = query.AnnotationsQueryGenerator(0, self.agent_num, req,
+                                             self.config)
         response = qq.make_request(None, 1000, 30)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
@@ -994,7 +1008,6 @@ class ConnectorTest(TestCaseBase):
         resp = conn.post('http://httpbin.org/post', {}, [])
         jsonified = resp.json()
         self.assertEqual('{}', jsonified['data'])
-
 
 
 suite = unittest.TestSuite()
