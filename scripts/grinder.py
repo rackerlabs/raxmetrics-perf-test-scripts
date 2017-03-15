@@ -10,7 +10,7 @@ import py_java
 from annotationsingest import AnnotationsIngestGenerator
 from ingest import IngestGenerator
 from query import SinglePlotQueryGenerator, MultiPlotQueryGenerator, SearchQueryGenerator
-from query import AnnotationsQuery
+from query import AnnotationsQueryGenerator
 from config import clean_configs
 import abstract_thread
 from raw_ingest_counter import RawIngestCounter
@@ -112,7 +112,7 @@ requests_by_type = {
             "SearchQuery",
             config.get('search_query_throttling_group', None),
             user),
-    AnnotationsQuery:
+    AnnotationsQueryGenerator:
         create_request_obj(
             6,
             "AnnotationsQuery",

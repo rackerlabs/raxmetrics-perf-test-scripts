@@ -114,7 +114,7 @@ requests_by_type = {
     query.SinglePlotQueryGenerator:                      MockReq(),
     query.MultiPlotQueryGenerator:                       MockReq(),
     query.SearchQueryGenerator:                          MockReq(),
-    query.AnnotationsQuery:                     MockReq(),
+    query.AnnotationsQueryGenerator:                     MockReq(),
 }
 
 
@@ -348,7 +348,7 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_44(self):
         th = self.tm.setup_thread(44, 0)
-        self.assertEqual(type(th), query.AnnotationsQuery)
+        self.assertEqual(type(th), query.AnnotationsQueryGenerator)
 
     def test_setup_thread_invalid_thread_type(self):
         self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
@@ -593,8 +593,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertIs(req, response.request)
 
     def test_query_make_AnnotationsQuery_request(self):
-        req = requests_by_type[query.AnnotationsQuery]
-        qq = query.AnnotationsQuery(0, self.agent_num, req, self.config)
+        req = requests_by_type[query.AnnotationsQueryGenerator]
+        qq = query.AnnotationsQueryGenerator(0, self.agent_num, req, self.config)
         response = qq.make_request(None, 1000, 30)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
@@ -722,7 +722,7 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         th3 = query.SinglePlotQueryGenerator(2, 0, treq, self.test_config)
         th4 = query.MultiPlotQueryGenerator(3, 0, treq, self.test_config)
         th5 = query.SearchQueryGenerator(4, 0, treq, self.test_config)
-        th6 = query.AnnotationsQuery(5, 0, treq, self.test_config)
+        th6 = query.AnnotationsQueryGenerator(5, 0, treq, self.test_config)
 
         # when
         th1.make_request(pp, 1000)

@@ -101,7 +101,7 @@ class SearchQueryGenerator(AbstractQueryGenerator):
         return result
 
 
-class AnnotationsQuery(AbstractQueryGenerator):
+class AnnotationsQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'annotations_query_weight'
 
     def make_request(self, logger, time, tenant_id=None):
