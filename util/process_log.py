@@ -63,14 +63,19 @@ def percent(x, n):
 
 print('Totals: {}'.format(total))
 for test in sorted(test_counts.iterkeys()):
-    print('  {}: {} ({}%)'.format(test, test_counts[test],
-                                  percent(test_counts[test], total)))
+    print('  {}: {} ({}% of all requests)'.format(test, test_counts[test],
+                                                  percent(test_counts[test],
+                                                          total)))
 
 print('Successes: {}'.format(total_successes))
 for test in sorted(test_success_counts.iterkeys()):
-    print('  {}: {} ({}%)'.format(test, test_success_counts[test],
-                                  percent(test_success_counts[test],
-                                          total_successes)))
+    template = ('  {}: {} ({}% of all successful requests,'
+                ' {}% success rate for this test)')
+    print(template.format(test, test_success_counts[test],
+                          percent(test_success_counts[test],
+                                  total_successes),
+                          percent(test_success_counts[test],
+                                  test_counts[test])))
 
 print('')
 print('Total lines: {}'.format(total_lines))
