@@ -103,3 +103,4 @@ for log_file in args.log_files:
     print('  Total lines: {}'.format(total_lines))
     print('  First line: "{}" ({})'.format(first_line.strip(), first_line_number))
     print('  Last line: "{}" ({})'.format(last_line.strip(), last_line_number))
+    print('')
