@@ -17,9 +17,23 @@ print('Stop time: {} ms'.format(args.stop_time_ms))
 
 start_time = int(args.start_time_ms)
 stop_time = int(args.stop_time_ms)
-tests = [t + 1 for t in xrange(7)]
-test_counts = {t: 0 for t in tests}
-test_success_counts = {t: 0 for t in tests}
+
+
+class Test(object):
+    def __init__(self, name, number):
+        self.name = name
+        self.number = number
+        self.count = 0
+        self.success_count = 0
+
+tests = {
+    1: Test('Ingest', 1),
+    2: Test('Annotations Ingest', 2),
+    3: Test('SinglePlot Query', 3),
+    4: Test('MultiPlot Query', 4),
+    5: Test('Search Query', 5),
+    6: Test('Annotations Query', 6),
+}
 
 first_line = ''
 first_line_number = 'none'
@@ -43,7 +57,7 @@ for log_file in args.log_files:
         total_lines = 1
         for line in f.readlines():
             total_lines += 1
-            (thread, run, test, test_start_time, test_time, errors, response_code,
+            (thread, run, test_number, test_start_time, test_time, errors, response_code,
              response_length, response_errors, time_to_resolv, time_to_connect,
              time_to_first_byte, new_conns) = map(clean_int, line.split(','))
             if start_time <= test_start_time < stop_time:
@@ -52,38 +66,37 @@ for log_file in args.log_files:
                     first_line_number = total_lines
 
                 try:
-                    test_counts[test] += 1
+                    test = tests[test_number]
                 except KeyError:
-                    test_counts[test] = 0
+                    test = Test('Test {}'.format(test_number), test_number)
+                    tests[test_number] = test
+
+                test.count += 1
+
                 if int(errors) < 1:
-                    try:
-                        test_success_counts[test] += 1
-                    except KeyError:
-                        test_success_counts[test] = 0
+                    test.success_count += 1
 
                 last_line = line
                 last_line_number = total_lines
 
-    total = sum(test_counts.itervalues())
-    total_successes = sum(test_success_counts.itervalues())
+    sorted_tests = [tests[i] for i in sorted(tests.iterkeys())]
+    total = sum(t.count for t in sorted_tests)
+    total_successes = sum(t.success_count for t in sorted_tests)
 
     print('Log file: {}'.format(log_file))
 
     print('  Totals: {}'.format(total))
-    for test in sorted(test_counts.iterkeys()):
-        print('    {}: {} ({}% of all requests)'.format(test, test_counts[test],
-                                                      percent(test_counts[test],
-                                                              total)))
+    for test in sorted_tests:
+        print('    {} ({}): {} ({}% of all requests)'.format(
+            test.name, test.number, test.count, percent(test.count, total)))
 
     print('  Successes: {}'.format(total_successes))
-    for test in sorted(test_success_counts.iterkeys()):
-        template = ('    {}: {} ({}% of all successful requests,'
+    for test in sorted_tests:
+        template = ('    {} ({}): {} ({}% of all successful requests,'
                     ' {}% success rate for this test)')
-        print(template.format(test, test_success_counts[test],
-                              percent(test_success_counts[test],
-                                      total_successes),
-                              percent(test_success_counts[test],
-                                      test_counts[test])))
+        print(template.format(test.name, test.number, test.success_count,
+                              percent(test.success_count, total_successes),
+                              percent(test.success_count, test.count)))
 
     print('')
     print('  Total lines: {}'.format(total_lines))
