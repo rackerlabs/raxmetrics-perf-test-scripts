@@ -30,6 +30,7 @@ class Test(object):
 def clean_int(x):
     return int(x.strip())
 
+
 def percent(x, n):
     try:
         return int(round(100 * x / n))
@@ -58,9 +59,12 @@ for log_file in args.log_files:
         total_lines = 1
         for line in f.readlines():
             total_lines += 1
-            (thread, run, test_number, test_start_time, test_time, errors, response_code,
-             response_length, response_errors, time_to_resolv, time_to_connect,
-             time_to_first_byte, new_conns) = map(clean_int, line.split(','))
+
+            (thread, run, test_number, test_start_time, test_time, errors,
+             response_code, response_length, response_errors, time_to_resolv,
+             time_to_connect, time_to_first_byte,
+             new_conns) = map(clean_int, line.split(','))
+
             if start_time <= test_start_time < stop_time:
                 if not first_line:
                     first_line = line
@@ -101,6 +105,7 @@ for log_file in args.log_files:
 
     print('')
     print('  Total lines: {}'.format(total_lines))
-    print('  First line: "{}" ({})'.format(first_line.strip(), first_line_number))
+    print('  First line: "{}" ({})'.format(first_line.strip(),
+                                           first_line_number))
     print('  Last line: "{}" ({})'.format(last_line.strip(), last_line_number))
     print('')
