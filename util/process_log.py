@@ -5,10 +5,16 @@ import argparse
 parser = argparse.ArgumentParser(
     description='Read through grinder data log files and calculate '
                 'statistics about various request types.')
-parser.add_argument('--start-time-ms', default=0)
-parser.add_argument('--stop-time-ms', default=2000000000000)
-# 2000000000000ms --> May 17th, 2033 at 10:33:20 PM
-parser.add_argument('log_files', nargs='+', metavar='log-files')
+parser.add_argument('--start-time-ms', default=0,
+                    help='Start time in milliseconds. Tests that start before '
+                         'this time will be ignored.')
+parser.add_argument('--stop-time-ms', default=2000000000000,
+                    help='Stop time in milliseconds. Tests that start after '
+                         'this time will be ignored. If left unspecified, the '
+                         'default is 2_000_000_000_000, or May 17th, 2033 at '
+                         '10:33:20 PM.')
+parser.add_argument('log_files', nargs='+', metavar='log-files',
+                    help='The log files to analyze.')
 
 args = parser.parse_args()
 
