@@ -67,7 +67,7 @@ for log_file in args.log_files:
     total = sum(test_counts.itervalues())
     total_successes = sum(test_success_counts.itervalues())
 
-    print('Log file: {}'.format(args.log_file))
+    print('Log file: {}'.format(log_file))
 
     print('  Totals: {}'.format(total))
     for test in sorted(test_counts.iterkeys()):
