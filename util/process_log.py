@@ -2,8 +2,9 @@
 
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--num-tests', action='store', default=6)
+parser = argparse.ArgumentParser(
+    description='Read through a grinder data log file and calculate '
+                'statistics about various request types.')
 parser.add_argument('--start-time-ms', default=0)
 parser.add_argument('--stop-time-ms', default=2000000000000)
 # 2000000000000ms --> May 17th, 2033 at 10:33:20 PM
@@ -11,13 +12,12 @@ parser.add_argument('log_files', nargs='+', metavar='log-files')
 
 args = parser.parse_args()
 
-print('Num. tests: {}'.format(args.num_tests))
 print('Start time: {} ms'.format(args.start_time_ms))
 print('Stop time: {} ms'.format(args.stop_time_ms))
 
 start_time = int(args.start_time_ms)
 stop_time = int(args.stop_time_ms)
-tests = [t + 1 for t in xrange(args.num_tests)]
+tests = [t + 1 for t in xrange(7)]
 test_counts = {t: 0 for t in tests}
 test_success_counts = {t: 0 for t in tests}
 
@@ -51,9 +51,15 @@ for log_file in args.log_files:
                     first_line = line
                     first_line_number = total_lines
 
-                test_counts[test] += 1
+                try:
+                    test_counts[test] += 1
+                except KeyError:
+                    test_counts[test] = 0
                 if int(errors) < 1:
-                    test_success_counts[test] += 1
+                    try:
+                        test_success_counts[test] += 1
+                    except KeyError:
+                        test_success_counts[test] = 0
 
                 last_line = line
                 last_line_number = total_lines
