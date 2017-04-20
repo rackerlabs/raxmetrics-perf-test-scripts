@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+"""
+This script will read through a data log (e.g. <hostname>-0-data.log), and
+count how many requests of each type were made, and how many succeeded. It has
+command-line options for specifying a window of time to analyze.
+"""
+
 import argparse
 
 parser = argparse.ArgumentParser(
