@@ -3,7 +3,7 @@
 import argparse
 
 parser = argparse.ArgumentParser(
-    description='Read through a grinder data log file and calculate '
+    description='Read through grinder data log files and calculate '
                 'statistics about various request types.')
 parser.add_argument('--start-time-ms', default=0)
 parser.add_argument('--stop-time-ms', default=2000000000000)
