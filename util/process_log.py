@@ -26,20 +26,6 @@ class Test(object):
         self.count = 0
         self.success_count = 0
 
-tests = {
-    1: Test('Ingest', 1),
-    2: Test('Annotations Ingest', 2),
-    3: Test('SinglePlot Query', 3),
-    4: Test('MultiPlot Query', 4),
-    5: Test('Search Query', 5),
-    6: Test('Annotations Query', 6),
-}
-
-first_line = ''
-first_line_number = 'none'
-last_line = ''
-last_line_number = 'none'
-
 
 def clean_int(x):
     return int(x.strip())
@@ -53,6 +39,21 @@ def percent(x, n):
 print args
 for log_file in args.log_files:
     with open(log_file) as f:
+
+        tests = {
+            1: Test('Ingest', 1),
+            2: Test('Annotations Ingest', 2),
+            3: Test('SinglePlot Query', 3),
+            4: Test('MultiPlot Query', 4),
+            5: Test('Search Query', 5),
+            6: Test('Annotations Query', 6),
+        }
+
+        first_line = ''
+        first_line_number = 'none'
+        last_line = ''
+        last_line_number = 'none'
+
         header = f.readline()
         total_lines = 1
         for line in f.readlines():
