@@ -39,7 +39,7 @@ class SinglePlotQuery(AbstractQuery):
                 self.config)
         to = time
         frm = time - self.one_day
-        resolution = 'FULL'
+        resolution = 'MIN5'
         url = "%s/v2.0/%s/views/%s?from=%d&to=%s&resolution=%s" % (
             self.config['query_url'],
             tenant_id, metric_name, frm,
@@ -67,7 +67,7 @@ class MultiPlotQuery(AbstractQuery):
             payload = self.generate_multiplot_payload()
         to = time
         frm = time - self.one_day
-        resolution = 'FULL'
+        resolution = 'MIN5'
         url = "%s/v2.0/%s/views?from=%d&to=%d&resolution=%s" % (
             self.config['query_url'],
             tenant_id, frm,

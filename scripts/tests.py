@@ -558,7 +558,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
                          "org.example.metric.metric123?from=-86399000&" +
-                         "to=1000&resolution=FULL")
+                         "to=1000&resolution=MIN5")
         self.assertIs(req, response.request)
 
     def test_query_make_SearchQuery_request(self):
@@ -588,7 +588,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         response = qq.make_request(None, 1000, 20, payload_sent)
         self.assertEqual(req.post_url,
                          "http://metrics.example.org/v2.0/20/views?" +
-                         "from=-86399000&to=1000&resolution=FULL")
+                         "from=-86399000&to=1000&resolution=MIN5")
         self.assertEqual(req.post_payload, payload_sent)
         self.assertIs(req, response.request)
 
