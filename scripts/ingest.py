@@ -88,7 +88,7 @@ class IngestGenerator(AbstractGenerator):
         url = self.ingest_url()
         result = self.request.POST(url, payload, headers)
         if result.getStatusCode() >= 400:
-            logger("IngestThread Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
+            logger("IngestGenerator Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         if 200 <= result.getStatusCode() < 300:
             self.count_raw_metrics(len(tenant_metric_id_values))
         return result

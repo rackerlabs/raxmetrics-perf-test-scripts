@@ -170,196 +170,196 @@ class ThreadManagerTest(TestCaseBase):
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update(clean_configs(grinder_props))
 
-    def test_thread_type_assignment_0(self):
+    def test_generator_type_assignment_0(self):
         th = self.tm.setup_thread(0, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_1(self):
+    def test_generator_type_assignment_1(self):
         th = self.tm.setup_thread(1, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_2(self):
+    def test_generator_type_assignment_2(self):
         th = self.tm.setup_thread(2, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_3(self):
+    def test_generator_type_assignment_3(self):
         th = self.tm.setup_thread(3, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_4(self):
+    def test_generator_type_assignment_4(self):
         th = self.tm.setup_thread(4, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_5(self):
+    def test_generator_type_assignment_5(self):
         th = self.tm.setup_thread(5, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_6(self):
+    def test_generator_type_assignment_6(self):
         th = self.tm.setup_thread(6, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_7(self):
+    def test_generator_type_assignment_7(self):
         th = self.tm.setup_thread(7, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_8(self):
+    def test_generator_type_assignment_8(self):
         th = self.tm.setup_thread(8, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_9(self):
+    def test_generator_type_assignment_9(self):
         th = self.tm.setup_thread(9, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_10(self):
+    def test_generator_type_assignment_10(self):
         th = self.tm.setup_thread(10, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_11(self):
+    def test_generator_type_assignment_11(self):
         th = self.tm.setup_thread(11, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_12(self):
+    def test_generator_type_assignment_12(self):
         th = self.tm.setup_thread(12, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_13(self):
+    def test_generator_type_assignment_13(self):
         th = self.tm.setup_thread(13, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_14(self):
+    def test_generator_type_assignment_14(self):
         th = self.tm.setup_thread(14, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_15(self):
+    def test_generator_type_assignment_15(self):
         th = self.tm.setup_thread(15, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_16(self):
+    def test_generator_type_assignment_16(self):
         th = self.tm.setup_thread(16, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_17(self):
+    def test_generator_type_assignment_17(self):
         th = self.tm.setup_thread(17, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_18(self):
+    def test_generator_type_assignment_18(self):
         th = self.tm.setup_thread(18, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_19(self):
+    def test_generator_type_assignment_19(self):
         th = self.tm.setup_thread(19, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_20(self):
+    def test_generator_type_assignment_20(self):
         th = self.tm.setup_thread(20, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_21(self):
+    def test_generator_type_assignment_21(self):
         th = self.tm.setup_thread(21, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_22(self):
+    def test_generator_type_assignment_22(self):
         th = self.tm.setup_thread(22, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_23(self):
+    def test_generator_type_assignment_23(self):
         th = self.tm.setup_thread(23, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_24(self):
+    def test_generator_type_assignment_24(self):
         th = self.tm.setup_thread(24, 0)
         self.assertEqual(type(th), ingest.IngestGenerator)
 
-    def test_thread_type_assignment_25(self):
+    def test_generator_type_assignment_25(self):
         th = self.tm.setup_thread(25, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_26(self):
+    def test_generator_type_assignment_26(self):
         th = self.tm.setup_thread(26, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_27(self):
+    def test_generator_type_assignment_27(self):
         th = self.tm.setup_thread(27, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_28(self):
+    def test_generator_type_assignment_28(self):
         th = self.tm.setup_thread(28, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_29(self):
+    def test_generator_type_assignment_29(self):
         th = self.tm.setup_thread(29, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_30(self):
+    def test_generator_type_assignment_30(self):
         th = self.tm.setup_thread(30, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_31(self):
+    def test_generator_type_assignment_31(self):
         th = self.tm.setup_thread(31, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_32(self):
+    def test_generator_type_assignment_32(self):
         th = self.tm.setup_thread(32, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_33(self):
+    def test_generator_type_assignment_33(self):
         th = self.tm.setup_thread(33, 0)
         self.assertEqual(type(th),
                          annotationsingest.AnnotationsIngestGenerator)
 
-    def test_thread_type_assignment_34(self):
+    def test_generator_type_assignment_34(self):
         th = self.tm.setup_thread(34, 0)
         self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
-    def test_thread_type_assignment_35(self):
+    def test_generator_type_assignment_35(self):
         th = self.tm.setup_thread(35, 0)
         self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
-    def test_thread_type_assignment_36(self):
+    def test_generator_type_assignment_36(self):
         th = self.tm.setup_thread(36, 0)
         self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
-    def test_thread_type_assignment_37(self):
+    def test_generator_type_assignment_37(self):
         th = self.tm.setup_thread(37, 0)
         self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
-    def test_thread_type_assignment_38(self):
+    def test_generator_type_assignment_38(self):
         th = self.tm.setup_thread(38, 0)
         self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
-    def test_thread_type_assignment_39(self):
+    def test_generator_type_assignment_39(self):
         th = self.tm.setup_thread(39, 0)
         self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
-    def test_thread_type_assignment_40(self):
+    def test_generator_type_assignment_40(self):
         th = self.tm.setup_thread(40, 0)
         self.assertEqual(type(th), query.SearchQueryGenerator)
 
-    def test_thread_type_assignment_41(self):
+    def test_generator_type_assignment_41(self):
         th = self.tm.setup_thread(41, 0)
         self.assertEqual(type(th), query.SearchQueryGenerator)
 
-    def test_thread_type_assignment_42(self):
+    def test_generator_type_assignment_42(self):
         th = self.tm.setup_thread(42, 0)
         self.assertEqual(type(th), query.SearchQueryGenerator)
 
-    def test_thread_type_assignment_43(self):
+    def test_generator_type_assignment_43(self):
         th = self.tm.setup_thread(43, 0)
         self.assertEqual(type(th), query.SearchQueryGenerator)
 
-    def test_thread_type_assignment_44(self):
+    def test_generator_type_assignment_44(self):
         th = self.tm.setup_thread(44, 0)
         self.assertEqual(type(th), query.AnnotationsQueryGenerator)
 
-    def test_setup_thread_invalid_thread_type(self):
+    def test_setup_generator_invalid_generator_type(self):
         self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
 
 
@@ -415,10 +415,10 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_payload(self):
         agent_num = 1
-        thread = ingest.IngestGenerator(0, agent_num, MockReq(),
-                                        self.test_config)
+        generator = ingest.IngestGenerator(0, agent_num, MockReq(),
+                                           self.test_config)
         payload = json.loads(
-            thread.generate_payload(0, [[2, 3, 0], [2, 4, 0], [2, 5, 0]]))
+            generator.generate_payload(0, [[2, 3, 0], [2, 4, 0], [2, 5, 0]]))
         valid_payload = [{'collectionTime': 0,
                           'metricName': 'org.example.metric.3',
                           'metricValue': 0,
@@ -441,9 +441,9 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_annotations_payload(self):
         agent_num = 1
-        thread = annotationsingest.AnnotationsIngestGenerator(
+        generator = annotationsingest.AnnotationsIngestGenerator(
             0, agent_num, MockReq(), self.test_config)
-        payload = json.loads(thread.generate_payload(0, 3))
+        payload = json.loads(generator.generate_payload(0, 3))
         valid_payload = {
             'what': 'annotation org.example.metric.3',
             'when': 0,
@@ -482,7 +482,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
     def test_annotationsingest_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = annotationsingest.AnnotationsIngestGenerator(
+        generator = annotationsingest.AnnotationsIngestGenerator(
             0, agent_num, MockReq(), self.test_config)
         tenant_id = 'tenantId'
         expected_url = (
@@ -492,7 +492,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
             "what": "annotation org.example.metric.%s" % metric_id,
             "when": 1000, "tags": "tag", "data": "data"}
 
-        response = thread.make_request(pp, 1000, (tenant_id, metric_id))
+        response = generator.make_request(pp, 1000, (tenant_id, metric_id))
         url = response.request.post_url
         payload = response.request.post_payload
 
@@ -531,8 +531,8 @@ class MakeIngestRequestsTest(TestCaseBase):
     def test_ingest_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = ingest.IngestGenerator(0, agent_num, MockReq(),
-                                        self.test_config)
+        generator = ingest.IngestGenerator(0, agent_num, MockReq(),
+                                           self.test_config)
         valid_payload = [
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
@@ -545,7 +545,7 @@ class MakeIngestRequestsTest(TestCaseBase):
             [2, 0, 0],
             [2, 1, 0]
         ]
-        response = thread.make_request(pp, 1000, tenant_metric_id_values)
+        response = generator.make_request(pp, 1000, tenant_metric_id_values)
         url = response.request.post_url
         payload = response.request.post_payload
 
@@ -617,7 +617,7 @@ class MakeQueryRequestsTest(TestCaseBase):
 
 
 class ThrottlingGroupTest(unittest.TestCase):
-    def test_single_thread_throttles_smoothly(self):
+    def test_single_generator_throttles_smoothly(self):
 
         sleeps = []
 
@@ -687,8 +687,8 @@ class ThrottlingGroupTest(unittest.TestCase):
         self.assertEqual([10, 10, 10, 10, 10, 10, 10], sleeps)
 
 
-class ThreadsWithThrottlingGroupTest(unittest.TestCase):
-    def test_multiple_threads_share_throttling_group(self):
+class GeneratorsWithThrottlingGroupTest(unittest.TestCase):
+    def test_multiple_generators_share_throttling_group(self):
         # given
         self.test_config = abstract_thread.default_config.copy()
         self.test_config.update({
@@ -1019,7 +1019,7 @@ suite.addTest(loader.loadTestsFromTestCase(MakeAnnotationsIngestRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeIngestRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(MakeQueryRequestsTest))
 suite.addTest(loader.loadTestsFromTestCase(ThrottlingGroupTest))
-suite.addTest(loader.loadTestsFromTestCase(ThreadsWithThrottlingGroupTest))
+suite.addTest(loader.loadTestsFromTestCase(GeneratorsWithThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(AuthenticatingRequestTest))
 suite.addTest(loader.loadTestsFromTestCase(UserTest))
 suite.addTest(loader.loadTestsFromTestCase(ConnectorTest))

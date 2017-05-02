@@ -131,12 +131,12 @@ class TestRunner:
     def __init__(self):
         agent_number = grinder.getAgentNumber()
         thread_number = grinder.getThreadNumber()
-        self.thread = thread_manager.setup_thread(
+        self.generator = thread_manager.setup_thread(
             thread_number, agent_number, throttling_groups, user)
-        worker_type = type(self.thread)
+        worker_type = type(self.generator)
         grinder.logger.debug('Worker %s-%s type %s' %
                              (agent_number, thread_number, worker_type))
 
     def __call__(self):
-        result = self.thread.make_request(grinder.logger.info,
-                                          self.thread.time())
+        result = self.generator.make_request(grinder.logger.info,
+                                             self.generator.time())
