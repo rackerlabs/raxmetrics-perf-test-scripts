@@ -7,10 +7,10 @@ from net.grinder.plugin.http import HTTPRequest
 
 import thread_manager as tm
 import py_java
-from annotationsingest import AnnotationsIngestThread
-from ingest import IngestThread
-from query import SinglePlotQuery, MultiPlotQuery, SearchQuery
-from query import AnnotationsQuery
+from annotationsingest import AnnotationsIngestGenerator
+from ingest import IngestGenerator
+from query import SinglePlotQueryGenerator, MultiPlotQueryGenerator
+from query import SearchQueryGenerator, AnnotationsQueryGenerator
 from config import clean_configs
 import abstract_thread
 from raw_ingest_counter import RawIngestCounter
@@ -82,37 +82,37 @@ user = None
 user = get_user(config, grinder)
 
 requests_by_type = {
-    IngestThread:
+    IngestGenerator:
         create_request_obj(
             1,
             "Ingest test",
             config.get('ingest_throttling_group', None),
             user),
-    AnnotationsIngestThread:
+    AnnotationsIngestGenerator:
         create_request_obj(
             2,
             "Annotations Ingest test",
             config.get('annotations_throttling_group', None),
             user),
-    SinglePlotQuery:
+    SinglePlotQueryGenerator:
         create_request_obj(
             3,
             "SinglePlotQuery",
             config.get('singleplot_query_throttling_group', None),
             user),
-    MultiPlotQuery:
+    MultiPlotQueryGenerator:
         create_request_obj(
             4,
             "MultiPlotQuery",
             config.get('multiplot_query_throttling_group', None),
             user),
-    SearchQuery:
+    SearchQueryGenerator:
         create_request_obj(
             5,
             "SearchQuery",
             config.get('search_query_throttling_group', None),
             user),
-    AnnotationsQuery:
+    AnnotationsQueryGenerator:
         create_request_obj(
             6,
             "AnnotationsQuery",
@@ -122,7 +122,7 @@ requests_by_type = {
 
 if config.get('ingest_count_raw_metrics', False):
     test = Test(101, "Metrics Ingested Raw Count")
-    IngestThread.raw_ingest_counter = RawIngestCounter(test)
+    IngestGenerator.raw_ingest_counter = RawIngestCounter(test)
 
 thread_manager = tm.ThreadManager(config, requests_by_type)
 

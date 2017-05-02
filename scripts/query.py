@@ -4,7 +4,7 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, generate_metric_name
+from abstract_thread import AbstractGenerator, generate_metric_name
 from throttling_group import NullThrottlingGroup
 
 try:
@@ -13,20 +13,20 @@ except ImportError:
     from nvpair import NVPair
 
 
-class AbstractQuery(AbstractThread):
+class AbstractQueryGenerator(AbstractGenerator):
     one_day = (1000 * 60 * 60 * 24)
 
     query_interval_name = None
 
     def __init__(self, thread_num, agent_number, request, config, user=None):
-        AbstractThread.__init__(self, thread_num, agent_number, request,
-                                config, user)
+        AbstractGenerator.__init__(self, thread_num, agent_number, request,
+                                   config, user)
         self.thread_num = thread_num
         self.config = config
         self.request = request
 
 
-class SinglePlotQuery(AbstractQuery):
+class SinglePlotQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'singleplot_query_weight'
 
     def make_request(self, logger, time, tenant_id=None,
@@ -48,7 +48,7 @@ class SinglePlotQuery(AbstractQuery):
         return result
 
 
-class MultiPlotQuery(AbstractQuery):
+class MultiPlotQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'multiplot_query_weight'
 
     def generate_multiplot_payload(self):
@@ -79,7 +79,7 @@ class MultiPlotQuery(AbstractQuery):
         return result
 
 
-class SearchQuery(AbstractQuery):
+class SearchQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'search_query_weight'
 
     def generate_metrics_regex(self):
@@ -101,7 +101,7 @@ class SearchQuery(AbstractQuery):
         return result
 
 
-class AnnotationsQuery(AbstractQuery):
+class AnnotationsQueryGenerator(AbstractQueryGenerator):
     query_interval_name = 'annotations_query_weight'
 
     def make_request(self, logger, time, tenant_id=None):

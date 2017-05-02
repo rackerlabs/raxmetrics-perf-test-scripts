@@ -109,12 +109,12 @@ class FakeIdentityConnector(object):
                         'id': UserTest.tenant}}}})
 
 requests_by_type = {
-    ingest.IngestThread:                        MockReq(),
-    annotationsingest.AnnotationsIngestThread:  MockReq(),
-    query.SinglePlotQuery:                      MockReq(),
-    query.MultiPlotQuery:                       MockReq(),
-    query.SearchQuery:                          MockReq(),
-    query.AnnotationsQuery:                     MockReq(),
+    ingest.IngestGenerator:                        MockReq(),
+    annotationsingest.AnnotationsIngestGenerator:  MockReq(),
+    query.SinglePlotQueryGenerator:                MockReq(),
+    query.MultiPlotQueryGenerator:                 MockReq(),
+    query.SearchQueryGenerator:                    MockReq(),
+    query.AnnotationsQueryGenerator:               MockReq(),
 }
 
 
@@ -172,183 +172,192 @@ class ThreadManagerTest(TestCaseBase):
 
     def test_thread_type_assignment_0(self):
         th = self.tm.setup_thread(0, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_1(self):
         th = self.tm.setup_thread(1, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_2(self):
         th = self.tm.setup_thread(2, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_3(self):
         th = self.tm.setup_thread(3, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_4(self):
         th = self.tm.setup_thread(4, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_5(self):
         th = self.tm.setup_thread(5, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_6(self):
         th = self.tm.setup_thread(6, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_7(self):
         th = self.tm.setup_thread(7, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_8(self):
         th = self.tm.setup_thread(8, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_9(self):
         th = self.tm.setup_thread(9, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_10(self):
         th = self.tm.setup_thread(10, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_11(self):
         th = self.tm.setup_thread(11, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_12(self):
         th = self.tm.setup_thread(12, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_13(self):
         th = self.tm.setup_thread(13, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_14(self):
         th = self.tm.setup_thread(14, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_15(self):
         th = self.tm.setup_thread(15, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_16(self):
         th = self.tm.setup_thread(16, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_17(self):
         th = self.tm.setup_thread(17, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_18(self):
         th = self.tm.setup_thread(18, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_19(self):
         th = self.tm.setup_thread(19, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_20(self):
         th = self.tm.setup_thread(20, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_21(self):
         th = self.tm.setup_thread(21, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_22(self):
         th = self.tm.setup_thread(22, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_23(self):
         th = self.tm.setup_thread(23, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_24(self):
         th = self.tm.setup_thread(24, 0)
-        self.assertEqual(type(th), ingest.IngestThread)
+        self.assertEqual(type(th), ingest.IngestGenerator)
 
     def test_thread_type_assignment_25(self):
         th = self.tm.setup_thread(25, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_26(self):
         th = self.tm.setup_thread(26, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_27(self):
         th = self.tm.setup_thread(27, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_28(self):
         th = self.tm.setup_thread(28, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_29(self):
         th = self.tm.setup_thread(29, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_30(self):
         th = self.tm.setup_thread(30, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_31(self):
         th = self.tm.setup_thread(31, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_32(self):
         th = self.tm.setup_thread(32, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_33(self):
         th = self.tm.setup_thread(33, 0)
-        self.assertEqual(type(th), annotationsingest.AnnotationsIngestThread)
+        self.assertEqual(type(th),
+                         annotationsingest.AnnotationsIngestGenerator)
 
     def test_thread_type_assignment_34(self):
         th = self.tm.setup_thread(34, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
     def test_thread_type_assignment_35(self):
         th = self.tm.setup_thread(35, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
     def test_thread_type_assignment_36(self):
         th = self.tm.setup_thread(36, 0)
-        self.assertEqual(type(th), query.SinglePlotQuery)
+        self.assertEqual(type(th), query.SinglePlotQueryGenerator)
 
     def test_thread_type_assignment_37(self):
         th = self.tm.setup_thread(37, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
     def test_thread_type_assignment_38(self):
         th = self.tm.setup_thread(38, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
     def test_thread_type_assignment_39(self):
         th = self.tm.setup_thread(39, 0)
-        self.assertEqual(type(th), query.MultiPlotQuery)
+        self.assertEqual(type(th), query.MultiPlotQueryGenerator)
 
     def test_thread_type_assignment_40(self):
         th = self.tm.setup_thread(40, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_41(self):
         th = self.tm.setup_thread(41, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_42(self):
         th = self.tm.setup_thread(42, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_43(self):
         th = self.tm.setup_thread(43, 0)
-        self.assertEqual(type(th), query.SearchQuery)
+        self.assertEqual(type(th), query.SearchQueryGenerator)
 
     def test_thread_type_assignment_44(self):
         th = self.tm.setup_thread(44, 0)
-        self.assertEqual(type(th), query.AnnotationsQuery)
+        self.assertEqual(type(th), query.AnnotationsQueryGenerator)
 
     def test_setup_thread_invalid_thread_type(self):
         self.assertRaises(Exception, self.tm.setup_thread, (45, 0))
@@ -406,7 +415,8 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_payload(self):
         agent_num = 1
-        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
+        thread = ingest.IngestGenerator(0, agent_num, MockReq(),
+                                        self.test_config)
         payload = json.loads(
             thread.generate_payload(0, [[2, 3, 0], [2, 4, 0], [2, 5, 0]]))
         valid_payload = [{'collectionTime': 0,
@@ -431,7 +441,7 @@ class GeneratePayloadTest(TestCaseBase):
 
     def test_generate_annotations_payload(self):
         agent_num = 1
-        thread = annotationsingest.AnnotationsIngestThread(
+        thread = annotationsingest.AnnotationsIngestGenerator(
             0, agent_num, MockReq(), self.test_config)
         payload = json.loads(thread.generate_payload(0, 3))
         valid_payload = {
@@ -472,7 +482,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
     def test_annotationsingest_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = annotationsingest.AnnotationsIngestThread(
+        thread = annotationsingest.AnnotationsIngestGenerator(
             0, agent_num, MockReq(), self.test_config)
         tenant_id = 'tenantId'
         expected_url = (
@@ -521,7 +531,8 @@ class MakeIngestRequestsTest(TestCaseBase):
     def test_ingest_make_request(self):
         global sleep_time
         agent_num = 0
-        thread = ingest.IngestThread(0, agent_num, MockReq(), self.test_config)
+        thread = ingest.IngestGenerator(0, agent_num, MockReq(),
+                                        self.test_config)
         valid_payload = [
             {"collectionTime": 1000, "ttlInSeconds": 172800, "tenantId": "2",
              "metricValue": 0, "unit": "days",
@@ -552,9 +563,11 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.requests_by_type = requests_by_type.copy()
 
     def test_query_make_SinglePlotQuery_request(self):
-        req = requests_by_type[query.SinglePlotQuery]
-        qq = query.SinglePlotQuery(0, self.agent_num, req, self.config)
-        response = qq.make_request(None, 1000, 0, 'org.example.metric.metric123')
+        req = requests_by_type[query.SinglePlotQueryGenerator]
+        qq = query.SinglePlotQueryGenerator(0, self.agent_num, req,
+                                            self.config)
+        response = qq.make_request(None, 1000, 0,
+                                   'org.example.metric.metric123')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/0/views/" +
                          "org.example.metric.metric123?from=-86399000&" +
@@ -562,8 +575,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertIs(req, response.request)
 
     def test_query_make_SearchQuery_request(self):
-        req = requests_by_type[query.SearchQuery]
-        qq = query.SearchQuery(0, self.agent_num, req, self.config)
+        req = requests_by_type[query.SearchQueryGenerator]
+        qq = query.SearchQueryGenerator(0, self.agent_num, req, self.config)
         response = qq.make_request(None, 1000, 10, 'org.example.metric.*')
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/10/metrics/search?" +
@@ -571,8 +584,8 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertIs(req, response.request)
 
     def test_query_make_MultiPlotQuery_request(self):
-        req = requests_by_type[query.MultiPlotQuery]
-        qq = query.MultiPlotQuery(0, self.agent_num, req, self.config)
+        req = requests_by_type[query.MultiPlotQueryGenerator]
+        qq = query.MultiPlotQueryGenerator(0, self.agent_num, req, self.config)
         payload_sent = json.dumps([
             "org.example.metric.0",
             "org.example.metric.1",
@@ -593,8 +606,9 @@ class MakeQueryRequestsTest(TestCaseBase):
         self.assertIs(req, response.request)
 
     def test_query_make_AnnotationsQuery_request(self):
-        req = requests_by_type[query.AnnotationsQuery]
-        qq = query.AnnotationsQuery(0, self.agent_num, req, self.config)
+        req = requests_by_type[query.AnnotationsQueryGenerator]
+        qq = query.AnnotationsQueryGenerator(0, self.agent_num, req,
+                                             self.config)
         response = qq.make_request(None, 1000, 30)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
@@ -628,7 +642,7 @@ class ThrottlingGroupTest(unittest.TestCase):
                                  time_source=time_source)
         treq = ThrottlingRequest(tgroup, MockReq())
         test_config = abstract_thread.default_config.copy()
-        th1 = ingest.IngestThread(0, 0, treq, test_config)
+        th1 = ingest.IngestGenerator(0, 0, treq, test_config)
 
         # when
         th1.make_request(pp, 1000)
@@ -716,13 +730,13 @@ class ThreadsWithThrottlingGroupTest(unittest.TestCase):
         tgroup = ThrottlingGroup('test', 6, time_source, sleep_source)
         treq = ThrottlingRequest(tgroup, MockReq())
 
-        th1 = ingest.IngestThread(0, 0, treq, self.test_config)
-        th2 = annotationsingest.AnnotationsIngestThread(
+        th1 = ingest.IngestGenerator(0, 0, treq, self.test_config)
+        th2 = annotationsingest.AnnotationsIngestGenerator(
             1, 0, treq, self.test_config)
-        th3 = query.SinglePlotQuery(2, 0, treq, self.test_config)
-        th4 = query.MultiPlotQuery(3, 0, treq, self.test_config)
-        th5 = query.SearchQuery(4, 0, treq, self.test_config)
-        th6 = query.AnnotationsQuery(5, 0, treq, self.test_config)
+        th3 = query.SinglePlotQueryGenerator(2, 0, treq, self.test_config)
+        th4 = query.MultiPlotQueryGenerator(3, 0, treq, self.test_config)
+        th5 = query.SearchQueryGenerator(4, 0, treq, self.test_config)
+        th6 = query.AnnotationsQueryGenerator(5, 0, treq, self.test_config)
 
         # when
         th1.make_request(pp, 1000)
@@ -994,7 +1008,6 @@ class ConnectorTest(TestCaseBase):
         resp = conn.post('http://httpbin.org/post', {}, [])
         jsonified = resp.json()
         self.assertEqual('{}', jsonified['data'])
-
 
 
 suite = unittest.TestSuite()

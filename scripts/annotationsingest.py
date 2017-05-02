@@ -5,7 +5,7 @@ try:
     from com.xhaus.jyson import JysonCodec as json
 except ImportError:
     import json
-from abstract_thread import AbstractThread, generate_metric_name
+from abstract_thread import AbstractGenerator, generate_metric_name
 from throttling_group import NullThrottlingGroup
 
 try:
@@ -14,7 +14,7 @@ except ImportError:
     from nvpair import NVPair
 
 
-class AnnotationsIngestThread(AbstractThread):
+class AnnotationsIngestGenerator(AbstractGenerator):
 
     def generate_annotation(self, time, metric_id):
         metric_name = generate_metric_name(metric_id, self.config)
