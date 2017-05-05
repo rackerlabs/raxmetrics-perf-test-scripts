@@ -12,7 +12,7 @@ from ingest import IngestGenerator
 from query import SinglePlotQueryGenerator, MultiPlotQueryGenerator
 from query import SearchQueryGenerator, AnnotationsQueryGenerator
 from config import clean_configs
-import abstract_thread
+import abstract_generator
 from raw_ingest_counter import RawIngestCounter
 from throttling_group import ThrottlingGroup
 from throttling_request import ThrottlingRequest
@@ -39,7 +39,7 @@ from get_user import get_user
 #
 
 
-config = abstract_thread.default_config.copy()
+config = abstract_generator.default_config.copy()
 config.update(clean_configs(py_java.get_config_from_grinder(grinder)))
 
 throttling_groups = {}

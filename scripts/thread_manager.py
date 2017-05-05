@@ -2,7 +2,7 @@
 
 import ast
 
-from abstract_thread import default_config
+from abstract_generator import default_config
 from annotationsingest import AnnotationsIngestGenerator
 from ingest import IngestGenerator
 from query import SinglePlotQueryGenerator, MultiPlotQueryGenerator

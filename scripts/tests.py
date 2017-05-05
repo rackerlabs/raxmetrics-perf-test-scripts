@@ -11,7 +11,7 @@ from datetime import datetime
 import ingest
 import query
 import annotationsingest
-import abstract_thread
+import abstract_generator
 import thread_manager as tm
 from config import clean_configs
 from throttling_group import ThrottlingGroup
@@ -167,7 +167,7 @@ class ThreadManagerTest(TestCaseBase):
         config = grinder_props.copy()
         self.tm = tm.ThreadManager(config, requests_by_type)
 
-        self.test_config = abstract_thread.default_config.copy()
+        self.test_config = abstract_generator.default_config.copy()
         self.test_config.update(clean_configs(grinder_props))
 
     def test_generator_type_assignment_0(self):
@@ -365,7 +365,7 @@ class ThreadManagerTest(TestCaseBase):
 
 class InitProcessTest(TestCaseBase):
     def setUp(self):
-        self.test_config = abstract_thread.default_config.copy()
+        self.test_config = abstract_generator.default_config.copy()
         self.test_config.update(clean_configs(grinder_props))
         self.test_config.update({
             'name_fmt': "org.example.metric.%d",
@@ -391,7 +391,7 @@ class InitProcessTest(TestCaseBase):
 
 class GeneratePayloadTest(TestCaseBase):
     def setUp(self):
-        self.test_config = abstract_thread.default_config.copy()
+        self.test_config = abstract_generator.default_config.copy()
         self.test_config.update({
             'name_fmt': "org.example.metric.%d",
 
@@ -454,7 +454,7 @@ class GeneratePayloadTest(TestCaseBase):
 
 class MakeAnnotationsIngestRequestsTest(TestCaseBase):
     def setUp(self):
-        self.test_config = abstract_thread.default_config.copy()
+        self.test_config = abstract_generator.default_config.copy()
         self.test_config.update({
             'url': 'http://metrics-ingest.example.org',
             'query_url': 'http://metrics.example.org',
@@ -503,7 +503,7 @@ class MakeAnnotationsIngestRequestsTest(TestCaseBase):
 
 class MakeIngestRequestsTest(TestCaseBase):
     def setUp(self):
-        self.test_config = abstract_thread.default_config.copy()
+        self.test_config = abstract_generator.default_config.copy()
         self.test_config.update({
             'url': 'http://metrics-ingest.example.org',
             'query_url': 'http://metrics.example.org',
@@ -641,7 +641,7 @@ class ThrottlingGroupTest(unittest.TestCase):
         tgroup = ThrottlingGroup('test', max_rpm, sleep_source=sleep_source,
                                  time_source=time_source)
         treq = ThrottlingRequest(tgroup, MockReq())
-        test_config = abstract_thread.default_config.copy()
+        test_config = abstract_generator.default_config.copy()
         th1 = ingest.IngestGenerator(0, 0, treq, test_config)
 
         # when
@@ -690,7 +690,7 @@ class ThrottlingGroupTest(unittest.TestCase):
 class GeneratorsWithThrottlingGroupTest(unittest.TestCase):
     def test_multiple_generators_share_throttling_group(self):
         # given
-        self.test_config = abstract_thread.default_config.copy()
+        self.test_config = abstract_generator.default_config.copy()
         self.test_config.update({
             'url': 'http://metrics-ingest.example.org',
             'query_url': 'http://metrics.example.org',
