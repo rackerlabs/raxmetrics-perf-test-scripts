@@ -33,6 +33,8 @@ except ImportError:
     from nvpair import NVPair
 
 from connector import Connector
+from error_logging_request import ErrorLoggingRequest
+
 
 pp = pprint.pprint
 sleep_time = -1
@@ -1010,6 +1012,67 @@ class ConnectorTest(TestCaseBase):
         self.assertEqual('{}', jsonified['data'])
 
 
+class MockReqCustomCode(MockReq):
+    def __init__(self, code):
+        super(MockReqCustomCode, self).__init__()
+        self.code = code
+
+    def GET(self, url, payload=None, headers=None):
+        global get_url
+        get_url = url
+        self.get_url = url
+        self.headers = headers
+        return MockResponse(self, self.code)
+
+
+class ErrorLoggingRequestTest(TestCaseBase):
+    def test_writes_to_log_on_error(self):
+        # given
+        log = []
+
+        def logger(s):
+            log.append(s)
+        req = MockReqCustomCode(500)
+        elr = ErrorLoggingRequest(req, logger)
+        # precondition
+        self.assertEqual(0, len(log))
+        # when
+        resp = elr.GET(url='http://www.example.com')
+        # then
+        self.assertEqual(1, len(log))
+        self.assertIs(resp, log[0])
+
+    def test_does_not_write_to_log_on_success(self):
+        # given
+        log = []
+
+        def logger(s):
+            log.append(s)
+        req = MockReqCustomCode(200)
+        elr = ErrorLoggingRequest(req, logger)
+        # precondition
+        self.assertEqual(0, len(log))
+        # when
+        resp = elr.GET(url='http://www.example.com')
+        # then
+        self.assertEqual(0, len(log))
+
+    def test_does_not_write_to_log_on_client_error(self):
+        # given
+        log = []
+
+        def logger(s):
+            log.append(s)
+        req = MockReqCustomCode(400)
+        elr = ErrorLoggingRequest(req, logger)
+        # precondition
+        self.assertEqual(0, len(log))
+        # when
+        resp = elr.GET(url='http://www.example.com')
+        # then
+        self.assertEqual(0, len(log))
+
+
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()
 suite.addTest(loader.loadTestsFromTestCase(ThreadManagerTest))
@@ -1023,6 +1086,7 @@ suite.addTest(loader.loadTestsFromTestCase(GeneratorsWithThrottlingGroupTest))
 suite.addTest(loader.loadTestsFromTestCase(AuthenticatingRequestTest))
 suite.addTest(loader.loadTestsFromTestCase(UserTest))
 suite.addTest(loader.loadTestsFromTestCase(ConnectorTest))
+suite.addTest(loader.loadTestsFromTestCase(ErrorLoggingRequestTest))
 
 
 class TestRunner:
