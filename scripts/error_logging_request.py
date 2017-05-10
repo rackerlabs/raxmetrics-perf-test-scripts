@@ -2,7 +2,7 @@
 
 class ErrorLoggingRequest():
 
-    """This request write to the grinder log all error responses with a 
+    """This request write to the grinder log all error responses with a
     status code of 5XX."""
 
     def __init__(self, request, log):
@@ -12,12 +12,15 @@ class ErrorLoggingRequest():
     def wrap(self, callee):
         response = callee()
         if response.getStatusCode() >= 500:
-            s = '\n    %s %s %s\n' % (response.getVersion(), response.getStatusCode(),
-                                response.getReasonLine())
+            s = '\n    %s %s %s\n' % (response.getVersion(),
+                                      response.getStatusCode(),
+                                      response.getReasonLine())
+
             def clean(s):
                 return s.replace('\n', '\n    ')
             for header in response.listHeaders():
-                s += '    %s: %s\n' % (header, clean(response.getHeader(header)))
+                s += '    %s: %s\n' % (header,
+                                       clean(response.getHeader(header)))
             text = response.getText()
             if text:
                 s += '\n    '
