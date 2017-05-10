@@ -48,10 +48,4 @@ class AnnotationsIngestGenerator(AbstractGenerator):
 
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(url, payload, headers)
-        if result.getStatusCode() >= 400:
-            logger("Error: status code=" + str(result.getStatusCode()) +
-                   " req url=" + url +
-                   " req headers=" + str(headers) +
-                   " req payload=" + payload +
-                   " resp payload=" + result.getText())
         return result
