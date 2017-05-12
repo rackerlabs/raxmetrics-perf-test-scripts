@@ -1,5 +1,5 @@
 # Blueflood Grinder Integration <a href="https://github.com/rackerlabs/raxmetrics-perf-test-scripts"><img src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png" height="32" width="32"/></a>
-##Intro
+## Intro
 Grinder is a distributed load testing tool described [here](http://grinder.sourceforge.net/g3/getting-started.html)
 
 This code defines implementations of grinder worker threads meant to repeatedly invoke the required number of BF api calls during each "reporting interval"
