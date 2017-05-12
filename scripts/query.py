@@ -74,8 +74,6 @@ class MultiPlotQueryGenerator(AbstractQueryGenerator):
             to, resolution)
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(url, payload, headers)
-        if result.getStatusCode() >= 400:
-            logger("MultiPlotQuery Error: status code=" + str(result.getStatusCode()) + " response=" + result.getText())
         return result
 
 

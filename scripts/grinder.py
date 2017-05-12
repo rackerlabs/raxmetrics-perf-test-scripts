@@ -20,6 +20,7 @@ from authenticating_request import AuthenticatingRequest
 from response_checking_request import ResponseCheckingRequest
 from exception_handling_request import ExceptionHandlingRequest
 from get_user import get_user
+from error_logging_request import ErrorLoggingRequest
 
 # ENTRY POINT into the Grinder
 
@@ -63,6 +64,7 @@ def create_request_obj(test_num, test_name, tgroup_name=None,
     request = ResponseCheckingRequest(request)
     test.record(request)
     request = ExceptionHandlingRequest(request)
+    request = ErrorLoggingRequest(request, grinder.logger.info)
     if auth_user:
         grinder.logger.debug('%s request object will authenticate with '
                             'username "%s".' % (test_name, auth_user.username))
