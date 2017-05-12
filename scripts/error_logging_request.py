@@ -11,7 +11,7 @@ class ErrorLoggingRequest():
 
     def wrap(self, callee):
         response = callee()
-        if response.getStatusCode() >= 500:
+        if response.getStatusCode() >= 400:
             s = '\n    %s %s %s\n' % (response.getVersion(),
                                       response.getStatusCode(),
                                       response.getReasonLine())
