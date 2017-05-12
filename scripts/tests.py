@@ -60,6 +60,22 @@ class MockResponse(object):
     def getVersion(self):
         return 'HTTP/1.1'
 
+    def getReasonLine(self):
+        map = {
+            200: 'OK',
+            400: 'Bad Request',
+            500: 'Internal Server Error',
+        }
+        return map[self.status_code]
+
+    def listHeaders(self):
+        return []
+
+    def getText(self):
+        if not self.json_data:
+            return None
+        return json.dumps(self.json_data)
+
     def json(self):
         return self.json_data
 
