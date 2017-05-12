@@ -6,7 +6,7 @@ This code defines implementations of grinder worker threads meant to repeatedly 
 
 It also includes the infrastructure to divide the total work described in the grinder properties file across all the workers in the distributed system.
 
-##Architecture
+## Architecture
 The BF grinder system is designed to take a single properties file that lists the total number of threads to be used to generate load, and allocate each of those threads to generate a certain kind of http request.
 
 The BF grinder code creates different types of threads to handle the different kinds of requests
@@ -71,7 +71,7 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]auth_properties_path` - Path to a `.properties` file that contains the user credentials. If any of `auth_url`, `auth_username`, or `auth_api_key` is not specified in the main config file, then this property will be checked for credentials. The property file referred to by this property will **only** be checked for user credentials; any other properties defined in it will not be used for any purpose, nor will this `.properties` file in any way override the main config.
 * `[grinder.bf.]auth_properties_encr_key_file` - Path to a `.properties` file that hass a `password` entry giving a simple encryption key. If this property is specified, then properties in the `auth_properties_path` file can be encrypted using jasypt, e.g. `ENC(abc123...)`. The property file referred to by `auth_properties_encr_key_file` will **only** be checked for a `password` property; any other properties defined in it will not be used for any purpose, nor will this property file in any way override the main config.
 
-##Installing
+## Installing
 The following command will download the necessary software packages and place them under the `dependencies/` folder:
 
 ```bash
@@ -80,7 +80,7 @@ The following command will download the necessary software packages and place th
 
 Note this needs to be run on each node in the cluster, as well as the console.
 
-##Starting the console
+## Starting the console
 The GUI can be started with the provided script:
 ```bash
 ./run-console.bash
@@ -101,7 +101,7 @@ curl -X POST http://localhost:6373/agents/start-workers
 The graphical console gives some useful status info, so you may prefer using that.
 
 
-##Starting the agents
+## Starting the agents
 Each agent is started with the provided script, like so:
 
 ```bash
@@ -113,7 +113,7 @@ There are currently some example properties files in the `properties` folder:
 1. `grinder-local.properties` has some configs for running on your localhost
 2. `grinder-unittests.properties` holds the configs used by the unit tests
 
-##Coverage
+## Coverage
 There is a set of unit tests to check the function of the individual components in the scripts.
 The relevant file is `scripts/tests.py`.
 To run the unit tests under Jython and Grinder, you can simply run `./run-unit-tests.bash` at the bash prompt.
