@@ -57,6 +57,9 @@ class MockResponse(object):
     def getStatusCode(self):
         return self.status_code
 
+    def getVersion(self):
+        return 'HTTP/1.1'
+
     def json(self):
         return self.json_data
 
