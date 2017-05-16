@@ -57,6 +57,25 @@ class MockResponse(object):
     def getStatusCode(self):
         return self.status_code
 
+    def getVersion(self):
+        return 'HTTP/1.1'
+
+    def getReasonLine(self):
+        map = {
+            200: 'OK',
+            400: 'Bad Request',
+            500: 'Internal Server Error',
+        }
+        return map[self.status_code]
+
+    def listHeaders(self):
+        return []
+
+    def getText(self):
+        if not self.json_data:
+            return None
+        return json.dumps(self.json_data)
+
     def json(self):
         return self.json_data
 
@@ -1026,7 +1045,7 @@ class MockReqCustomCode(MockReq):
 
 
 class ErrorLoggingRequestTest(TestCaseBase):
-    def test_writes_to_log_on_error(self):
+    def test_writes_to_log_on_server_error(self):
         # given
         log = []
 
@@ -1040,7 +1059,7 @@ class ErrorLoggingRequestTest(TestCaseBase):
         resp = elr.GET(url='http://www.example.com')
         # then
         self.assertEqual(1, len(log))
-        self.assertIs(resp, log[0])
+        self.assertEqual('\n    HTTP/1.1 500 Internal Server Error\n', log[0])
 
     def test_does_not_write_to_log_on_success(self):
         # given
@@ -1057,7 +1076,7 @@ class ErrorLoggingRequestTest(TestCaseBase):
         # then
         self.assertEqual(0, len(log))
 
-    def test_does_not_write_to_log_on_client_error(self):
+    def test_writes_to_log_on_client_error(self):
         # given
         log = []
 
@@ -1070,7 +1089,8 @@ class ErrorLoggingRequestTest(TestCaseBase):
         # when
         resp = elr.GET(url='http://www.example.com')
         # then
-        self.assertEqual(0, len(log))
+        self.assertEqual(1, len(log))
+        self.assertEqual('\n    HTTP/1.1 400 Bad Request\n', log[0])
 
 
 suite = unittest.TestSuite()
