@@ -16,17 +16,17 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="identity_endpoint" elementType="Argument">
             <stringProp name="Argument.name">identity_endpoint</stringProp>
-            <stringProp name="Argument.value">__property(test.identity_endpoint,,identity.api.rackspacecloud.com)</stringProp>
+            <stringProp name="Argument.value">${__property(test.identity_endpoint,,identity.api.rackspacecloud.com)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="query_endpoint" elementType="Argument">
             <stringProp name="Argument.name">query_endpoint</stringProp>
-            <stringProp name="Argument.value">__property(test.query_endpoint,,perf02.metrics.api.rackspacecloud.com)</stringProp>
+            <stringProp name="Argument.value">${__property(test.query_endpoint,,perf02.metrics.api.rackspacecloud.com)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="ingest_endpoint" elementType="Argument">
             <stringProp name="Argument.name">ingest_endpoint</stringProp>
-            <stringProp name="Argument.value">__property(test.ingest_endpoint,,perf02.metrics-ingest.api.rackspacecloud.com)</stringProp>
+            <stringProp name="Argument.value">${__property(test.ingest_endpoint,,perf02.metrics-ingest.api.rackspacecloud.com)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="metric_value" elementType="Argument">
@@ -41,22 +41,22 @@
           </elementProp>
           <elementProp name="token" elementType="Argument">
             <stringProp name="Argument.name">token</stringProp>
-            <stringProp name="Argument.value">___property(test.token)</stringProp>
+            <stringProp name="Argument.value">${__property(test.token)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="user" elementType="Argument">
             <stringProp name="Argument.name">user</stringProp>
-            <stringProp name="Argument.value">__property(test.user)</stringProp>
+            <stringProp name="Argument.value">${__property(test.user)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="apiKey" elementType="Argument">
-            <stringProp name="Argument.name">apiKey</stringProp>
-            <stringProp name="Argument.value">__property(test.apiKey)</stringProp>
+          <elementProp name="apikey" elementType="Argument">
+            <stringProp name="Argument.name">apikey</stringProp>
+            <stringProp name="Argument.value">${__property(test.apikey)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="tenant_id" elementType="Argument">
             <stringProp name="Argument.name">tenant_id</stringProp>
-            <stringProp name="Argument.value">__property(test.tenant_id)</stringProp>
+            <stringProp name="Argument.value">${__property(test.tenant_id)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -99,7 +99,7 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;auth&quot;:{&quot;RAX-KSKEY:apiKeyCredentials&quot;:{&quot;username&quot;:&quot;${user}&quot;,&quot;apiKey&quot;:&quot;${apiKey}&quot;}}}</stringProp>
+                <stringProp name="Argument.value">{&quot;auth&quot;:{&quot;RAX-KSKEY:apiKeyCredentials&quot;:{&quot;username&quot;:&quot;${user}&quot;,&quot;apiKey&quot;:&quot;${apikey}&quot;}}}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
@@ -202,7 +202,7 @@ vars.put(&quot;tenant_id&quot;, props.get(&quot;tenant_id&quot;));</stringProp>
      &quot;unit&apos;: &quot;minutes&quot;,&#xd;
      &quot;metricValue&quot;: &quot;${metric_value}&quot;,&#xd;
      &quot;ttlInSeconds&quot;: 172800,&#xd;
-     &quot;collectionTime&quot;: ${time()}&#xd;
+     &quot;collectionTime&quot;: ${__time()}&#xd;
   }&#xd;
 ]</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
