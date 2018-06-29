@@ -115,7 +115,6 @@
             <stringProp name="filename"></stringProp>
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="script">def token = props.get(&quot;token&quot;);
-println(&quot;:&quot; + token.toString() + &quot;:&quot;);
 vars.put(&quot;token&quot;, props.get(&quot;token&quot;));</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
@@ -193,7 +192,7 @@ props.put(&quot;tenant_id&quot;, vars.get(&quot;tenant_id&quot;));
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
-        <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
@@ -291,9 +290,9 @@ if (r &lt; t0) {
                     <stringProp name="Argument.value">[&#xd;
   {&#xd;
      &quot;tenantId&quot;: &quot;${tenant_id}&quot;,&#xd;
-     &quot;metricName&apos;: &quot;${metric_value}&quot;,&#xd;
-     &quot;unit&apos;: &quot;minutes&quot;,&#xd;
-     &quot;metricValue&quot;: &quot;${metric_value}&quot;,&#xd;
+     &quot;metricName&quot;: &quot;${metric_value}&quot;,&#xd;
+     &quot;unit&quot;: &quot;minutes&quot;,&#xd;
+     &quot;metricValue&quot;: ${metric_value},&#xd;
      &quot;ttlInSeconds&quot;: 172800,&#xd;
      &quot;collectionTime&quot;: ${__time()}&#xd;
   }&#xd;
