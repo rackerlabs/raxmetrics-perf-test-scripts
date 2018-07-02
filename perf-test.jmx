@@ -81,7 +81,7 @@
           </elementProp>
           <elementProp name="ingest_payload_tenant_base" elementType="Argument">
             <stringProp name="Argument.name">ingest_payload_tenant_base</stringProp>
-            <stringProp name="Argument.value">${__property(test.ingest_payload_tenant_base,,876543)}</stringProp>
+            <stringProp name="Argument.value">${__property(test.ingest_payload_tenant_base,,1)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="ingest_payload_tenant_count" elementType="Argument">
@@ -92,6 +92,11 @@
           <elementProp name="ingest_metric_names_count" elementType="Argument">
             <stringProp name="Argument.name">ingest_metric_names_count</stringProp>
             <stringProp name="Argument.value">${__property(test.ingest_metric_names_count,,25000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="anno_ingest_metric_names_count" elementType="Argument">
+            <stringProp name="Argument.name">anno_ingest_metric_names_count</stringProp>
+            <stringProp name="Argument.value">${__property(test.anno_ingest_metric_names_count,,25000)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -309,7 +314,7 @@ if (r &lt; t0) {
           <stringProp name="SwitchController.value">${switch_var}</stringProp>
         </SwitchController>
         <hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Ingest" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Ingest" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Ingest-multi request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -360,7 +365,7 @@ ingest_batch_size.times {
 	def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
 	def metric_value = random.nextInt(1024)
      metric_list.add([
-          &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
+          &quot;tenantId&quot;: payload_tenant,
           &quot;metricName&quot;: metric_name,
           &quot;unit&quot;: &quot;minutes&quot;,
           &quot;metricValue&quot;: metric_value,
@@ -373,43 +378,8 @@ vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
               </JSR223PreProcessor>
               <hashTree/>
             </hashTree>
-            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler" enabled="false">
-              <stringProp name="scriptLanguage">groovy</stringProp>
-              <stringProp name="parameters"></stringProp>
-              <stringProp name="filename"></stringProp>
-              <stringProp name="cacheKey">true</stringProp>
-              <stringProp name="script">import groovy.json.JsonOutput
-
-def metric_list = []
-
-def ingest_batch_size = vars.get(&quot;ingest_batch_size&quot;) as int
-def ingest_payload_tenant_base = vars.get(&quot;ingest_payload_tenant_base&quot;) as int
-def ingest_payload_tenant_count = vars.get(&quot;ingest_payload_tenant_count&quot;) as int
-
-def ingest_metric_names_count = vars.get(&quot;ingest_metric_names_count&quot;) as int
-def metric_name_template = vars.get(&quot;metric_name_template&quot;)
-
-def random = new Random();
-
-ingest_batch_size.times {
-	def payload_tenant = ingest_payload_tenant_base + random.nextInt(ingest_payload_tenant_count)
-	def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
-	def metric_value = random.nextInt()
-     metric_list.add([
-          &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
-          &quot;metricName&quot;: metric_name,
-          &quot;unit&quot;: &quot;minutes&quot;,
-          &quot;metricValue&quot;: metric_value,
-          &quot;ttlInSeconds&quot;: 172800,
-          &quot;collectionTime&quot;: ${__time()}
-])}
-
-vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
-</stringProp>
-            </JSR223Sampler>
-            <hashTree/>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Annotations Ingest request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -445,7 +415,13 @@ vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
                 <stringProp name="parameters"></stringProp>
                 <stringProp name="filename"></stringProp>
                 <stringProp name="cacheKey">true</stringProp>
-                <stringProp name="script">vars.put(&quot;annotation_metric_name&quot;, vars.get(&quot;metric_name&quot;))</stringProp>
+                <stringProp name="script">def template = vars.get(&quot;metric_name_template&quot;).toString()
+def anno_ingest_metric_names_count = vars.get(&quot;anno_ingest_metric_names_count&quot;) as int
+def random = new Random();
+def metric_number = random.nextInt(anno_ingest_metric_names_count)
+def metric_name = template + metric_number.toString()
+
+vars.put(&quot;annotation_metric_name&quot;, metric_name)</stringProp>
               </JSR223PreProcessor>
               <hashTree/>
             </hashTree>
