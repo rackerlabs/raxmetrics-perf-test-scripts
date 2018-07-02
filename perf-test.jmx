@@ -358,11 +358,12 @@ def random = new Random();
 ingest_batch_size.times {
 	def payload_tenant = ingest_payload_tenant_base + random.nextInt(ingest_payload_tenant_count)
 	def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
+	def metric_value = random.nextInt(1024)
      metric_list.add([
           &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
           &quot;metricName&quot;: metric_name,
           &quot;unit&quot;: &quot;minutes&quot;,
-          &quot;metricValue&quot;: ${metric_value},
+          &quot;metricValue&quot;: metric_value,
           &quot;ttlInSeconds&quot;: 172800,
           &quot;collectionTime&quot;: ${__time()}
 ])}
@@ -393,11 +394,12 @@ def random = new Random();
 ingest_batch_size.times {
 	def payload_tenant = ingest_payload_tenant_base + random.nextInt(ingest_payload_tenant_count)
 	def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
+	def metric_value = random.nextInt()
      metric_list.add([
           &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
           &quot;metricName&quot;: metric_name,
           &quot;unit&quot;: &quot;minutes&quot;,
-          &quot;metricValue&quot;: ${metric_value},
+          &quot;metricValue&quot;: metric_value,
           &quot;ttlInSeconds&quot;: 172800,
           &quot;collectionTime&quot;: ${__time()}
 ])}
