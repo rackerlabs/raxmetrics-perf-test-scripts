@@ -69,11 +69,6 @@
             <stringProp name="Argument.value">com.example.*</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="max_multiplot_metrics" elementType="Argument">
-            <stringProp name="Argument.name">max_multiplot_metrics</stringProp>
-            <stringProp name="Argument.value">3</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
           <elementProp name="ingest_batch_size" elementType="Argument">
             <stringProp name="Argument.name">ingest_batch_size</stringProp>
             <stringProp name="Argument.value">${__property(test.ingest_batch_size,,1500)}</stringProp>
@@ -97,6 +92,11 @@
           <elementProp name="anno_ingest_metric_names_count" elementType="Argument">
             <stringProp name="Argument.name">anno_ingest_metric_names_count</stringProp>
             <stringProp name="Argument.value">${__property(test.anno_ingest_metric_names_count,,25000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="max_multiplot_metrics" elementType="Argument">
+            <stringProp name="Argument.name">max_multiplot_metrics</stringProp>
+            <stringProp name="Argument.value">${__property(test.max_multiplot_metrics,,3)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -426,7 +426,7 @@ vars.put(&quot;annotation_metric_name&quot;, metric_name)</stringProp>
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Single-plot request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -486,7 +486,7 @@ vars.put(&quot;query_metric_name&quot;, metric_name)
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Multi-plot" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Multi-plot" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Multi-plot request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -494,9 +494,7 @@ vars.put(&quot;query_metric_name&quot;, metric_name)
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">[&#xd;
-  &quot;${metric_name}&quot;&#xd;
-]</stringProp>
+                    <stringProp name="Argument.value">${query_metric_names}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -544,6 +542,30 @@ vars.put(&quot;query_metric_name&quot;, metric_name)
                 <stringProp name="script">def to_time = vars.get(&quot;to_time&quot;) as Long
 def from_time = to_time - 86400000
 vars.put(&quot;from_time&quot;, from_time.toString())
+</stringProp>
+              </JSR223PreProcessor>
+              <hashTree/>
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Generate the list of names" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import groovy.json.JsonOutput
+
+def metric_names = []
+
+def max_multiplot_metrics = vars.get(&quot;max_multiplot_metrics&quot;) as int
+def ingest_metric_names_count = vars.get(&quot;ingest_metric_names_count&quot;) as int
+def metric_name_template = vars.get(&quot;metric_name_template&quot;)
+
+def random = new Random();
+
+max_multiplot_metrics.times {
+	def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
+     metric_names.add(metric_name)
+}
+
+vars.put(&quot;query_metric_names&quot;, JsonOutput.toJson(metric_names))
 </stringProp>
               </JSR223PreProcessor>
               <hashTree/>
