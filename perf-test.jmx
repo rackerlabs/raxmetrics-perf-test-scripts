@@ -39,6 +39,11 @@
             <stringProp name="Argument.value">com.example.metric_name_1</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="metric_name_template" elementType="Argument">
+            <stringProp name="Argument.name">metric_name_template</stringProp>
+            <stringProp name="Argument.value">com.example.metric_name_</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="token" elementType="Argument">
             <stringProp name="Argument.name">token</stringProp>
             <stringProp name="Argument.value">${__property(test.token)}</stringProp>
@@ -62,6 +67,16 @@
           <elementProp name="search_regex" elementType="Argument">
             <stringProp name="Argument.name">search_regex</stringProp>
             <stringProp name="Argument.value">com.example.*</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="max_multiplot_metrics" elementType="Argument">
+            <stringProp name="Argument.name">max_multiplot_metrics</stringProp>
+            <stringProp name="Argument.value">3</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="ingest_batch_size" elementType="Argument">
+            <stringProp name="Argument.name">ingest_batch_size</stringProp>
+            <stringProp name="Argument.value">${__property(test.ingest_batch_size,,1500)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -287,16 +302,7 @@ if (r &lt; t0) {
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">[&#xd;
-  {&#xd;
-     &quot;tenantId&quot;: &quot;${tenant_id}&quot;,&#xd;
-     &quot;metricName&quot;: &quot;${metric_value}&quot;,&#xd;
-     &quot;unit&quot;: &quot;minutes&quot;,&#xd;
-     &quot;metricValue&quot;: ${metric_value},&#xd;
-     &quot;ttlInSeconds&quot;: 172800,&#xd;
-     &quot;collectionTime&quot;: ${__time()}&#xd;
-  }&#xd;
-]</stringProp>
+                    <stringProp name="Argument.value">${ingest_multi_payload}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -315,7 +321,33 @@ if (r &lt; t0) {
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
             </HTTPSamplerProxy>
-            <hashTree/>
+            <hashTree>
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Generate the metrics payload" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import groovy.json.JsonOutput
+
+def metric_list = []
+
+def ingest_batch_size = vars.get(&quot;ingest_batch_size&quot;) as int
+
+ingest_batch_size.times {
+     metric_list.add([
+          &quot;tenantId&quot;: &quot;${tenant_id}&quot;,
+          &quot;metricName&quot;: &quot;${metric_value}&quot;,
+          &quot;unit&quot;: &quot;minutes&quot;,
+          &quot;metricValue&quot;: ${metric_value},
+          &quot;ttlInSeconds&quot;: 172800,
+          &quot;collectionTime&quot;: ${__time()}
+])}
+
+vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
+</stringProp>
+              </JSR223PreProcessor>
+              <hashTree/>
+            </hashTree>
           </hashTree>
           <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="true"/>
           <hashTree>
