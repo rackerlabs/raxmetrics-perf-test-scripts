@@ -89,6 +89,11 @@
             <stringProp name="Argument.value">${__property(test.ingest_payload_tenant_count,,3000)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="ingest_metric_names_count" elementType="Argument">
+            <stringProp name="Argument.name">ingest_metric_names_count</stringProp>
+            <stringProp name="Argument.value">${__property(test.ingest_metric_names_count,,25000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -345,14 +350,17 @@ def ingest_batch_size = vars.get(&quot;ingest_batch_size&quot;) as int
 def ingest_payload_tenant_base = vars.get(&quot;ingest_payload_tenant_base&quot;) as int
 def ingest_payload_tenant_count = vars.get(&quot;ingest_payload_tenant_count&quot;) as int
 
+def ingest_metric_names_count = vars.get(&quot;ingest_metric_names_count&quot;) as int
+def metric_name_template = vars.get(&quot;metric_name_template&quot;)
+
 def random = new Random();
-def r = random.nextInt(100) //vars.get(&quot;r&quot;)//__Random(1, 100)
 
 ingest_batch_size.times {
 	def payload_tenant = ingest_payload_tenant_base + random.nextInt(ingest_payload_tenant_count)
+	def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
      metric_list.add([
           &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
-          &quot;metricName&quot;: &quot;${metric_name}&quot;,
+          &quot;metricName&quot;: metric_name,
           &quot;unit&quot;: &quot;minutes&quot;,
           &quot;metricValue&quot;: ${metric_value},
           &quot;ttlInSeconds&quot;: 172800,
@@ -377,14 +385,17 @@ def ingest_batch_size = vars.get(&quot;ingest_batch_size&quot;) as int
 def ingest_payload_tenant_base = vars.get(&quot;ingest_payload_tenant_base&quot;) as int
 def ingest_payload_tenant_count = vars.get(&quot;ingest_payload_tenant_count&quot;) as int
 
+def ingest_metric_names_count = vars.get(&quot;ingest_metric_names_count&quot;) as int
+def metric_name_template = vars.get(&quot;metric_name_template&quot;)
+
 def random = new Random();
-def r = random.nextInt(100) //vars.get(&quot;r&quot;)//__Random(1, 100)
 
 ingest_batch_size.times {
 	def payload_tenant = ingest_payload_tenant_base + random.nextInt(ingest_payload_tenant_count)
+	def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
      metric_list.add([
           &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
-          &quot;metricName&quot;: &quot;${metric_name}&quot;,
+          &quot;metricName&quot;: metric_name,
           &quot;unit&quot;: &quot;minutes&quot;,
           &quot;metricValue&quot;: ${metric_value},
           &quot;ttlInSeconds&quot;: 172800,
@@ -396,7 +407,7 @@ vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
             </JSR223Sampler>
             <hashTree/>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Annotations Ingest request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -437,7 +448,7 @@ vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Single-plot request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -491,7 +502,7 @@ vars.put(&quot;from_time&quot;, from_time.toString())
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Multi-plot" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Multi-plot" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Multi-plot request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -554,7 +565,7 @@ vars.put(&quot;from_time&quot;, from_time.toString())
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Search Query" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Search Query" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Search request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -576,7 +587,7 @@ vars.put(&quot;from_time&quot;, from_time.toString())
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Query" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Query" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Annotations query request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
