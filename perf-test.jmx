@@ -79,6 +79,16 @@
             <stringProp name="Argument.value">${__property(test.ingest_batch_size,,1500)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="ingest_payload_tenant_base" elementType="Argument">
+            <stringProp name="Argument.name">ingest_payload_tenant_base</stringProp>
+            <stringProp name="Argument.value">${__property(test.ingest_payload_tenant_base,,876543)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="ingest_payload_tenant_count" elementType="Argument">
+            <stringProp name="Argument.name">ingest_payload_tenant_count</stringProp>
+            <stringProp name="Argument.value">${__property(test.ingest_payload_tenant_count,,3000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -332,11 +342,17 @@ if (r &lt; t0) {
 def metric_list = []
 
 def ingest_batch_size = vars.get(&quot;ingest_batch_size&quot;) as int
+def ingest_payload_tenant_base = vars.get(&quot;ingest_payload_tenant_base&quot;) as int
+def ingest_payload_tenant_count = vars.get(&quot;ingest_payload_tenant_count&quot;) as int
+
+def random = new Random();
+def r = random.nextInt(100) //vars.get(&quot;r&quot;)//__Random(1, 100)
 
 ingest_batch_size.times {
+	def payload_tenant = ingest_payload_tenant_base + random.nextInt(ingest_payload_tenant_count)
      metric_list.add([
-          &quot;tenantId&quot;: &quot;${tenant_id}&quot;,
-          &quot;metricName&quot;: &quot;${metric_value}&quot;,
+          &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
+          &quot;metricName&quot;: &quot;${metric_name}&quot;,
           &quot;unit&quot;: &quot;minutes&quot;,
           &quot;metricValue&quot;: ${metric_value},
           &quot;ttlInSeconds&quot;: 172800,
@@ -348,6 +364,37 @@ vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
               </JSR223PreProcessor>
               <hashTree/>
             </hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler" enabled="false">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import groovy.json.JsonOutput
+
+def metric_list = []
+
+def ingest_batch_size = vars.get(&quot;ingest_batch_size&quot;) as int
+def ingest_payload_tenant_base = vars.get(&quot;ingest_payload_tenant_base&quot;) as int
+def ingest_payload_tenant_count = vars.get(&quot;ingest_payload_tenant_count&quot;) as int
+
+def random = new Random();
+def r = random.nextInt(100) //vars.get(&quot;r&quot;)//__Random(1, 100)
+
+ingest_batch_size.times {
+	def payload_tenant = ingest_payload_tenant_base + random.nextInt(ingest_payload_tenant_count)
+     metric_list.add([
+          &quot;tenantId&quot;: &quot;${payload_tenant}&quot;,
+          &quot;metricName&quot;: &quot;${metric_name}&quot;,
+          &quot;unit&quot;: &quot;minutes&quot;,
+          &quot;metricValue&quot;: ${metric_value},
+          &quot;ttlInSeconds&quot;: 172800,
+          &quot;collectionTime&quot;: ${__time()}
+])}
+
+vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
+</stringProp>
+            </JSR223Sampler>
+            <hashTree/>
           </hashTree>
           <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="true"/>
           <hashTree>
