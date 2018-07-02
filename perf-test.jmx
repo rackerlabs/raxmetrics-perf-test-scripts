@@ -379,7 +379,7 @@ vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="false"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Annotations Ingest request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -426,7 +426,7 @@ vars.put(&quot;annotation_metric_name&quot;, metric_name)</stringProp>
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Single-plot request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -436,7 +436,7 @@ vars.put(&quot;annotation_metric_name&quot;, metric_name)</stringProp>
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">v2.0/${tenant_id}/views/${metric_name}?from=${from_time}&amp;to=${to_time}&amp;resolution=${resolution}</stringProp>
+              <stringProp name="HTTPSampler.path">v2.0/${tenant_id}/views/${query_metric_name}?from=${from_time}&amp;to=${to_time}&amp;resolution=${resolution}</stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -467,7 +467,7 @@ vars.put(&quot;annotation_metric_name&quot;, metric_name)</stringProp>
                 </collectionProp>
               </Arguments>
               <hashTree/>
-              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Set the &quot;from_time&quot; variable" enabled="true">
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Set variables for the request" enabled="true">
                 <stringProp name="scriptLanguage">groovy</stringProp>
                 <stringProp name="parameters"></stringProp>
                 <stringProp name="filename"></stringProp>
@@ -475,6 +475,12 @@ vars.put(&quot;annotation_metric_name&quot;, metric_name)</stringProp>
                 <stringProp name="script">def to_time = vars.get(&quot;to_time&quot;) as Long
 def from_time = to_time - 86400000
 vars.put(&quot;from_time&quot;, from_time.toString())
+
+def ingest_metric_names_count = vars.get(&quot;ingest_metric_names_count&quot;) as int
+def metric_name_template = vars.get(&quot;metric_name_template&quot;)
+def random = new Random()
+def metric_name = metric_name_template + random.nextInt(ingest_metric_names_count).toString()
+vars.put(&quot;query_metric_name&quot;, metric_name)
 </stringProp>
               </JSR223PreProcessor>
               <hashTree/>
