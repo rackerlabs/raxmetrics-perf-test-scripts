@@ -314,7 +314,7 @@ if (r &lt; t0) {
           <stringProp name="SwitchController.value">${switch_var}</stringProp>
         </SwitchController>
         <hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Ingest" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Ingest" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Ingest-multi request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -379,7 +379,7 @@ vars.put(&quot;ingest_multi_payload&quot;, JsonOutput.toJson(metric_list))
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Ingest" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Annotations Ingest request" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -426,7 +426,7 @@ vars.put(&quot;annotation_metric_name&quot;, metric_name)</stringProp>
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Single-plot" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Single-plot request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -571,7 +571,7 @@ vars.put(&quot;query_metric_names&quot;, JsonOutput.toJson(metric_names))
               <hashTree/>
             </hashTree>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Search Query" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Search Query" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Search request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -593,7 +593,7 @@ vars.put(&quot;query_metric_names&quot;, JsonOutput.toJson(metric_names))
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Query" enabled="false"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Annotations Query" enabled="true"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Annotations query request" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
