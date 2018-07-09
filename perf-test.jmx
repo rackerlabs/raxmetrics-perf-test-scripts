@@ -109,6 +109,36 @@
             <stringProp name="Argument.value">${__property(test.loop_count,,1)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="ingest_percent" elementType="Argument">
+            <stringProp name="Argument.name">ingest_percent</stringProp>
+            <stringProp name="Argument.value">${__property(test.ingest_percent,,22)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="annotation_ingest_percent" elementType="Argument">
+            <stringProp name="Argument.name">annotation_ingest_percent</stringProp>
+            <stringProp name="Argument.value">${__property(test.annotation_ingest_percent,,22)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="singe_plot_percent" elementType="Argument">
+            <stringProp name="Argument.name">singe_plot_percent</stringProp>
+            <stringProp name="Argument.value">${__property(test.singe_plot_percent,,14)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="multi_plot_percent" elementType="Argument">
+            <stringProp name="Argument.name">multi_plot_percent</stringProp>
+            <stringProp name="Argument.value">${__property(test.multi_plot_percent,,14)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="search_percent" elementType="Argument">
+            <stringProp name="Argument.name">search_percent</stringProp>
+            <stringProp name="Argument.value">${__property(test.search_percent,,14)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="annotations_query_percent" elementType="Argument">
+            <stringProp name="Argument.name">annotations_query_percent</stringProp>
+            <stringProp name="Argument.value">${__property(test.annotations_query_percent,,14)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -249,7 +279,7 @@ props.put(&quot;tenant_id&quot;, vars.get(&quot;tenant_id&quot;));
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Get the token and tenant ID from setup" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Get ready to send a request" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration">0</stringProp>
@@ -273,13 +303,12 @@ vars.put(&quot;tenant_id&quot;, props.get(&quot;tenant_id&quot;));
             <stringProp name="parameters"></stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="cacheKey">true</stringProp>
-            <stringProp name="script">
-def ingest_percent = 22
-def annotation_ingest_percent = 22
-def singe_plot_percent = 14
-def multi_plot_percent = 14
-def search_percent = 14
-def annotations_query_percent = 14
+            <stringProp name="script">def ingest_percent = props.get(&quot;test.ingest_percent&quot;, 22) as int
+def annotation_ingest_percent = props.get(&quot;test.annotation_ingest_percent&quot;, 22) as int
+def singe_plot_percent = props.get(&quot;test.singe_plot_percent&quot;, 14) as int
+def multi_plot_percent = props.get(&quot;test.multi_plot_percent&quot;, 14) as int
+def search_percent = props.get(&quot;test.search_percent&quot;, 14) as int
+def annotations_query_percent = props.get(&quot;test.annotations_query_percent&quot;, 14) as int
 
 def total = ingest_percent + annotation_ingest_percent + singe_plot_percent + multi_plot_percent + search_percent + annotations_query_percent
 def scale = 100 / total
