@@ -119,9 +119,9 @@
             <stringProp name="Argument.value">${__property(test.annotation_ingest_percent,,22)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="singe_plot_percent" elementType="Argument">
-            <stringProp name="Argument.name">singe_plot_percent</stringProp>
-            <stringProp name="Argument.value">${__property(test.singe_plot_percent,,14)}</stringProp>
+          <elementProp name="single_plot_percent" elementType="Argument">
+            <stringProp name="Argument.name">single_plot_percent</stringProp>
+            <stringProp name="Argument.value">${__property(test.single_plot_percent,,14)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="multi_plot_percent" elementType="Argument">
@@ -305,24 +305,24 @@ vars.put(&quot;tenant_id&quot;, props.get(&quot;tenant_id&quot;));
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="script">def ingest_percent = props.get(&quot;test.ingest_percent&quot;, 22) as int
 def annotation_ingest_percent = props.get(&quot;test.annotation_ingest_percent&quot;, 22) as int
-def singe_plot_percent = props.get(&quot;test.singe_plot_percent&quot;, 14) as int
+def single_plot_percent = props.get(&quot;test.single_plot_percent&quot;, 14) as int
 def multi_plot_percent = props.get(&quot;test.multi_plot_percent&quot;, 14) as int
 def search_percent = props.get(&quot;test.search_percent&quot;, 14) as int
 def annotations_query_percent = props.get(&quot;test.annotations_query_percent&quot;, 14) as int
 
-def total = ingest_percent + annotation_ingest_percent + singe_plot_percent + multi_plot_percent + search_percent + annotations_query_percent
+def total = ingest_percent + annotation_ingest_percent + single_plot_percent + multi_plot_percent + search_percent + annotations_query_percent
 def scale = 100 / total
 
 ingest_percent = ingest_percent * scale
 annotation_ingest_percent = annotation_ingest_percent * scale
-singe_plot_percent = singe_plot_percent * scale
+single_plot_percent = single_plot_percent * scale
 multi_plot_percent = multi_plot_percent * scale
 search_percent = search_percent * scale
 annotations_query_percent = annotations_query_percent * scale
 
 def t0 = ingest_percent
 def t1 = t0 + annotation_ingest_percent
-def t2 = t1 + singe_plot_percent
+def t2 = t1 + single_plot_percent
 def t3 = t2 + multi_plot_percent
 def t4 = t3 + search_percent
 def t5 = t4 + annotations_query_percent
