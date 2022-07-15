@@ -29,7 +29,10 @@ class AnnotationsIngestGenerator(AbstractGenerator):
 
     def ingest_url(self, tenant_id=None):
         if tenant_id is None:
-            tenant_id = self.user.get_tenant_id()
+            if self.user.is_real_user():
+                tenant_id = self.user.get_tenant_id()
+            else:
+                tenant_id = random.randint(0, self.config['annotations_num_tenants'])
         return "%s/v2.0/%s/events" % (self.config['url'], tenant_id)
 
     def make_request(self, logger, time, tenant_and_metric=None):

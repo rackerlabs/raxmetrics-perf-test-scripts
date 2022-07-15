@@ -69,6 +69,8 @@ class IngestGenerator(AbstractGenerator):
 
     def ingest_url(self, tenantId=None):
         if tenantId is None:
+            # The ingest/multi endpoint takes the tenant from each metric. The URL tenant is only used for
+            # authorization.
             tenantId = self.user.get_tenant_id()
         return "%s/v2.0/%s/ingest/multi" % (self.config['url'], str(tenantId))
 
@@ -76,7 +78,10 @@ class IngestGenerator(AbstractGenerator):
         if tenant_metric_id_values is None:
             tenant_metric_id_values = []
             for i in xrange(self.config['ingest_batch_size']):
-                tenant_id = self.user.get_tenant_id()
+                if self.user.is_real_user():
+                    tenant_id = self.user.get_tenant_id()
+                else:
+                    tenant_id = random.randint(0, self.config['ingest_num_tenants'])
                 metric_id = random.randint(
                     1, self.config['ingest_metrics_per_tenant'])
                 value = random.randint(0, RAND_MAX)
