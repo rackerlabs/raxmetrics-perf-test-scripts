@@ -61,7 +61,13 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
   With 5 ingest threads and a batch size of 10, 50 metrics total will be ingested. The names and tenants of those metrics
   are randomized within the bounds of the `ingest_num_tenants` and `ingest_metrics_per_tenant` properties.
 
-* `[grinder.bf.]ingest_delay_millis` - Configures delayed metrics. Default is `""`, which doesn't produced any delayed metrics.
+* `[grinder.bf.]ingest_delay_millis` - Configures delayed metrics. Default is `""`, which doesn't produce any delayed
+  metrics. Set to a comma-separated list of delays, in milliseconds, to produce some delayed metrics. For half of the
+  tenants (the even numbered ones), a delay value will be randomly selected from the list and applied to each metric
+  produced for that tenant, making it look like the metric was produced that many milliseconds ago but has just now been
+  ingested. Example: `"0,0,0,60000"` would make about 1/4 of the metrics of even-numbered tenants appear delayed by 1
+  minute.
+
 * `[grinder.bf.]ingest_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `IngestThread` objects. Default is `None`. If the tgroup name is blank, or is not defined among the throttling groups (or if there is a _spelling error_), then no throttling will be performed for this thread type.
 * `[grinder.bf.]ingest_count_raw_metrics` - `True` to create a secondary Grinder `Test` object to track the total number of metrics ingested, not just the number of HTTP requests. The count is increased by the number of metrics in a given POST payload (which should be equal to `ingest_batch_size`), when the given request is successful. Note that this will skew the total TPS and other statistics that Grinder collects. Default is False.
 
