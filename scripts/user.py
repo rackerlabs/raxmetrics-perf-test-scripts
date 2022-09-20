@@ -132,6 +132,9 @@ class User(object):
 
         return False
 
+    def is_real_user(self):
+        return True
+
 
 class NullUser(object):
     def get_token(self):
@@ -144,4 +147,7 @@ class NullUser(object):
         return self.get_tenant_id(), self.get_token()
 
     def is_expired(self):
+        return False
+
+    def is_real_user(self):
         return False

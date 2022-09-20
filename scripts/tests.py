@@ -154,7 +154,7 @@ grinder_props = {
     'grinder.bf.max_multiplot_metrics': '10',
 
     'grinder.bf.ingest_weight': '15',
-    'grinder.bf.num_tenants': '4',
+    'grinder.bf.ingest_num_tenants': '4',
     'grinder.bf.metrics_per_tenant': '15',
     'grinder.bf.ingest_batch_size': '5',
 
