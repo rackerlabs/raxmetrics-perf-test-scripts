@@ -633,7 +633,7 @@ class MakeQueryRequestsTest(TestCaseBase):
         response = qq.make_request(None, 1000, 30)
         self.assertEqual(req.get_url,
                          "http://metrics.example.org/v2.0/30/events/" +
-                         "getEvents?from=-86399000&until=1000")
+                         "getEvents?from=-59000&until=1000")
         self.assertIs(req, response.request)
 
 
