@@ -18,6 +18,7 @@ default_config = {
     'ingest_num_tenants': 4,
     'ingest_metrics_per_tenant': 15,
     'ingest_batch_size': 5,
+    'ingest_use_multi_ingest': 'true',
     # ingest_delay_millis is comma separated list of delays used during
     # ingestion
     'ingest_delay_millis': "",

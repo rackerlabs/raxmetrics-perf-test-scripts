@@ -576,6 +576,35 @@ class MakeIngestRequestsTest(TestCaseBase):
             'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
 
+    def test_ingest_with_no_use_multi(self):
+        self.test_config['ingest_use_multi_ingest'] = 'false'
+        global sleep_time
+        agent_num = 0
+        generator = ingest.IngestGenerator(0, agent_num, MockReq(),
+                                           self.test_config)
+        tenant_metric_id_values = [
+            [2, 0, 0],
+            [2, 1, 0]
+        ]
+        response = generator.make_request(pp, 1000, tenant_metric_id_values)
+        url = response.request.post_url
+        payload = response.request.post_payload
+
+        # It should use the singular /ingest endpoint instead of /ingest/multi and not include a "tenantId" field in the
+        # payload.
+        self.assertEqual(
+            url,
+            'http://metrics-ingest.example.org/v2.0/tenantId/ingest')
+
+        valid_payload = [
+            {"collectionTime": 1000, "ttlInSeconds": 172800,
+             "metricValue": 0, "unit": "days",
+             "metricName": "org.example.metric.0"},
+            {"collectionTime": 1000, "ttlInSeconds": 172800,
+             "metricValue": 0, "unit": "days",
+             "metricName": "org.example.metric.1"}]
+        self.assertEqual(eval(payload), valid_payload)
+
 
 class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):

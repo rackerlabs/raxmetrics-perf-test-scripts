@@ -68,6 +68,10 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
   ingested. Example: `"0,0,0,60000"` would make about 1/4 of the metrics of even-numbered tenants appear delayed by 1
   minute.
 
+* `[grinder.bf.]ingest_use_multi_ingest` - Whether to call the `/ingest/multi` endpoint or the `/ingest` endpoint.
+  Default is `true`, meaning call `/ingest/multi`. That's useful for creating metrics for multiple tenants, but it
+  requires elevated privileges in staging and production. Setting this to `false` helps work around that.
+
 * `[grinder.bf.]ingest_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `IngestThread` objects. Default is `None`. If the tgroup name is blank, or is not defined among the throttling groups (or if there is a _spelling error_), then no throttling will be performed for this thread type.
 * `[grinder.bf.]ingest_count_raw_metrics` - `True` to create a secondary Grinder `Test` object to track the total number of metrics ingested, not just the number of HTTP requests. The count is increased by the number of metrics in a given POST payload (which should be equal to `ingest_batch_size`), when the given request is successful. Note that this will skew the total TPS and other statistics that Grinder collects. Default is False.
 

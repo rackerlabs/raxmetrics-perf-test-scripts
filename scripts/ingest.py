@@ -55,12 +55,15 @@ class IngestGenerator(AbstractGenerator):
             delay = long(random.choice(ingest_delay_millis.split(',')))
             collection_time = collection_time - delay
 
-        return {'tenantId': str(tenant_id),
+        payload = {
                 'metricName': generate_metric_name(metric_id, self.config),
                 'unit': self.generate_unit(tenant_int),
                 'metricValue': value,
                 'ttlInSeconds': (2 * 24 * 60 * 60),
                 'collectionTime': collection_time}
+        if self.config['ingest_use_multi_ingest'] == 'true':
+            payload['tenantId'] = str(tenant_id)
+        return payload
 
     def generate_payload(self, time, tenant_metric_id_values):
         payload = [self.generate_metric(time, x[0], x[1], x[2]) for x in
@@ -68,6 +71,11 @@ class IngestGenerator(AbstractGenerator):
         return json.dumps(payload)
 
     def ingest_url(self, tenantId=None):
+        if tenantId is None:
+            tenantId = self.user.get_tenant_id()
+        return "%s/v2.0/%s/ingest" % (self.config['url'], str(tenantId))
+
+    def multi_ingest_url(self, tenantId=None):
         if tenantId is None:
             tenantId = self.user.get_tenant_id()
         return "%s/v2.0/%s/ingest/multi" % (self.config['url'], str(tenantId))
@@ -84,7 +92,10 @@ class IngestGenerator(AbstractGenerator):
                 tenant_metric_id_values.append(tmv)
         payload = self.generate_payload(time, tenant_metric_id_values)
         headers = ( NVPair("Content-Type", "application/json"), )
-        url = self.ingest_url()
+        if self.config['ingest_use_multi_ingest'] == 'true':
+            url = self.multi_ingest_url()
+        else:
+            url = self.ingest_url()
         result = self.request.POST(url, payload, headers)
         if 200 <= result.getStatusCode() < 300:
             self.count_raw_metrics(len(tenant_metric_id_values))
