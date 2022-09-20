@@ -49,15 +49,13 @@ class IngestGenerator(AbstractGenerator):
         ingest_delay_millis = self.config['ingest_delay_millis']
 
         collection_time = time
-        # all even tenants have possible delayed metrics
-        tenant_int = int_from_tenant(tenant_id)
-        if tenant_int % 2 == 0 and len(ingest_delay_millis) > 0:
+        if len(ingest_delay_millis) > 0:
             delay = long(random.choice(ingest_delay_millis.split(',')))
             collection_time = collection_time - delay
 
         return {'tenantId': str(tenant_id),
                 'metricName': generate_metric_name(metric_id, self.config),
-                'unit': self.generate_unit(tenant_int),
+                'unit': self.generate_unit(tenant_id),
                 'metricValue': value,
                 'ttlInSeconds': (2 * 24 * 60 * 60),
                 'collectionTime': collection_time}
