@@ -88,7 +88,10 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]annotations_query_weight` - Default is `8`.
 * `[grinder.bf.]annotations_query_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `AnnotationsQuery` objects. Default is `None`. If the tgroup name is blank, or is not defined among the throttling groups (or if there is a _spelling error_), then no throttling will be performed for this thread type.
 
-* `[grinder.bf.]auth_url` - URL to use to authenticate against before running the perf test. Should be the url to an OpenStack compatible identity service.
+* `[grinder.bf.]auth_url` - URL to use to authenticate against before running the perf test. Should be the url to the
+  `/tokens` endpoint of an OpenStack compatible identity service, such as
+  `https://identity.api.rackspacecloud.com/v2.0/tokens`.
+
 * `[grinder.bf.]auth_username` - The username to authenticate with before running the perf test.
 * `[grinder.bf.]auth_api_key` - The API key to authenticate with before running the perf test.
 * `[grinder.bf.]auth_properties_path` - Path to a `.properties` file that contains the user credentials. If any of `auth_url`, `auth_username`, or `auth_api_key` is not specified in the main config file, then this property will be checked for credentials. The property file referred to by this property will **only** be checked for user credentials; any other properties defined in it will not be used for any purpose, nor will this `.properties` file in any way override the main config.
