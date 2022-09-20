@@ -26,6 +26,7 @@ default_config = {
     'annotations_num_tenants': 5,
     'annotations_per_tenant': 10,
 
+    'query_require_results': 0,
     'singleplot_query_weight': 10,
 
     'multiplot_query_weight': 10,

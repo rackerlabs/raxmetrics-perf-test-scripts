@@ -45,6 +45,14 @@ class SinglePlotQueryGenerator(AbstractQueryGenerator):
             tenant_id, metric_name, frm,
             to, resolution)
         result = self.request.GET(url)
+        # If we got zero results back, we don't really know if this was a successful test or not, but maybe we don't
+        # care, either...
+        min_results = self.config['query_require_results']
+        payload = json.loads(result.getText())
+        if len(payload) <= min_results:
+            raise Exception(
+                'Single plot query returned less than query_require_results; ' +
+                'consider reducing permutations or increasing ingest weight')
         return result
 
 
@@ -74,6 +82,12 @@ class MultiPlotQueryGenerator(AbstractQueryGenerator):
             to, resolution)
         headers = ( NVPair("Content-Type", "application/json"), )
         result = self.request.POST(url, payload, headers)
+        min_results = self.config['query_require_results']
+        payload = json.loads(result.getText())
+        if len(payload) <= min_results:
+            raise Exception(
+                'Multiplot query returned less than query_require_results; ' +
+                'consider reducing permutations or increasing ingest weight')
         return result
 
 
@@ -96,6 +110,12 @@ class SearchQueryGenerator(AbstractQueryGenerator):
             self.config['query_url'],
             tenant_id, metric_regex)
         result = self.request.GET(url)
+        min_results = self.config['query_require_results']
+        payload = json.loads(result.getText())
+        if len(payload) <= min_results:
+            raise Exception(
+                'Search query returned less than query_require_results; ' +
+                'consider reducing permutations or increasing ingest weight')
         return result
 
 
@@ -110,5 +130,11 @@ class AnnotationsQueryGenerator(AbstractQueryGenerator):
         url = "%s/v2.0/%s/events/getEvents?from=%d&until=%d" % (
             self.config['query_url'], tenant_id, frm, to)
         result = self.request.GET(url)
+        min_results = self.config['query_require_results']
+        payload = json.loads(result.getText())
+        if len(payload) <= min_results:
+            raise Exception(
+                'Annotations query returned less than query_require_results; ' +
+                'consider reducing permutations or increasing ingest weight')
         return result
 

@@ -72,7 +72,7 @@ class MockResponse(object):
         return []
 
     def getText(self):
-        if not self.json_data:
+        if self.json_data == None:
             return None
         return json.dumps(self.json_data)
 
@@ -81,11 +81,12 @@ class MockResponse(object):
 
 
 class MockReq(object):
-    def __init__(self):
+    def __init__(self, response_json_data=None):
         self.post_url = None
         self.post_payload = None
         self.get_url = None
         self.headers = None
+        self.response_json_data = response_json_data
 
     def POST(self, url, payload, headers=None):
         global post_url, post_payload
@@ -94,14 +95,14 @@ class MockReq(object):
         self.post_url = url
         self.post_payload = payload
         self.headers = headers
-        return MockResponse(self)
+        return MockResponse(self, 200, self.response_json_data)
 
     def GET(self, url, payload=None, headers=None):
         global get_url
         get_url = url
         self.get_url = url
         self.headers = headers
-        return MockResponse(self)
+        return MockResponse(self, 200, self.response_json_data)
 
 
 class FakeIdentityConnector(object):
@@ -580,7 +581,8 @@ class MakeIngestRequestsTest(TestCaseBase):
 class MakeQueryRequestsTest(TestCaseBase):
     def setUp(self):
         self.agent_num = 0
-        self.config = clean_configs(grinder_props)
+        self.config = abstract_generator.default_config.copy()
+        self.config.update(clean_configs(grinder_props))
         self.requests_by_type = requests_by_type.copy()
 
     def test_query_make_SinglePlotQuery_request(self):
@@ -635,6 +637,30 @@ class MakeQueryRequestsTest(TestCaseBase):
                          "http://metrics.example.org/v2.0/30/events/" +
                          "getEvents?from=-86399000&until=1000")
         self.assertIs(req, response.request)
+
+    def test_query_SinglePlotQuery_requiring_results(self):
+        self.config['query_require_results'] = 1
+        req = MockReq([])
+        qq = query.SinglePlotQueryGenerator(0, self.agent_num, req, self.config)
+        self.assertRaises(Exception, qq.make_request, None, 1000, 0, 'org.example.metric.metric123')
+
+    def test_query_make_SearchQuery_request_requiring_results(self):
+        self.config['query_require_results'] = 1
+        req = MockReq([])
+        qq = query.SearchQueryGenerator(0, self.agent_num, req, self.config)
+        self.assertRaises(Exception, qq.make_request, None, 1000, 0, 'org.example.metric.metric123')
+
+    def test_query_make_MultiPlotQuery_request_requiring_results(self):
+        self.config['query_require_results'] = 1
+        req = MockReq([])
+        qq = query.MultiPlotQueryGenerator(0, self.agent_num, req, self.config)
+        self.assertRaises(Exception, qq.make_request, None, 1000, 0, 'org.example.metric.metric123')
+
+    def test_query_make_AnnotationsQuery_request_requiring_results(self):
+        self.config['query_require_results'] = 1
+        req = MockReq([])
+        qq = query.AnnotationsQueryGenerator(0, self.agent_num, req, self.config)
+        self.assertRaises(Exception, qq.make_request, None, 1000, 0, 'org.example.metric.metric123')
 
 
 class ThrottlingGroupTest(unittest.TestCase):

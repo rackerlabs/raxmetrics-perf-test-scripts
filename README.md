@@ -76,6 +76,9 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]annotations_per_tenant` - Exactly like `ingest_metrics_per_tenant`, except that this property controls the number of metric name suffixes for the `AnnotationsIngestThread` class. This property is provided so that ingest threads can be configured independently. Default is `10`.
 * `[grinder.bf.]annotations_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `AnnotationsIngestThread` objects. Default is `None`. If the tgroup name is blank, or is not defined among the throttling groups (or if there is a _spelling error_), then no throttling will be performed for this thread type.
 
+* `[grinder.bf.]query_require_results` - Require a minimum number of results per query test. Default is `0`, meaning
+  don't require any results. This can be helpful to ensure queries aren't just returning success with an empty payload.
+
 * `[grinder.bf.]singleplot_query_weight` - Default is `10`.
 * `[grinder.bf.]singleplot_query_throttling_group` - Name of an above-defined throttling group. The named tgroup will be assigned to all `SinglePlotQuery` objects. Default is `None`. If the tgroup name is blank, or is not defined among the throttling groups (or if there is a _spelling error_), then no throttling will be performed for this thread type.
 
