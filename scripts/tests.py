@@ -5,6 +5,8 @@ import sys
 import time
 import unittest
 import random
+import re
+from sets import Set
 import math
 from datetime import datetime
 
@@ -575,6 +577,59 @@ class MakeIngestRequestsTest(TestCaseBase):
             url,
             'http://metrics-ingest.example.org/v2.0/tenantId/ingest/multi')
         self.assertEqual(eval(payload), valid_payload)
+
+    def test_ingest_with_name_permutations(self):
+        # Given: a name format and permutation count that should produce lots of unique metric names
+        self.test_config['name_fmt'] = 'one.%d.two.%d.three.%d.four.%d'
+        self.test_config['ingest_metrics_permutation_scale'] = 9
+        global sleep_time
+        agent_num = 0
+        generator = ingest.IngestGenerator(0, agent_num, MockReq(), self.test_config)
+
+        # When I request metrics and specify some metric id's
+        tenant_metric_id_values = [
+            [2, 0, 0],
+            [2, 1, 0]
+        ]
+        payloads = [generator.make_request(pp, 1000, tenant_metric_id_values).request.post_payload
+                    for i in range(100)]
+        parsed = [json.loads(payload) for payload in payloads]
+        namePairs = [
+            [metrics[0]['metricName'], metrics[1]['metricName']
+        ] for metrics in parsed]
+
+        # Then all the generated metric names conform to the expected pattern
+        name1List = []
+        name2List = []
+        for [name1, name2] in namePairs:
+            # I want to say this:
+            # assert re.match(r'one\.\d\.two\.\d\.three\.\d\.four\.0', name1)
+            # assert re.match(r'one\.\d\.two\.\d\.three\.\d\.four\.1', name2)
+            # but it appears there's some bug in Jython affecting regexes. When I try it, I get a trace ending with:
+            #   File "/src/dependencies/grinder-3.11/lib/jython-standalone-2.5.3.jar/Lib/sre_compile.py", line 182, in _compile
+            #      raise ValueError, ("unsupported operand type", op)
+            #  ValueError: ('unsupported operand type', 'in')
+            # Possible related bug report: https://bugs.jython.org/issue2392
+            # I think this is the best I can do in the meantime:
+            assert name1.startswith('one.')
+            assert '.two.' in name1
+            assert '.three.' in name1
+            assert name1.endswith('.four.0')
+
+            assert name2.startswith('one.')
+            assert '.two.' in name2
+            assert '.three.' in name2
+            assert name2.endswith('.four.1')
+
+            name1List.append(name1)
+            name2List.append(name2)
+
+        # And lots of different names were generated for the metric_id=0 names
+        name1Set = Set(name1List)
+        assert len(name1Set) > len(name1List) / 2
+        # And also for the metric_id=1 names
+        name2Set = Set(name2List)
+        assert len(name2Set) > len(name2List) / 2
 
 
 class MakeQueryRequestsTest(TestCaseBase):
