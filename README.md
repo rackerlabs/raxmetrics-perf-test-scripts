@@ -39,7 +39,19 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
 * `[grinder.bf.]url` - The HTTP Url for ingestion-based traffic. Default is `http://localhost:19000`.
 * `[grinder.bf.]query_url` - The HTTP Url for query-based traffic. Default is `http://localhost:20000`.
 * `[grinder.bf.]max_multiplot_metrics` - Default is `10`.
-* `[grinder.bf.]name_fmt` - Default is `org.example.metric.%d`.
+
+* `[grinder.bf.]name_fmt` - A pattern used to create random metric names. Default is `org.example.metric.%d`. The value
+  must include at least one `%d` format specifier. You can use more than one to increase the number of permutations of
+  generated metric names and tokens.
+
+  Due to historical/test reasons, this property is more complicated than it needs to be. The description *should* be: Each
+  `%d` is replaced by a random integer in the range `1` to `ingest_metrics_permutation_scale`.
+
+  However, many tests are tied to the idea of a `metric_id`, which is from a time when the `name_fmt` only allowed a
+  single `%d`, which was the `metric_id`. To keep from being too disruptive, we maintain the `metric_id` and always use it
+  for the final `%d` in the `name_fmt`. This makes metric names predictable for tests. In normal operations, the range for
+  this value is `1` to `ingest_metrics_per_tenant`. Any `%d` beyond this first is replaced by a random integer in the
+  range `1` to `ingest_metrics_permutation_scale`.
 
 * `[grinder.bf.]throttling_group.<name>.max_requests_per_minute` - Create a throttling group with the given `name`. The value of the property is taken as the throttling group's `max_requests_per_minute` parameter. By default, no throttling groups are created if no properties are specified.
 
@@ -50,11 +62,26 @@ Grinder-specific properties are discussed in more detail [here](http://grinder.s
   metrics to the service. Default is `4`. This isn't the total number of tenants that *will* be used, only the number that
   *can* be used.
 
-* `[grinder.bf.]ingest_metrics_per_tenant` - Ingestion threads randomly generate a numerical metric name suffix in the
-  range of `[0,ingest_metrics_per_tenant)`. Metric names will generally be of the form `org.example.metric.%d`, or
-  whatever the `name_fmt` property is set to. Change this property to control how many different metrics will have data
-  generated for them. Default is `15`. As in `ingest_num_tenants`, this isn't the number of metrics that *will* be sent.
-  It's the number of distinct metric names than *can* be sent.
+* `[grinder.bf.]ingest_metrics_per_tenant` - See `name_fmt` and `ingest_metrics_permutation_scale`. Default is `15`. I
+  highly recommend keeping this set to the same value as `ingest_metrics_permutation_scale`.
+
+* `[grinder.bf.]ingest_metrics_permutation_scale` - Ingestion threads randomly generate metric names based on the
+  `name_fmt`. That property is a format string with one or more format specifiers where random integers are injected.
+  This property sets the maximum number of different values that can be generated for each of those integers. Default is
+  `15`.
+
+  *EXCEPTION:* Due to historical reasons, the range of the last format specifier is actually controlled by
+  `ingest_metrics_per_tenant`. See `name_fmt` for more details. I highly recommend setting this to the same value as
+  `ingest_metrics_per_tenant`.
+
+  As in `ingest_num_tenants`, this doesn't set the number of metrics that *will* be sent. It controls the number of
+  distinct metric names that *can* be sent. As an example, if `name_fmt` is `org.example.dc.%d.server.%d.metric.%d` and
+  both `ingest_metrics_permutation_scale` and `ingest_metrics_per_tenant` are 10, then the number of distinct metric names
+  that can be sent is 1000, or scale^(number of format specifiers in `name_fmt`).
+
+  NOTE: The query and ingest generators will generate their own completely random metric names, so as the number of
+  permutations increases, the number of results returned by each query will trend toward zero. If you want to try to guard
+  against this situation, see the `query_require_results` property.
 
 * `[grinder.bf.]ingest_batch_size` - Ingestion threads will generate this many metrics in a single payload (HTTP request
   body). Default is `5`. This is the property that actually controls how many metrics are ingested per request or thread.
