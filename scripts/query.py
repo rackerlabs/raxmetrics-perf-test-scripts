@@ -14,7 +14,8 @@ except ImportError:
 
 
 class AbstractQueryGenerator(AbstractGenerator):
-    one_day = (1000 * 60 * 60 * 24)
+    one_minute = (1000 * 60)
+    one_day = (one_minute * 60 * 24)
 
     query_interval_name = None
 
@@ -106,7 +107,9 @@ class AnnotationsQueryGenerator(AbstractQueryGenerator):
         if tenant_id is None:
             tenant_id = self.user.get_tenant_id()
         to = time
-        frm = time - self.one_day
+        # Unlike time series data, annotations don't have any kind of rollup, so querying for a day's data can return a
+        # huge payload, causing memory issues on the servers when you generate a lot of load.
+        frm = time - self.one_minute
         url = "%s/v2.0/%s/events/getEvents?from=%d&until=%d" % (
             self.config['query_url'], tenant_id, frm, to)
         result = self.request.GET(url)
