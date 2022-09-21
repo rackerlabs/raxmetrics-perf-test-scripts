@@ -69,6 +69,8 @@ def create_request_obj(test_num, test_name, tgroup_name=None,
         grinder.logger.debug('%s request object will authenticate with '
                             'username "%s".' % (test_name, auth_user.username))
         request = AuthenticatingRequest(request, auth_user)
+    else:
+        grinder.logger.debug('%s request object will not authenticate.' % test_name)
     if tgroup_name:
         grinder.logger.debug('%s request object will throttle with group '
                             '"%s".' % (test_name, tgroup_name))
